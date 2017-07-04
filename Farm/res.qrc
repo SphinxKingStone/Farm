@@ -1,1 +1,5 @@
-<RCC/>
+<RCC>
+    <qresource prefix="/images">
+        <file>green_bg.jpg</file>
+    </qresource>
+</RCC>

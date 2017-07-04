@@ -1,7 +1,7 @@
 #ifndef BEAST_N_DROP_H
 #define BEAST_N_DROP_H
 
-
+#include <QString>
 
 struct beast
 {
@@ -9,6 +9,8 @@ struct beast
     QString name;
     int drop_chance;
     int rarity;
+    int health;
+    int xp;
 };
 
 struct drop

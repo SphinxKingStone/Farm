@@ -25,12 +25,14 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += main.cpp \
     interface.cpp \
-    drop.cpp
+    drop.cpp \
+    player.cpp
 
 HEADERS  += \
     beast_n_drop.h \
     interface.h \
-    drop.h
+    drop.h \
+    player.h
 
 FORMS    +=
 

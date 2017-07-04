@@ -4,25 +4,9 @@
 #include <QDebug>
 #include <time.h>
 
-Drop::Drop(QWidget *parent)
+Drop::Drop()
 {
-    scene = new QGraphicsScene();
-    scene->setSceneRect(0,0,800,600);
 
-    setScene(scene);
-
-    list = new QListWidget();
-    scene->addWidget(list);
-    list->resize(800,600);
-    list->setStyleSheet("font: 16px");
-
-    fill_beast_mas(beast_mas);
-    fill_drop_mas(drop_mas);
-
-    for (int i = 0; i < 20; i++)
-        simulate_drop();
-
-    show();
 }
 
 
@@ -34,7 +18,7 @@ void Drop::simulate_drop()
     int DropChance = rand() % 100;
 
     if (DropChance > beast_mas[BeastType].drop_chance)
-        list->addItem("Вы убили " + beast_mas[BeastType].name + " и вам ничего не выпало.");
+        //list->addItem("Вы убили " + beast_mas[BeastType].name + " и вам ничего не выпало.");
 
     if (DropChance <= beast_mas[BeastType].drop_chance)
     {
@@ -46,7 +30,7 @@ void Drop::simulate_drop()
 
         int DropType;
         DropType = rand() % tmp_drop.size();
-        list->addItem("Вы убили " + beast_mas[BeastType].name + " и вам выпал " + tmp_drop[DropType].name);
+        //list->addItem("Вы убили " + beast_mas[BeastType].name + " и вам выпал " + tmp_drop[DropType].name);
     }
 }
 
@@ -87,14 +71,20 @@ void Drop::fill_beast_mas(std::vector<beast> &mas)
     mas[0].name = "Кабан";
     mas[0].drop_chance = 100;
     mas[0].rarity = 100;
+    mas[0].health = 10;
+    mas[0].xp = 5;
     mas.insert(mas.end(), beast());
     mas[1].id = mas.size() - 1;
     mas[1].name = "Гоблин";
     mas[1].drop_chance = 75;
     mas[1].rarity = 75;
+    mas[1].health = 30;
+    mas[1].xp = 10;
     mas.insert(mas.end(), beast());
     mas[2].id = mas.size() - 1;
     mas[2].name = "Сова";
     mas[2].drop_chance = 15;
     mas[2].rarity = 15;
+    mas[2].health = 50;
+    mas[2].xp = 20;
 }
