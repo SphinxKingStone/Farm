@@ -3,6 +3,8 @@
 
 #include <QString>
 
+typedef std::pair< int, int> level_xp_pair;
+
 struct beast
 {
     int id;
@@ -19,6 +21,5 @@ struct drop
     QString name;
     int rarity;
 };
-
 
 #endif // BEAST_N_DROP_H
