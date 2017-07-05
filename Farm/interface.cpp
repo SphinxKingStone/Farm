@@ -1,5 +1,4 @@
 #include "interface.h"
-#include "player.h"
 #include <QDebug>
 
 Interface::Interface(QWidget *parent)
@@ -25,7 +24,7 @@ Interface::~Interface()
 void Interface::play_bt_click()
 {
     draw_mainScreen();
-    Player * player = new Player();
+    player = new Player();
 
     play_buttton->deleteLater();
 
@@ -50,6 +49,7 @@ void Interface::onLocation_list_item_clicked()
 void Interface::onprofile_button_click()
 {
     close_mainScreen();
+    draw_profile();
 }
 
 void Interface::show_startWindow()
@@ -115,4 +115,38 @@ void Interface::close_mainScreen()
     beast_list->deleteLater();
     profile_button->deleteLater();
     inventory_button->deleteLater();
+}
+
+void Interface::draw_profile()
+{
+    grid_layout = new QGridLayout();
+
+    mas_profile_labels << new QLabel();
+    mas_profile_labels[0]->setText("Уровень: " + QString::number(player->get_level()));
+    grid_layout->addWidget(mas_profile_labels[0],0,0,Qt::AlignBaseline);
+
+    mas_profile_labels << new QLabel();
+    mas_profile_labels[1]->setText("Опыт: " + QString::number(player->get_xp()) + "/" + QString::number(player->get_xp_for_next_lvl()));
+    grid_layout->addWidget(mas_profile_labels[1],1,0,Qt::AlignBaseline);
+
+    mas_profile_labels << new QLabel();
+    mas_profile_labels[2]->setText("Здоровье: " + QString::number(player->get_health()));
+    grid_layout->addWidget(mas_profile_labels[2],2,0,Qt::AlignBaseline);
+
+    mas_profile_labels << new QLabel();
+    mas_profile_labels[3]->setText("Атака: " + QString::number(player->get_attack()));
+    grid_layout->addWidget(mas_profile_labels[3],3,0,Qt::AlignBaseline);
+
+    for (int i = 0; i <= 3; i++)
+    {
+        mas_profile_buttons << new QPushButton("+");
+        grid_layout->addWidget(mas_profile_buttons[i],i,0,Qt::AlignRight);
+    }
+
+    profile_frame = new QFrame();
+    profile_frame->resize(400, 500);
+    profile_frame->move(0,50);
+
+    scene->addWidget(profile_frame);
+    profile_frame->setLayout(grid_layout);
 }

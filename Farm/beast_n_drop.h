@@ -3,7 +3,6 @@
 
 #include <QString>
 
-typedef std::pair< int, int> level_xp_pair;
 
 struct beast
 {

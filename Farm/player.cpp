@@ -1,18 +1,15 @@
 #include "player.h"
+#include <utility>
 
-level_xp_pair level_xp[3];
+std::vector<std::pair<int, int>> level_xp;
 
 Player::Player()
 {
     //Todo: инициализировать не в конструкторе, а как - то единожды, при запуске программы
-    level_xp[0].first = 1;
-    level_xp[0].second = 0;
-    level_xp[1].first = 2;
-    level_xp[1].second = 50;
-    level_xp[2].first = 3;
-    level_xp[2].second = 200;
-    level_xp[3].first = 4;
-    level_xp[3].second = 500;
+    for (int i = 0; i < 100; i++)
+    {
+        level_xp.insert(level_xp.end(), std::make_pair(i, i * 50));
+    }
 
     health = 20;
     attack = 2;
@@ -33,4 +30,29 @@ void Player::increase_lvl()
     lvl++;
     health += 10;
     attack += 1;
+}
+
+int Player::get_level()
+{
+    return lvl;
+}
+
+int Player::get_xp()
+{
+    return xp;
+}
+
+int Player::get_health()
+{
+    return health;
+}
+
+int Player::get_attack()
+{
+    return attack;
+}
+
+int Player::get_xp_for_next_lvl()
+{
+    return level_xp[lvl].second;
 }

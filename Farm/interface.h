@@ -5,6 +5,9 @@
 #include <QPushButton>
 #include <QLayout>
 #include <QListWidget>
+#include <QLabel>
+#include <QFrame>
+#include <player.h>
 
 class Interface: public QGraphicsView
 {
@@ -15,6 +18,9 @@ public:
     void show_startWindow();
     void draw_mainScreen();
     void close_mainScreen();
+    void draw_profile();
+
+    Player * player;
 
 private:
     QGraphicsScene * scene;
@@ -24,6 +30,11 @@ private:
     QListWidget * beast_list;
     QPushButton * profile_button;
     QPushButton * inventory_button;
+    QFrame * profile_frame;
+
+    QList<QLabel*> mas_profile_labels;
+    QList<QPushButton*> mas_profile_buttons;
+
 
 private slots:
     void play_bt_click();
