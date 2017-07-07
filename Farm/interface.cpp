@@ -39,11 +39,49 @@ void Interface::onLocation_list_item_clicked()
     case 0:
         beast_list->addItem("Кабан");
         beast_list->addItem("Сова");
+        beast_list->setStyleSheet("background-color: rgba(255, 255, 255, 30%);"
+                                  "font: 18px;");
         break;
     case 1:
         beast_list->addItem("Гоблин");
+        beast_list->setStyleSheet("background-image:none;"
+                                  "background-color: rgba(255, 255, 255, 30%);"
+                                  "font: 18px;");
         break;
     }
+}
+
+void Interface::onBeast_list_item_selected()
+{
+    close_mainScreen();
+
+    grid_layout = new QGridLayout();
+
+    profile_frame = new QFrame();
+    profile_frame->resize(700,500);
+    profile_frame->move(50,50);
+    scene->addWidget(profile_frame);
+
+    profile_frame->setLayout(grid_layout);
+
+    mas_profile_labels << new QLabel();
+    mas_profile_labels.last()->setFixedSize(100,150);
+    mas_profile_labels.last()->setPixmap(player->get_image().scaled(100, 150, Qt::KeepAspectRatio));
+    grid_layout->addWidget(mas_profile_labels.last(),0,0,Qt::AlignCenter | Qt::AlignBottom);
+
+    mas_profile_labels << new QLabel();
+    mas_profile_labels.last()->setFixedSize(100,150);
+    //Загружаю картинку. Отзеркаливаю её. Подгоняю по размеру
+    mas_profile_labels.last()->setPixmap(QPixmap(":/images/goblin.png").transformed(QTransform().scale(-1, 1)).scaled(100, 150, Qt::KeepAspectRatio));
+    grid_layout->addWidget(mas_profile_labels.last(),0,1,Qt::AlignCenter | Qt::AlignBottom);
+
+    mas_profile_labels << new QLabel();
+    mas_profile_labels.last()->setText("Здоровье: " + QString::number(player->get_max_health()) + "/" + QString::number(player->get_max_health()));
+    grid_layout->addWidget(mas_profile_labels.last(),0,0,Qt::AlignTop | Qt::AlignCenter);
+
+    mas_profile_labels << new QLabel();
+    mas_profile_labels.last()->setText("Здоровье: " + QString::number(30) + "/" + QString::number(30));
+    grid_layout->addWidget(mas_profile_labels.last(),0,1,Qt::AlignTop | Qt::AlignCenter);
 }
 
 void Interface::onprofile_button_click()
@@ -84,7 +122,8 @@ void Interface::draw_mainScreen()
     beast_list->move(location_list->x() + location_list->width() + 30, location_list->y());
     beast_list->resize(scene->width() - beast_list->x() - 10, location_list->height());
     beast_list->setStyleSheet("background-color: rgba(255, 255, 255, 30%);"
-                                 "font: 18px;");
+                              "font: 18px;");
+    connect(beast_list, SIGNAL(itemActivated(QListWidgetItem*)), this, SLOT(onBeast_list_item_selected()));
 
     profile_button = new QPushButton("Профиль", nullptr);
     profile_button->resize(150,60);
@@ -130,7 +169,7 @@ void Interface::draw_profile()
     grid_layout->addWidget(mas_profile_labels[1],1,0,Qt::AlignBaseline);
 
     mas_profile_labels << new QLabel();
-    mas_profile_labels[2]->setText("Здоровье: " + QString::number(player->get_health()));
+    mas_profile_labels[2]->setText("Здоровье: " + QString::number(player->get_max_health()));
     grid_layout->addWidget(mas_profile_labels[2],2,0,Qt::AlignBaseline);
 
     mas_profile_labels << new QLabel();

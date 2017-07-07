@@ -1,5 +1,9 @@
 <RCC>
     <qresource prefix="/images">
         <file>green_bg.jpg</file>
+        <file>forest_bg.png</file>
+        <file>rsz_forest_bg.png</file>
+        <file>main_hero.png</file>
+        <file>goblin.png</file>
     </qresource>
 </RCC>

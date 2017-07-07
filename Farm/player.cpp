@@ -11,10 +11,13 @@ Player::Player()
         level_xp.insert(level_xp.end(), std::make_pair(i, i * 50));
     }
 
-    health = 20;
+    max_health = 20;
     attack = 2;
     xp = 0;
     lvl = 1;
+
+    //Вызывает libpng warning: iCCP: known incorrect sRGB profile
+    image = (QPixmap(":/images/main_hero.png"));
 }
 
 void Player::increase_xp(int amount)
@@ -28,7 +31,7 @@ void Player::increase_xp(int amount)
 void Player::increase_lvl()
 {
     lvl++;
-    health += 10;
+    max_health += 10;
     attack += 1;
 }
 
@@ -40,6 +43,11 @@ int Player::get_level()
 int Player::get_xp()
 {
     return xp;
+}
+
+int Player::get_max_health()
+{
+    return max_health;
 }
 
 int Player::get_health()
@@ -55,4 +63,9 @@ int Player::get_attack()
 int Player::get_xp_for_next_lvl()
 {
     return level_xp[lvl].second;
+}
+
+QPixmap Player::get_image()
+{
+    return image;
 }

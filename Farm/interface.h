@@ -39,6 +39,7 @@ private:
 private slots:
     void play_bt_click();
     void onLocation_list_item_clicked();
+    void onBeast_list_item_selected();
     void onprofile_button_click();
 };
 

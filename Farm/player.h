@@ -2,6 +2,7 @@
 #define PLAYER_H
 
 #include <vector>
+#include <QGraphicsPixmapItem>
 
 class Player
 {
@@ -11,14 +12,19 @@ public:
     void increase_lvl();
     int get_level();
     int get_xp();
+    int get_max_health();
     int get_health();
     int get_attack();
     int get_xp_for_next_lvl();
+    QPixmap get_image();
 private:
+    int max_health;
     int health;
     int attack;
     int xp;
     int lvl;
+    QPixmap image;
+
 };
 
 
