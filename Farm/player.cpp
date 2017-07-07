@@ -12,6 +12,7 @@ Player::Player()
     }
 
     max_health = 20;
+    health = max_health;
     attack = 2;
     xp = 0;
     lvl = 1;
@@ -33,6 +34,11 @@ void Player::increase_lvl()
     lvl++;
     max_health += 10;
     attack += 1;
+}
+
+void Player::get_damage(int amount)
+{
+    health -= amount;
 }
 
 int Player::get_level()

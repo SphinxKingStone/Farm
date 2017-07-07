@@ -11,6 +11,7 @@ struct beast
     int drop_chance;
     int rarity;
     int health;
+    int attack;
     int xp;
 };
 

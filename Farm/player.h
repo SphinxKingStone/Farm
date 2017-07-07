@@ -10,6 +10,7 @@ public:
     Player();
     void increase_xp(int amount);
     void increase_lvl();
+    void get_damage(int amount);
     int get_level();
     int get_xp();
     int get_max_health();

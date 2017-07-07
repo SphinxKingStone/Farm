@@ -73,6 +73,7 @@ void Drop::fill_beast_mas(std::vector<beast> &mas)
     mas[0].rarity = 100;
     mas[0].health = 10;
     mas[0].xp = 5;
+    mas[0].attack = 5;
     mas.insert(mas.end(), beast());
     mas[1].id = mas.size() - 1;
     mas[1].name = "Гоблин";
@@ -80,6 +81,7 @@ void Drop::fill_beast_mas(std::vector<beast> &mas)
     mas[1].rarity = 75;
     mas[1].health = 30;
     mas[1].xp = 10;
+    mas[1].attack = 10;
     mas.insert(mas.end(), beast());
     mas[2].id = mas.size() - 1;
     mas[2].name = "Сова";
@@ -87,4 +89,5 @@ void Drop::fill_beast_mas(std::vector<beast> &mas)
     mas[2].rarity = 15;
     mas[2].health = 50;
     mas[2].xp = 20;
+    mas[2].attack = 15;
 }

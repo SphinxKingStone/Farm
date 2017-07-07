@@ -1,5 +1,6 @@
 #include "interface.h"
 #include <QDebug>
+#include <QThread>
 
 Interface::Interface(QWidget *parent)
 {
@@ -65,23 +66,26 @@ void Interface::onBeast_list_item_selected()
     profile_frame->setLayout(grid_layout);
 
     mas_profile_labels << new QLabel();
-    mas_profile_labels.last()->setFixedSize(100,150);
-    mas_profile_labels.last()->setPixmap(player->get_image().scaled(100, 150, Qt::KeepAspectRatio));
-    grid_layout->addWidget(mas_profile_labels.last(),0,0,Qt::AlignCenter | Qt::AlignBottom);
+    mas_profile_labels.last()->setFixedSize(150,200);
+    mas_profile_labels.last()->setPixmap(player->get_image().scaled(150, 200, Qt::KeepAspectRatio));
+    grid_layout->addWidget(mas_profile_labels.last(),1,0,Qt::AlignCenter | Qt::AlignTop);
 
     mas_profile_labels << new QLabel();
-    mas_profile_labels.last()->setFixedSize(100,150);
+    mas_profile_labels.last()->setFixedSize(150,200);
     //Загружаю картинку. Отзеркаливаю её. Подгоняю по размеру
-    mas_profile_labels.last()->setPixmap(QPixmap(":/images/goblin.png").transformed(QTransform().scale(-1, 1)).scaled(100, 150, Qt::KeepAspectRatio));
-    grid_layout->addWidget(mas_profile_labels.last(),0,1,Qt::AlignCenter | Qt::AlignBottom);
+    mas_profile_labels.last()->setPixmap(QPixmap(":/images/goblin.png").transformed(QTransform().scale(-1, 1)).scaled(150, 200, Qt::KeepAspectRatio));
+    grid_layout->addWidget(mas_profile_labels.last(),1,1,Qt::AlignCenter | Qt::AlignTop);
 
     mas_profile_labels << new QLabel();
-    mas_profile_labels.last()->setText("Здоровье: " + QString::number(player->get_max_health()) + "/" + QString::number(player->get_max_health()));
-    grid_layout->addWidget(mas_profile_labels.last(),0,0,Qt::AlignTop | Qt::AlignCenter);
+    mas_profile_labels.last()->setText("Здоровье: " + QString::number(player->get_max_health()) + "/" + QString::number(player->get_health()));
+    mas_profile_labels.last()->setStyleSheet("font: 16px;");
+    grid_layout->addWidget(mas_profile_labels.last(),0,0, Qt::AlignCenter);
 
     mas_profile_labels << new QLabel();
     mas_profile_labels.last()->setText("Здоровье: " + QString::number(30) + "/" + QString::number(30));
-    grid_layout->addWidget(mas_profile_labels.last(),0,1,Qt::AlignTop | Qt::AlignCenter);
+    mas_profile_labels.last()->setStyleSheet("font: 16px;");
+    grid_layout->addWidget(mas_profile_labels.last(),0,1,Qt::AlignCenter);
+
 }
 
 void Interface::onprofile_button_click()
