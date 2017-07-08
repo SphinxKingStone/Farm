@@ -1,6 +1,5 @@
 #include <QApplication>
 #include "interface.h"
-#include "drop.h"
 
 int main(int argc, char *argv[])
 {

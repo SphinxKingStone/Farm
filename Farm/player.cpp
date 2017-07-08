@@ -18,7 +18,7 @@ Player::Player()
     lvl = 1;
 
     //Вызывает libpng warning: iCCP: known incorrect sRGB profile
-    image = (QPixmap(":/images/main_hero.png"));
+    image = (QPixmap(":/images/main_hero.png").scaled(150, 200, Qt::KeepAspectRatio));
 }
 
 void Player::increase_xp(int amount)

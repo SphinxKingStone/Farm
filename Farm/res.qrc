@@ -5,5 +5,7 @@
         <file>rsz_forest_bg.png</file>
         <file>main_hero.png</file>
         <file>goblin.png</file>
+        <file>boar.png</file>
+        <file>owl.png</file>
     </qresource>
 </RCC>

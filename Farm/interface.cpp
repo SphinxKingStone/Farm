@@ -15,6 +15,8 @@ Interface::Interface(QWidget *parent)
     setScene(scene);
 
     show_startWindow();
+
+
 }
 
 Interface::~Interface()
@@ -26,6 +28,7 @@ void Interface::play_bt_click()
 {
     draw_mainScreen();
     player = new Player();
+    variable = new Drop();
 
     play_buttton->deleteLater();
 
@@ -38,13 +41,14 @@ void Interface::onLocation_list_item_clicked()
     switch (location_list->currentRow())
     {
     case 0:
-        beast_list->addItem("Кабан");
-        beast_list->addItem("Сова");
+        beast_list->addItem(variable->beast_mas[0].name);
+        beast_list->addItem(variable->beast_mas[2].name);
         beast_list->setStyleSheet("background-color: rgba(255, 255, 255, 30%);"
                                   "font: 18px;");
         break;
     case 1:
-        beast_list->addItem("Гоблин");
+        beast_list->addItem(variable->beast_mas[1].name);
+        beast_list->addItem(variable->beast_mas[2].name);
         beast_list->setStyleSheet("background-image:none;"
                                   "background-color: rgba(255, 255, 255, 30%);"
                                   "font: 18px;");
@@ -54,6 +58,12 @@ void Interface::onLocation_list_item_clicked()
 
 void Interface::onBeast_list_item_selected()
 {
+    //ищем итератор по имени существа, которое получаем из выбранной строки в списке
+     auto it = std::find_if(variable->beast_mas.begin(), variable->beast_mas.end(), FindByName(beast_list->currentItem()->text()));
+     //Если не нашли, то итератор будет указывать на конец вектора, вот и проверяем, нашли ли
+     if (it != variable->beast_mas.end())
+        enemy = new Enemy(*it);
+
     close_mainScreen();
 
     grid_layout = new QGridLayout();
@@ -66,14 +76,11 @@ void Interface::onBeast_list_item_selected()
     profile_frame->setLayout(grid_layout);
 
     mas_profile_labels << new QLabel();
-    mas_profile_labels.last()->setFixedSize(150,200);
-    mas_profile_labels.last()->setPixmap(player->get_image().scaled(150, 200, Qt::KeepAspectRatio));
+    mas_profile_labels.last()->setPixmap(player->get_image());
     grid_layout->addWidget(mas_profile_labels.last(),1,0,Qt::AlignCenter | Qt::AlignTop);
 
     mas_profile_labels << new QLabel();
-    mas_profile_labels.last()->setFixedSize(150,200);
-    //Загружаю картинку. Отзеркаливаю её. Подгоняю по размеру
-    mas_profile_labels.last()->setPixmap(QPixmap(":/images/goblin.png").transformed(QTransform().scale(-1, 1)).scaled(150, 200, Qt::KeepAspectRatio));
+    mas_profile_labels.last()->setPixmap(enemy->get_image());
     grid_layout->addWidget(mas_profile_labels.last(),1,1,Qt::AlignCenter | Qt::AlignTop);
 
     mas_profile_labels << new QLabel();
@@ -82,7 +89,7 @@ void Interface::onBeast_list_item_selected()
     grid_layout->addWidget(mas_profile_labels.last(),0,0, Qt::AlignCenter);
 
     mas_profile_labels << new QLabel();
-    mas_profile_labels.last()->setText("Здоровье: " + QString::number(30) + "/" + QString::number(30));
+    mas_profile_labels.last()->setText("Здоровье: " + QString::number(enemy->get_max_health()) + "/" + QString::number(enemy->get_health()));
     mas_profile_labels.last()->setStyleSheet("font: 16px;");
     grid_layout->addWidget(mas_profile_labels.last(),0,1,Qt::AlignCenter);
 

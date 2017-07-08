@@ -8,6 +8,8 @@
 #include <QLabel>
 #include <QFrame>
 #include <player.h>
+#include "drop.h"
+#include "enemy.h"
 
 class Interface: public QGraphicsView
 {
@@ -21,6 +23,8 @@ public:
     void draw_profile();
 
     Player * player;
+    Drop * variable;
+    Enemy * enemy;
 
 private:
     QGraphicsScene * scene;

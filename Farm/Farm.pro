@@ -26,13 +26,15 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += main.cpp \
     interface.cpp \
     drop.cpp \
-    player.cpp
+    player.cpp \
+    enemy.cpp
 
 HEADERS  += \
     beast_n_drop.h \
     interface.h \
     drop.h \
-    player.h
+    player.h \
+    enemy.h
 
 FORMS    +=
 

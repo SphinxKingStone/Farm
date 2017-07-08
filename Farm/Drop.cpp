@@ -6,7 +6,7 @@
 
 Drop::Drop()
 {
-
+    fill_beast_mas(beast_mas);
 }
 
 
@@ -64,30 +64,36 @@ void Drop::fill_drop_mas(std::vector<drop> &mas)
     mas[3].rarity = 100;
 }
 
-void Drop::fill_beast_mas(std::vector<beast> &mas)
+void Drop::fill_beast_mas(std::vector<Beast> &mas)
 {
-    mas.insert(mas.end(), beast());
-    mas[0].id = mas.size() - 1;
-    mas[0].name = "Кабан";
-    mas[0].drop_chance = 100;
-    mas[0].rarity = 100;
-    mas[0].health = 10;
-    mas[0].xp = 5;
-    mas[0].attack = 5;
-    mas.insert(mas.end(), beast());
-    mas[1].id = mas.size() - 1;
-    mas[1].name = "Гоблин";
-    mas[1].drop_chance = 75;
-    mas[1].rarity = 75;
-    mas[1].health = 30;
-    mas[1].xp = 10;
-    mas[1].attack = 10;
-    mas.insert(mas.end(), beast());
-    mas[2].id = mas.size() - 1;
-    mas[2].name = "Сова";
-    mas[2].drop_chance = 15;
-    mas[2].rarity = 15;
-    mas[2].health = 50;
-    mas[2].xp = 20;
-    mas[2].attack = 15;
+    mas.insert(mas.end(), Beast());
+    mas[mas.size() - 1].id = mas.size() - 1;
+    mas[mas.size() - 1].name = "Кабан";
+    mas[mas.size() - 1].drop_chance = 100;
+    mas[mas.size() - 1].rarity = 100;
+    mas[mas.size() - 1].health = 10;
+    mas[mas.size() - 1].xp = 5;
+    mas[mas.size() - 1].attack = 5;
+    mas[mas.size() - 1].lvl = 1;
+    mas[mas.size() - 1].image = (QPixmap(":/images/boar.png").scaled(200, 200, Qt::KeepAspectRatio));
+    mas.insert(mas.end(), Beast());
+    mas[mas.size() - 1].id = mas.size() - 1;
+    mas[mas.size() - 1].name = "Гоблин";
+    mas[mas.size() - 1].drop_chance = 75;
+    mas[mas.size() - 1].rarity = 75;
+    mas[mas.size() - 1].health = 30;
+    mas[mas.size() - 1].xp = 10;
+    mas[mas.size() - 1].attack = 10;
+    mas[mas.size() - 1].lvl = 2;
+    mas[mas.size() - 1].image = (QPixmap(":/images/goblin.png").transformed(QTransform().scale(-1, 1)).scaled(150, 200, Qt::KeepAspectRatio));
+    mas.insert(mas.end(), Beast());
+    mas[mas.size() - 1].id = mas.size() - 1;
+    mas[mas.size() - 1].name = "Сова";
+    mas[mas.size() - 1].drop_chance = 15;
+    mas[mas.size() - 1].rarity = 15;
+    mas[mas.size() - 1].health = 50;
+    mas[mas.size() - 1].xp = 20;
+    mas[mas.size() - 1].attack = 15;
+    mas[mas.size() - 1].lvl = 3;
+    mas[mas.size() - 1].image = (QPixmap(":/images/owl.png").scaled(250, 200, Qt::KeepAspectRatio));
 }
