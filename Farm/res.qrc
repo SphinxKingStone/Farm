@@ -7,5 +7,6 @@
         <file>goblin.png</file>
         <file>boar.png</file>
         <file>owl.png</file>
+        <file>forest_road.png</file>
     </qresource>
 </RCC>

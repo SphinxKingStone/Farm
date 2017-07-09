@@ -10,6 +10,7 @@
 #include <player.h>
 #include "drop.h"
 #include "enemy.h"
+#include <QTimer>
 
 class Interface: public QGraphicsView
 {
@@ -35,16 +36,18 @@ private:
     QPushButton * profile_button;
     QPushButton * inventory_button;
     QFrame * profile_frame;
+    QTimer * timer;
 
     QList<QLabel*> mas_profile_labels;
     QList<QPushButton*> mas_profile_buttons;
-
 
 private slots:
     void play_bt_click();
     void onLocation_list_item_clicked();
     void onBeast_list_item_selected();
     void onprofile_button_click();
+    void battle();
+    void update_health_bar();
 };
 
 #endif // INTERFACE_H

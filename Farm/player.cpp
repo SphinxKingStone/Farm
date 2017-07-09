@@ -36,9 +36,27 @@ void Player::increase_lvl()
     attack += 1;
 }
 
-void Player::get_damage(int amount)
+void Player::get_hit(int amount, QString type)
 {
+    //кейсим тип, если магический, то одна защита, если физический, то другой
     health -= amount;
+}
+
+int Player::hit()
+{
+    // анимация подхода
+    forward_timer = new QTimer();
+    forward_timer->setInterval(50);
+    QObject::connect(forward_timer, SIGNAL(timeout()), this, SLOT(forward_timer_tick()));
+    forward_timer->start();
+
+
+    backward_timer = new QTimer();
+    backward_timer->setInterval(50);
+    QObject::connect(backward_timer, SIGNAL(timeout()), this, SLOT(backward_timer_tick()));
+
+    // здесь учесть все вещи, текущую атаку, шанс крита, шанс промаха и т.д.
+    return attack;
 }
 
 int Player::get_level()
@@ -71,7 +89,51 @@ int Player::get_xp_for_next_lvl()
     return level_xp[lvl].second;
 }
 
+void Player::set_item(QGraphicsPixmapItem * new_item)
+{
+    item = new_item;
+    item->setPos(100, 200);
+}
+
+void Player::set_enemy_item(QGraphicsPixmapItem *new_item)
+{
+    enemys_item = new_item;
+}
+
+QGraphicsPixmapItem *Player::get_item()
+{
+    return item;
+}
+
 QPixmap Player::get_image()
 {
     return image;
+}
+
+void Player::forward_timer_tick()
+{
+    item->setPos(item->x() + 10, item->y());
+
+    QList<QGraphicsItem *> colliding_items = item->collidingItems();
+
+    for (int i = 0, n = colliding_items.size(); i < n; ++i)
+    {
+        if (typeid(*(colliding_items[i])) == typeid(QGraphicsPixmapItem))
+        {
+            forward_timer->stop();
+            backward_timer->start();
+            emit hit_is_done();
+        }
+    }
+
+    colliding_items.clear();
+}
+
+void Player::backward_timer_tick()
+{
+    item->setPos(item->x() - 10, item->y());
+    if (item->x() <= 100)
+    {
+        backward_timer->stop();
+    }
 }

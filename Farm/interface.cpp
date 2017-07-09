@@ -1,6 +1,5 @@
 #include "interface.h"
 #include <QDebug>
-#include <QThread>
 
 Interface::Interface(QWidget *parent)
 {
@@ -69,30 +68,31 @@ void Interface::onBeast_list_item_selected()
     grid_layout = new QGridLayout();
 
     profile_frame = new QFrame();
-    profile_frame->resize(700,500);
-    profile_frame->move(50,50);
+    profile_frame->resize(800,600);
+    //profile_frame->setStyleSheet("background-image: url(:/images/forest_road.png);");
     scene->addWidget(profile_frame);
 
     profile_frame->setLayout(grid_layout);
 
     mas_profile_labels << new QLabel();
-    mas_profile_labels.last()->setPixmap(player->get_image());
-    grid_layout->addWidget(mas_profile_labels.last(),1,0,Qt::AlignCenter | Qt::AlignTop);
-
-    mas_profile_labels << new QLabel();
-    mas_profile_labels.last()->setPixmap(enemy->get_image());
-    grid_layout->addWidget(mas_profile_labels.last(),1,1,Qt::AlignCenter | Qt::AlignTop);
-
-    mas_profile_labels << new QLabel();
     mas_profile_labels.last()->setText("Здоровье: " + QString::number(player->get_max_health()) + "/" + QString::number(player->get_health()));
     mas_profile_labels.last()->setStyleSheet("font: 16px;");
-    grid_layout->addWidget(mas_profile_labels.last(),0,0, Qt::AlignCenter);
+    grid_layout->addWidget(mas_profile_labels.last(),0,0, Qt::AlignCenter | Qt::AlignTop);
 
     mas_profile_labels << new QLabel();
     mas_profile_labels.last()->setText("Здоровье: " + QString::number(enemy->get_max_health()) + "/" + QString::number(enemy->get_health()));
     mas_profile_labels.last()->setStyleSheet("font: 16px;");
-    grid_layout->addWidget(mas_profile_labels.last(),0,1,Qt::AlignCenter);
+    grid_layout->addWidget(mas_profile_labels.last(),0,1,Qt::AlignCenter | Qt::AlignTop);
 
+
+    player->set_item(scene->addPixmap(player->get_image()));
+    enemy->set_item(scene->addPixmap(enemy->get_image()), player->get_item());
+    player->set_enemy_item(enemy->get_item());
+
+    QObject::connect(player, SIGNAL(i_finished()), this, SLOT(update_health_bar()));
+
+    // бой
+    battle();
 }
 
 void Interface::onprofile_button_click()
@@ -199,4 +199,27 @@ void Interface::draw_profile()
 
     scene->addWidget(profile_frame);
     profile_frame->setLayout(grid_layout);
+}
+
+void Interface::update_health_bar()
+{
+    mas_profile_labels[0]->setText("Здоровье: " + QString::number(player->get_max_health()) + "/" + QString::number(player->get_health()));
+    mas_profile_labels[1]->setText("Здоровье: " + QString::number(enemy->get_max_health()) + "/" + QString::number(enemy->get_health()));
+}
+
+void Interface::battle()
+{
+
+    //if (qrand() % ((1 + 1) - 0) + 0)
+    if (1 == 1)
+    {
+        enemy->get_hit(player->hit());
+    }
+    else
+        player->get_hit(enemy->hit());
+
+    // enemy идет вперед, бьет, идет обратно, я иду вперед, бью, иду обратно, так, пока кто - нибудь не умрет.
+    // начинаем идти вперед, по таймеру, как только доходим - бьем и идем обратно по таймеру, как только вернулись - останавливаем свой таймер и
+    // запускаем таймер движения для соперника, он запустится, только если все живы.
+
 }
