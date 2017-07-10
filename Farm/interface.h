@@ -48,6 +48,9 @@ private slots:
     void onprofile_button_click();
     void battle();
     void update_health_bar();
+
+    void player_hit();
+    void enemy_hit();
 };
 
 #endif // INTERFACE_H

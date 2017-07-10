@@ -13,7 +13,7 @@ Player::Player()
 
     max_health = 20;
     health = max_health;
-    attack = 2;
+    attack = 8;
     xp = 0;
     lvl = 1;
 
@@ -47,7 +47,9 @@ int Player::hit()
     // анимация подхода
     forward_timer = new QTimer();
     forward_timer->setInterval(50);
-    QObject::connect(forward_timer, SIGNAL(timeout()), this, SLOT(forward_timer_tick()));
+    QObject::connect(forward_timer, SIGNAL(timeout()), this, SLOT(forward_timer_tick()));  
+    x_coord = new qreal();
+    *x_coord = item->x();
     forward_timer->start();
 
 
@@ -76,7 +78,10 @@ int Player::get_max_health()
 
 int Player::get_health()
 {
-    return health;
+    if (health < 0)
+        return 0;
+    else
+        return health;
 }
 
 int Player::get_attack()
@@ -132,8 +137,11 @@ void Player::forward_timer_tick()
 void Player::backward_timer_tick()
 {
     item->setPos(item->x() - 10, item->y());
-    if (item->x() <= 100)
+    if (item->x() <= *x_coord)
     {
         backward_timer->stop();
+
+        if (health > 0)
+            emit is_alive();
     }
 }

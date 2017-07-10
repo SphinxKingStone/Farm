@@ -40,14 +40,14 @@ void Interface::onLocation_list_item_clicked()
     switch (location_list->currentRow())
     {
     case 0:
-        beast_list->addItem(variable->beast_mas[0].name);
-        beast_list->addItem(variable->beast_mas[2].name);
+        beast_list->addItem(variable->beast_mas[0].name + " (" + QString::number(variable->beast_mas[0].lvl) + ")");
+        beast_list->addItem(variable->beast_mas[2].name + " (" + QString::number(variable->beast_mas[2].lvl) + ")");
         beast_list->setStyleSheet("background-color: rgba(255, 255, 255, 30%);"
                                   "font: 18px;");
         break;
     case 1:
-        beast_list->addItem(variable->beast_mas[1].name);
-        beast_list->addItem(variable->beast_mas[2].name);
+        beast_list->addItem(variable->beast_mas[1].name + " (" + QString::number(variable->beast_mas[1].lvl) + ")");
+        beast_list->addItem(variable->beast_mas[2].name + " (" + QString::number(variable->beast_mas[2].lvl) + ")");
         beast_list->setStyleSheet("background-image:none;"
                                   "background-color: rgba(255, 255, 255, 30%);"
                                   "font: 18px;");
@@ -57,8 +57,8 @@ void Interface::onLocation_list_item_clicked()
 
 void Interface::onBeast_list_item_selected()
 {
-    //ищем итератор по имени существа, которое получаем из выбранной строки в списке
-     auto it = std::find_if(variable->beast_mas.begin(), variable->beast_mas.end(), FindByName(beast_list->currentItem()->text()));
+     //ищем итератор по имени существа (строка, пока не встретится пробле), которое получаем из выбранной строки в списке
+     auto it = std::find_if(variable->beast_mas.begin(), variable->beast_mas.end(), FindByName(beast_list->currentItem()->text().split(" ").at(0)));
      //Если не нашли, то итератор будет указывать на конец вектора, вот и проверяем, нашли ли
      if (it != variable->beast_mas.end())
         enemy = new Enemy(*it);
@@ -89,7 +89,8 @@ void Interface::onBeast_list_item_selected()
     enemy->set_item(scene->addPixmap(enemy->get_image()), player->get_item());
     player->set_enemy_item(enemy->get_item());
 
-    QObject::connect(player, SIGNAL(i_finished()), this, SLOT(update_health_bar()));
+    QObject::connect(player, SIGNAL(hit_is_done()), this, SLOT(update_health_bar()));
+    QObject::connect(enemy, SIGNAL(hit_is_done()), this, SLOT(update_health_bar()));
 
     // бой
     battle();
@@ -201,6 +202,18 @@ void Interface::draw_profile()
     profile_frame->setLayout(grid_layout);
 }
 
+void Interface::player_hit()
+{
+    if (player->get_health() > 0)
+        enemy->get_hit(player->hit());
+}
+
+void Interface::enemy_hit()
+{
+    if (enemy->get_health() > 0)
+        player->get_hit(enemy->hit());
+}
+
 void Interface::update_health_bar()
 {
     mas_profile_labels[0]->setText("Здоровье: " + QString::number(player->get_max_health()) + "/" + QString::number(player->get_health()));
@@ -210,13 +223,21 @@ void Interface::update_health_bar()
 void Interface::battle()
 {
 
-    //if (qrand() % ((1 + 1) - 0) + 0)
-    if (1 == 1)
+
+    //Если враг жив, то его бьет игрок, и наоборот
+    connect(player, SIGNAL(is_alive()), this, SLOT(enemy_hit()));
+    connect(enemy, SIGNAL(is_alive()), this,SLOT(player_hit()));
+
+    //Если 1, то первым бьет персонаж, если 0, то противник. Можно будет учесть уровни и удачу при рандоме
+    qsrand(time(nullptr));
+    if (qrand() % ((1 + 1) - 0) + 0)
     {
-        enemy->get_hit(player->hit());
+        player_hit();
     }
     else
-        player->get_hit(enemy->hit());
+    {
+        enemy_hit();
+    }
 
     // enemy идет вперед, бьет, идет обратно, я иду вперед, бью, иду обратно, так, пока кто - нибудь не умрет.
     // начинаем идти вперед, по таймеру, как только доходим - бьем и идем обратно по таймеру, как только вернулись - останавливаем свой таймер и

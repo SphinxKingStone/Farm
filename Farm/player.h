@@ -6,7 +6,6 @@
 #include <QTimer>
 #include <QObject>
 #include <typeinfo>
-#include "enemy.h"
 
 class Player: public QObject
 {
@@ -16,7 +15,7 @@ public:
     void increase_xp(int amount);
     void increase_lvl();
 
-    void get_hit (int amount, QString type = nullptr);
+    void get_hit(int amount, QString type = nullptr);
     int hit();
 
     int get_level();
@@ -35,6 +34,7 @@ private:
     int attack;
     int xp;
     int lvl;
+    qreal * x_coord;
     QPixmap image;
 
     QGraphicsPixmapItem * item;
@@ -48,6 +48,7 @@ private slots:
 
 signals:
     void hit_is_done();
+    void is_alive();
 
 };
 
