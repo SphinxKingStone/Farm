@@ -85,6 +85,8 @@ void Interface::onBeast_list_item_selected()
 
     log = new QListWidget();
     log->setMaximumSize(800,120);
+    log->setSelectionMode(QAbstractItemView::NoSelection);
+    log->setFocusPolicy(Qt::FocusPolicy::NoFocus);
     grid_layout->addWidget(log,1,0,1,0);
 
     player->set_item(scene->addPixmap(player->get_image()));
