@@ -21,6 +21,12 @@ Player::Player()
     image = (QPixmap(":/images/main_hero.png").scaled(150, 200, Qt::KeepAspectRatio));
 }
 
+Player::~Player()
+{
+    delete forward_timer;
+    delete backward_timer;
+}
+
 void Player::increase_xp(int amount)
 {
     xp += amount;
@@ -98,11 +104,6 @@ void Player::set_item(QGraphicsPixmapItem * new_item)
 {
     item = new_item;
     item->setPos(100, 200);
-}
-
-void Player::set_enemy_item(QGraphicsPixmapItem *new_item)
-{
-    enemys_item = new_item;
 }
 
 QGraphicsPixmapItem *Player::get_item()

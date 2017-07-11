@@ -11,6 +11,7 @@
 #include "drop.h"
 #include "enemy.h"
 #include <QTimer>
+#include <QSignalMapper>
 
 class Interface: public QGraphicsView
 {
@@ -22,6 +23,7 @@ public:
     void draw_mainScreen();
     void close_mainScreen();
     void draw_profile();
+    void add_log(QString str);
 
     Player * player;
     Drop * variable;
@@ -37,6 +39,10 @@ private:
     QPushButton * inventory_button;
     QFrame * profile_frame;
     QTimer * timer;
+    QListWidget * log;
+    QSignalMapper * signalMapper;
+
+    int * hit_value;
 
     QList<QLabel*> mas_profile_labels;
     QList<QPushButton*> mas_profile_buttons;
@@ -48,9 +54,11 @@ private slots:
     void onprofile_button_click();
     void battle();
     void update_health_bar();
+    void update_log(int players_hit);
 
     void player_hit();
     void enemy_hit();
 };
+
 
 #endif // INTERFACE_H

@@ -12,6 +12,7 @@ class Player: public QObject
     Q_OBJECT
 public:
     Player();
+    ~Player();
     void increase_xp(int amount);
     void increase_lvl();
 
@@ -25,7 +26,6 @@ public:
     int get_attack();
     int get_xp_for_next_lvl();
     void set_item(QGraphicsPixmapItem * new_item);
-    void set_enemy_item(QGraphicsPixmapItem * new_item);
     QGraphicsPixmapItem * get_item();
     QPixmap get_image();
 private:
@@ -38,7 +38,6 @@ private:
     QPixmap image;
 
     QGraphicsPixmapItem * item;
-    QGraphicsPixmapItem * enemys_item;
 
     QTimer * forward_timer;
     QTimer * backward_timer;

@@ -8,6 +8,13 @@ Enemy::Enemy(Beast beast)
     xp_reward = beast.xp;
     lvl = beast.lvl;
     image = beast.image;
+    name = beast.name;
+}
+
+Enemy::~Enemy()
+{
+    delete forward_timer;
+    delete backward_timer;
 }
 
 QPixmap Enemy::get_image()
@@ -25,7 +32,12 @@ int Enemy::get_health()
     if (health < 0)
         return 0;
     else
-    return health;
+        return health;
+}
+
+QString Enemy::get_name()
+{
+    return name;
 }
 
 int Enemy::hit()

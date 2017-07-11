@@ -13,9 +13,12 @@ class Enemy: public QObject
     Q_OBJECT
 public:
     Enemy(Beast beast);
+    ~Enemy();
+
     QPixmap get_image();
     int get_max_health();
     int get_health();
+    QString get_name();
 
     int hit();
     void get_hit(int amount, QString type = nullptr);
@@ -25,6 +28,7 @@ public:
 private:
     int max_health;
     int health;
+    QString name;
     int attack;
     int xp_reward;
     int lvl;

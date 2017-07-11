@@ -48,8 +48,7 @@ void Interface::onLocation_list_item_clicked()
     case 1:
         beast_list->addItem(variable->beast_mas[1].name + " (" + QString::number(variable->beast_mas[1].lvl) + ")");
         beast_list->addItem(variable->beast_mas[2].name + " (" + QString::number(variable->beast_mas[2].lvl) + ")");
-        beast_list->setStyleSheet("background-image:none;"
-                                  "background-color: rgba(255, 255, 255, 30%);"
+        beast_list->setStyleSheet("background-color: rgba(255, 255, 255, 30%);"
                                   "font: 18px;");
         break;
     }
@@ -84,13 +83,26 @@ void Interface::onBeast_list_item_selected()
     mas_profile_labels.last()->setStyleSheet("font: 16px;");
     grid_layout->addWidget(mas_profile_labels.last(),0,1,Qt::AlignCenter | Qt::AlignTop);
 
+    log = new QListWidget();
+    log->setMaximumSize(800,120);
+    grid_layout->addWidget(log,1,0,1,0);
 
     player->set_item(scene->addPixmap(player->get_image()));
     enemy->set_item(scene->addPixmap(enemy->get_image()), player->get_item());
-    player->set_enemy_item(enemy->get_item());
 
     QObject::connect(player, SIGNAL(hit_is_done()), this, SLOT(update_health_bar()));
     QObject::connect(enemy, SIGNAL(hit_is_done()), this, SLOT(update_health_bar()));
+
+    // Так можно в слот передать параметры
+    signalMapper = new QSignalMapper(this);
+    signalMapper->setMapping(player, 1); // если класс player, то передадим 1
+    signalMapper->setMapping(enemy, 0); // если класс enemy, то передадим 0
+    // Класс player дает сигнал, сигнал маппер принимает его, и раз это от player, то записывает 1
+    QObject::connect(player, SIGNAL(hit_is_done()), signalMapper, SLOT(map()));
+    QObject::connect(enemy, SIGNAL(hit_is_done()), signalMapper, SLOT(map()));
+    // Только что в маппер записалась единица (int) и на этот сигнал мы вызывам слот update_log и передаем туда эту единицу
+    QObject::connect(signalMapper, SIGNAL(mapped(int)), this, SLOT(update_log(int)));
+
 
     // бой
     battle();
@@ -202,22 +214,48 @@ void Interface::draw_profile()
     profile_frame->setLayout(grid_layout);
 }
 
+void Interface::add_log(QString str)
+{
+    log->addItem(str);
+}
+
 void Interface::player_hit()
 {
     if (player->get_health() > 0)
-        enemy->get_hit(player->hit());
+    {
+        hit_value = new int();
+        enemy->get_hit(*hit_value = player->hit());
+    }
+    else
+        add_log("Игрок умер");
 }
 
 void Interface::enemy_hit()
 {
     if (enemy->get_health() > 0)
-        player->get_hit(enemy->hit());
+    {
+        hit_value = new int();
+        player->get_hit(*hit_value = enemy->hit());
+    }
+    else
+        add_log(enemy->get_name() + " умер");
 }
 
 void Interface::update_health_bar()
 {
     mas_profile_labels[0]->setText("Здоровье: " + QString::number(player->get_max_health()) + "/" + QString::number(player->get_health()));
     mas_profile_labels[1]->setText("Здоровье: " + QString::number(enemy->get_max_health()) + "/" + QString::number(enemy->get_health()));
+}
+
+//TODO: нормально склонять имена противников и слово "нанёс"
+void Interface::update_log(int players_hit)
+{
+    if (players_hit == 1)
+        add_log("Игрок нанёс " + enemy->get_name() + " " + QString::number(*hit_value) + " ед. урона");
+    else
+        add_log(enemy->get_name() + " нанёс Игроку " + QString::number(*hit_value) + " ед. урона");
+
+    delete hit_value;
 }
 
 void Interface::battle()
