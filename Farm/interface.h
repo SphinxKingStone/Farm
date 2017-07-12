@@ -30,8 +30,6 @@ public:
     Drop * drop_class_variable;
     Enemy * enemy;
 
-    int test = 10;
-
 private:
     QGraphicsScene * scene;
     QPushButton * play_buttton;

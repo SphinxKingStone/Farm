@@ -184,8 +184,6 @@ void Interface::draw_Exit_battle_button()
     exit_battle_button->resize(150,50);
     scene->addWidget(exit_battle_button);
     exit_battle_button->move(scene->width() / 2 - exit_battle_button->width() / 2, scene->height() / 2 - exit_battle_button->height() / 2 - log->height());
-    exit_battle_button->move(600, test);
-    test += 100;
     QObject::connect(exit_battle_button,SIGNAL(clicked(bool)),this,SLOT(onExit_battle_button_click()));
 }
 
