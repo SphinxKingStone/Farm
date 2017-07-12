@@ -21,13 +21,16 @@ public:
     ~Interface();
     void show_startWindow();
     void draw_mainScreen();
+    void draw_Exit_battle_button();
     void close_mainScreen();
     void draw_profile();
     void add_log(QString str);
 
     Player * player;
-    Drop * variable;
+    Drop * drop_class_variable;
     Enemy * enemy;
+
+    int test = 10;
 
 private:
     QGraphicsScene * scene;
@@ -41,6 +44,7 @@ private:
     QTimer * timer;
     QListWidget * log;
     QSignalMapper * signalMapper;
+    QPushButton * exit_battle_button;
 
     int * hit_value;
 
@@ -55,6 +59,7 @@ private slots:
     void battle();
     void update_health_bar();
     void update_log(int players_hit);
+    void onExit_battle_button_click();
 
     void player_hit();
     void enemy_hit();

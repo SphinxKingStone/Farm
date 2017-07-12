@@ -1,5 +1,5 @@
 #include "player.h"
-#include <utility>
+#include <QDebug>
 
 std::vector<std::pair<int, int>> level_xp;
 
@@ -13,18 +13,28 @@ Player::Player()
 
     max_health = 20;
     health = max_health;
-    attack = 8;
+    attack = 80;
     xp = 0;
     lvl = 1;
 
     //Вызывает libpng warning: iCCP: known incorrect sRGB profile
-    image = (QPixmap(":/images/main_hero.png").scaled(150, 200, Qt::KeepAspectRatio));
+    image = QPixmap(":/images/main_hero.png").scaled(150, 200, Qt::KeepAspectRatio);
 }
 
 Player::~Player()
 {
+    /*
     delete forward_timer;
     delete backward_timer;
+    delete item;
+    */
+}
+
+void Player::delete_after_battle()
+{
+    delete forward_timer;
+    delete backward_timer;
+    delete item;
 }
 
 void Player::increase_xp(int amount)
@@ -51,7 +61,6 @@ void Player::get_hit(int amount, QString type)
 int Player::hit()
 {
     // анимация подхода
-    forward_timer = new QTimer();
     forward_timer->setInterval(50);
     QObject::connect(forward_timer, SIGNAL(timeout()), this, SLOT(forward_timer_tick()));  
     x_coord = new qreal();
@@ -59,12 +68,16 @@ int Player::hit()
     forward_timer->start();
 
 
-    backward_timer = new QTimer();
     backward_timer->setInterval(50);
     QObject::connect(backward_timer, SIGNAL(timeout()), this, SLOT(backward_timer_tick()));
 
     // здесь учесть все вещи, текущую атаку, шанс крита, шанс промаха и т.д.
     return attack;
+}
+
+void Player::restore_health()
+{
+    health = max_health;
 }
 
 int Player::get_level()
@@ -116,6 +129,12 @@ QPixmap Player::get_image()
     return image;
 }
 
+void Player::allocate_timers()
+{
+    forward_timer = new QTimer();
+    backward_timer = new QTimer();
+}
+
 void Player::forward_timer_tick()
 {
     item->setPos(item->x() + 10, item->y());
@@ -128,6 +147,7 @@ void Player::forward_timer_tick()
         {
             forward_timer->stop();
             backward_timer->start();
+            qDebug() << "Тесто";
             emit hit_is_done();
         }
     }
@@ -143,6 +163,8 @@ void Player::backward_timer_tick()
         backward_timer->stop();
 
         if (health > 0)
+        {
             emit is_alive();
+        }
     }
 }

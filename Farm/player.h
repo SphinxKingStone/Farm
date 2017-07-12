@@ -13,11 +13,13 @@ class Player: public QObject
 public:
     Player();
     ~Player();
+    void delete_after_battle();
     void increase_xp(int amount);
     void increase_lvl();
 
     void get_hit(int amount, QString type = nullptr);
     int hit();
+    void restore_health();
 
     int get_level();
     int get_xp();
@@ -28,6 +30,7 @@ public:
     void set_item(QGraphicsPixmapItem * new_item);
     QGraphicsPixmapItem * get_item();
     QPixmap get_image();
+    void allocate_timers();
 private:
     int max_health;
     int health;

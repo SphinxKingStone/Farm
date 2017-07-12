@@ -27,7 +27,7 @@ void Interface::play_bt_click()
 {
     draw_mainScreen();
     player = new Player();
-    variable = new Drop();
+    drop_class_variable = new Drop();
 
     play_buttton->deleteLater();
 
@@ -40,14 +40,14 @@ void Interface::onLocation_list_item_clicked()
     switch (location_list->currentRow())
     {
     case 0:
-        beast_list->addItem(variable->beast_mas[0].name + " (" + QString::number(variable->beast_mas[0].lvl) + ")");
-        beast_list->addItem(variable->beast_mas[2].name + " (" + QString::number(variable->beast_mas[2].lvl) + ")");
+        beast_list->addItem(drop_class_variable->beast_mas[0].name + " (" + QString::number(drop_class_variable->beast_mas[0].lvl) + ")");
+        beast_list->addItem(drop_class_variable->beast_mas[2].name + " (" + QString::number(drop_class_variable->beast_mas[2].lvl) + ")");
         beast_list->setStyleSheet("background-color: rgba(255, 255, 255, 30%);"
                                   "font: 18px;");
         break;
     case 1:
-        beast_list->addItem(variable->beast_mas[1].name + " (" + QString::number(variable->beast_mas[1].lvl) + ")");
-        beast_list->addItem(variable->beast_mas[2].name + " (" + QString::number(variable->beast_mas[2].lvl) + ")");
+        beast_list->addItem(drop_class_variable->beast_mas[1].name + " (" + QString::number(drop_class_variable->beast_mas[1].lvl) + ")");
+        beast_list->addItem(drop_class_variable->beast_mas[2].name + " (" + QString::number(drop_class_variable->beast_mas[2].lvl) + ")");
         beast_list->setStyleSheet("background-color: rgba(255, 255, 255, 30%);"
                                   "font: 18px;");
         break;
@@ -57,9 +57,9 @@ void Interface::onLocation_list_item_clicked()
 void Interface::onBeast_list_item_selected()
 {
      //ищем итератор по имени существа (строка, пока не встретится пробле), которое получаем из выбранной строки в списке
-     auto it = std::find_if(variable->beast_mas.begin(), variable->beast_mas.end(), FindByName(beast_list->currentItem()->text().split(" ").at(0)));
+     auto it = std::find_if(drop_class_variable->beast_mas.begin(), drop_class_variable->beast_mas.end(), FindByName(beast_list->currentItem()->text().split(" ").at(0)));
      //Если не нашли, то итератор будет указывать на конец вектора, вот и проверяем, нашли ли
-     if (it != variable->beast_mas.end())
+     if (it != drop_class_variable->beast_mas.end())
         enemy = new Enemy(*it);
 
     close_mainScreen();
@@ -174,6 +174,21 @@ void Interface::draw_mainScreen()
     scene->addWidget(inventory_button);
 }
 
+void Interface::draw_Exit_battle_button()
+{
+    exit_battle_button = new QPushButton("Выход");
+    exit_battle_button->setStyleSheet("color: white;"
+                           "background-color: lightblue;"
+                           "font: 16px;"
+                           "font-weight: bold;");
+    exit_battle_button->resize(150,50);
+    scene->addWidget(exit_battle_button);
+    exit_battle_button->move(scene->width() / 2 - exit_battle_button->width() / 2, scene->height() / 2 - exit_battle_button->height() / 2 - log->height());
+    exit_battle_button->move(600, test);
+    test += 100;
+    QObject::connect(exit_battle_button,SIGNAL(clicked(bool)),this,SLOT(onExit_battle_button_click()));
+}
+
 void Interface::close_mainScreen()
 {
     location_list->deleteLater();
@@ -229,7 +244,11 @@ void Interface::player_hit()
         enemy->get_hit(*hit_value = player->hit());
     }
     else
+    {
         add_log("Игрок умер");
+        player->restore_health();
+        draw_Exit_battle_button();
+    }
 }
 
 void Interface::enemy_hit()
@@ -240,7 +259,13 @@ void Interface::enemy_hit()
         player->get_hit(*hit_value = enemy->hit());
     }
     else
+    {
         add_log(enemy->get_name() + " умер");
+        player->restore_health();
+        draw_Exit_battle_button();
+
+        add_log("Вам ничего не выпало");
+    }
 }
 
 void Interface::update_health_bar()
@@ -252,6 +277,7 @@ void Interface::update_health_bar()
 //TODO: нормально склонять имена противников и слово "нанёс"
 void Interface::update_log(int players_hit)
 {
+    qDebug() << "Чисто для теста";
     if (players_hit == 1)
         add_log("Игрок нанёс " + enemy->get_name() + " " + QString::number(*hit_value) + " ед. урона");
     else
@@ -260,9 +286,37 @@ void Interface::update_log(int players_hit)
     delete hit_value;
 }
 
+void Interface::onExit_battle_button_click()
+{
+    disconnect(exit_battle_button, SIGNAL(pressed()), this, SLOT(onExit_battle_button_click()));
+    disconnect(player, SIGNAL(hit_is_done()), this, SLOT(update_health_bar()));
+    disconnect(enemy, SIGNAL(hit_is_done()), this, SLOT(update_health_bar()));
+    disconnect(player, SIGNAL(hit_is_done()), signalMapper, SLOT(map()));
+    disconnect(enemy, SIGNAL(hit_is_done()), signalMapper, SLOT(map()));
+    disconnect(signalMapper, SIGNAL(mapped(int)), this, SLOT(update_log(int)));
+
+    enemy->deleteLater();
+    player->delete_after_battle();
+    mas_profile_labels.clear();
+    delete signalMapper;
+    delete log;
+
+    QLayoutItem *child;
+    while ((child = grid_layout->takeAt(0)) != 0)
+    {
+        delete child->widget();
+        delete child;
+    }
+    delete grid_layout;
+    delete profile_frame;
+    draw_mainScreen();
+
+    exit_battle_button->deleteLater();
+}
+
 void Interface::battle()
 {
-
+    player->allocate_timers();
 
     //Если враг жив, то его бьет игрок, и наоборот
     connect(player, SIGNAL(is_alive()), this, SLOT(enemy_hit()));
@@ -278,9 +332,5 @@ void Interface::battle()
     {
         enemy_hit();
     }
-
-    // enemy идет вперед, бьет, идет обратно, я иду вперед, бью, иду обратно, так, пока кто - нибудь не умрет.
-    // начинаем идти вперед, по таймеру, как только доходим - бьем и идем обратно по таймеру, как только вернулись - останавливаем свой таймер и
-    // запускаем таймер движения для соперника, он запустится, только если все живы.
 
 }

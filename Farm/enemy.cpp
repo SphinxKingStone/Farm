@@ -1,4 +1,5 @@
 #include "enemy.h"
+#include <QDebug>
 
 Enemy::Enemy(Beast beast)
 {
@@ -9,12 +10,15 @@ Enemy::Enemy(Beast beast)
     lvl = beast.lvl;
     image = beast.image;
     name = beast.name;
+    forward_timer = new QTimer();
+    backward_timer = new QTimer();
 }
 
 Enemy::~Enemy()
 {
     delete forward_timer;
     delete backward_timer;
+    delete item;
 }
 
 QPixmap Enemy::get_image()
@@ -42,7 +46,6 @@ QString Enemy::get_name()
 
 int Enemy::hit()
 {
-    forward_timer = new QTimer();
     forward_timer->setInterval(50);
     QObject::connect(forward_timer, SIGNAL(timeout()), this, SLOT(forward_timer_tick()));
     x_coord = new qreal();
@@ -50,7 +53,6 @@ int Enemy::hit()
     forward_timer->start();
 
 
-    backward_timer = new QTimer();
     backward_timer->setInterval(50);
     QObject::connect(backward_timer, SIGNAL(timeout()), this, SLOT(backward_timer_tick()));
 
@@ -103,6 +105,8 @@ void Enemy::backward_timer_tick()
         backward_timer->stop();
 
         if (health > 0)
+        {
             emit is_alive();
+        }
     }
 }
