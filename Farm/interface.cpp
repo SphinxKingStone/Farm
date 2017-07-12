@@ -262,9 +262,9 @@ void Interface::enemy_hit()
     {
         add_log(enemy->get_name() + " умер");
         player->restore_health();
+        add_log("Вам ничего не выпало");
         draw_Exit_battle_button();
 
-        add_log("Вам ничего не выпало");
     }
 }
 
@@ -277,7 +277,6 @@ void Interface::update_health_bar()
 //TODO: нормально склонять имена противников и слово "нанёс"
 void Interface::update_log(int players_hit)
 {
-    qDebug() << "Чисто для теста";
     if (players_hit == 1)
         add_log("Игрок нанёс " + enemy->get_name() + " " + QString::number(*hit_value) + " ед. урона");
     else
@@ -294,6 +293,8 @@ void Interface::onExit_battle_button_click()
     disconnect(player, SIGNAL(hit_is_done()), signalMapper, SLOT(map()));
     disconnect(enemy, SIGNAL(hit_is_done()), signalMapper, SLOT(map()));
     disconnect(signalMapper, SIGNAL(mapped(int)), this, SLOT(update_log(int)));
+    disconnect(player, SIGNAL(is_alive()), this, SLOT(enemy_hit()));
+    disconnect(enemy, SIGNAL(is_alive()), this,SLOT(player_hit()));
 
     enemy->deleteLater();
     player->delete_after_battle();

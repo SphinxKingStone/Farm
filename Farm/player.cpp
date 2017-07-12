@@ -62,14 +62,12 @@ int Player::hit()
 {
     // анимация подхода
     forward_timer->setInterval(50);
-    QObject::connect(forward_timer, SIGNAL(timeout()), this, SLOT(forward_timer_tick()));  
     x_coord = new qreal();
     *x_coord = item->x();
     forward_timer->start();
 
 
     backward_timer->setInterval(50);
-    QObject::connect(backward_timer, SIGNAL(timeout()), this, SLOT(backward_timer_tick()));
 
     // здесь учесть все вещи, текущую атаку, шанс крита, шанс промаха и т.д.
     return attack;
@@ -132,7 +130,9 @@ QPixmap Player::get_image()
 void Player::allocate_timers()
 {
     forward_timer = new QTimer();
+    QObject::connect(forward_timer, SIGNAL(timeout()), this, SLOT(forward_timer_tick()));
     backward_timer = new QTimer();
+    QObject::connect(backward_timer, SIGNAL(timeout()), this, SLOT(backward_timer_tick()));
 }
 
 void Player::forward_timer_tick()
@@ -147,7 +147,6 @@ void Player::forward_timer_tick()
         {
             forward_timer->stop();
             backward_timer->start();
-            qDebug() << "Тесто";
             emit hit_is_done();
         }
     }
