@@ -13,7 +13,7 @@ Player::Player()
 
     max_health = 20;
     health = max_health;
-    attack = 80;
+    attack = 8;
     xp = 0;
     lvl = 1;
 
@@ -61,13 +61,13 @@ void Player::get_hit(int amount, QString type)
 int Player::hit()
 {
     // анимация подхода
-    forward_timer->setInterval(50);
+    forward_timer->setInterval(40);
     x_coord = new qreal();
     *x_coord = item->x();
     forward_timer->start();
 
 
-    backward_timer->setInterval(50);
+    backward_timer->setInterval(40);
 
     // здесь учесть все вещи, текущую атаку, шанс крита, шанс промаха и т.д.
     return attack;

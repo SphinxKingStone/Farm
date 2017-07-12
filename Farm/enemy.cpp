@@ -11,7 +11,11 @@ Enemy::Enemy(Beast beast)
     image = beast.image;
     name = beast.name;
     forward_timer = new QTimer();
+    QObject::connect(forward_timer, SIGNAL(timeout()), this, SLOT(forward_timer_tick()));
     backward_timer = new QTimer();
+    QObject::connect(backward_timer, SIGNAL(timeout()), this, SLOT(backward_timer_tick()));
+    // выделение и удаление памяти можно делать после движения, но я сделал так, потому что
+    // экземпляры и так существуют недолго, плюс, так легче читается код
 }
 
 Enemy::~Enemy()
@@ -46,15 +50,14 @@ QString Enemy::get_name()
 
 int Enemy::hit()
 {
-    forward_timer->setInterval(50);
-    QObject::connect(forward_timer, SIGNAL(timeout()), this, SLOT(forward_timer_tick()));
+    //заменить 40 на константу - скорость передвижения
+    forward_timer->setInterval(40);
     x_coord = new qreal();
     *x_coord = item->x();
     forward_timer->start();
 
 
-    backward_timer->setInterval(50);
-    QObject::connect(backward_timer, SIGNAL(timeout()), this, SLOT(backward_timer_tick()));
+    backward_timer->setInterval(40);
 
     //учесть что надо при атаке, шанс промаха, крита и т.д.
     return attack;
