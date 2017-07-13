@@ -19,8 +19,10 @@ int Drop::simulate_drop(int beast_type)
     int * BeastType = new int(beast_type);
     int * DropChance = new int(rand() % 100);
 
+    // Число 9999 значит, что ничего не выпало, не использутся ноль, потому что для его использования пришлось бы добавить фиктивную, нулевую запись
+    // в массив с предметами, как обойти это по красивому у меня идей нет.
     if (*DropChance > beast_mas[*BeastType].drop_chance)
-        return 0;
+        return 9999;
 
     if (*DropChance <= beast_mas[*BeastType].drop_chance)
     {
@@ -38,8 +40,9 @@ int Drop::simulate_drop(int beast_type)
         delete DropType;
 
         return result;
-
     }
+
+    return 9999;
 }
 
 Drop::~Drop()
@@ -54,10 +57,6 @@ Drop::~Drop()
 
 void Drop::fill_drop_mas(std::vector<drop> &mas)
 {
-    mas.insert(mas.end(), drop());
-    mas[mas.size() - 1].id = mas.size() - 1;
-    mas[mas.size() - 1].name = "Ничего не выпало";
-    mas[mas.size() - 1].rarity = 0;
     mas.insert(mas.end(), drop());
     mas[mas.size() - 1].id = mas.size() - 1;
     mas[mas.size() - 1].name = "Леденец";

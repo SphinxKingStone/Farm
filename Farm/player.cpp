@@ -13,7 +13,7 @@ Player::Player()
 
     max_health = 20;
     health = max_health;
-    attack = 8;
+    attack = 80;
     xp = 0;
     lvl = 1;
 
