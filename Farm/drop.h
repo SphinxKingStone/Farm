@@ -13,7 +13,7 @@ public:
 
     void fill_beast_mas(std::vector<Beast> &mas);
     void fill_drop_mas(std::vector<drop> &mas);
-    void simulate_drop();
+    int simulate_drop(int beast_type);
 
     ~Drop();
 

@@ -7,30 +7,38 @@
 Drop::Drop()
 {
     fill_beast_mas(beast_mas);
+    fill_drop_mas(drop_mas);
 }
 
 
-void Drop::simulate_drop()
+int Drop::simulate_drop(int beast_type)
 {
+    // динамически выделять память
     tmp_drop.clear();
 
-    int BeastType = rand() % beast_mas.size();
-    int DropChance = rand() % 100;
+    int * BeastType = new int(beast_type);
+    int * DropChance = new int(rand() % 100);
 
-    if (DropChance > beast_mas[BeastType].drop_chance)
-        //list->addItem("Вы убили " + beast_mas[BeastType].name + " и вам ничего не выпало.");
+    if (*DropChance > beast_mas[*BeastType].drop_chance)
+        return 0;
 
-    if (DropChance <= beast_mas[BeastType].drop_chance)
+    if (*DropChance <= beast_mas[*BeastType].drop_chance)
     {
         for (unsigned int i = 0; i < drop_mas.size(); i++)
         {
-            if (drop_mas[i].rarity >= beast_mas[BeastType].rarity)
+            if (drop_mas[i].rarity >= beast_mas[*BeastType].rarity)
                 tmp_drop.insert(tmp_drop.end(), drop_mas[i]);
         }
 
-        int DropType;
-        DropType = rand() % tmp_drop.size();
-        //list->addItem("Вы убили " + beast_mas[BeastType].name + " и вам выпал " + tmp_drop[DropType].name);
+        int * DropType = new int(rand() % tmp_drop.size());
+        int result = tmp_drop[*DropType].id;
+
+        delete BeastType;
+        delete DropChance;
+        delete DropType;
+
+        return result;
+
     }
 }
 
@@ -47,21 +55,25 @@ Drop::~Drop()
 void Drop::fill_drop_mas(std::vector<drop> &mas)
 {
     mas.insert(mas.end(), drop());
-    mas[0].id = mas.size() - 1;
-    mas[0].name = "Леденец";
-    mas[0].rarity = 100;
+    mas[mas.size() - 1].id = mas.size() - 1;
+    mas[mas.size() - 1].name = "Ничего не выпало";
+    mas[mas.size() - 1].rarity = 0;
     mas.insert(mas.end(), drop());
-    mas[1].id = mas.size() - 1;
-    mas[1].name = "Золото";
-    mas[1].rarity = 75;
+    mas[mas.size() - 1].id = mas.size() - 1;
+    mas[mas.size() - 1].name = "Леденец";
+    mas[mas.size() - 1].rarity = 100;
     mas.insert(mas.end(), drop());
-    mas[2].id = mas.size() - 1;
-    mas[2].name = "Бриллиант";
-    mas[2].rarity = 15;
+    mas[mas.size() - 1].id = mas.size() - 1;
+    mas[mas.size() - 1].name = "Золото";
+    mas[mas.size() - 1].rarity = 75;
     mas.insert(mas.end(), drop());
-    mas[3].id = mas.size() - 1;
-    mas[3].name = "Мусор";
-    mas[3].rarity = 100;
+    mas[mas.size() - 1].id = mas.size() - 1;
+    mas[mas.size() - 1].name = "Бриллиант";
+    mas[mas.size() - 1].rarity = 15;
+    mas.insert(mas.end(), drop());
+    mas[mas.size() - 1].id = mas.size() - 1;
+    mas[mas.size() - 1].name = "Мусор";
+    mas[mas.size() - 1].rarity = 100;
 }
 
 void Drop::fill_beast_mas(std::vector<Beast> &mas)

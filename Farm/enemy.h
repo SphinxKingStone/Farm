@@ -15,6 +15,7 @@ public:
     Enemy(Beast beast);
     ~Enemy();
 
+    int get_beast_id();
     QPixmap get_image();
     int get_max_health();
     int get_health();
@@ -26,6 +27,7 @@ public:
     void set_item(QGraphicsPixmapItem * new_item, QGraphicsPixmapItem * players_item);
     QGraphicsPixmapItem * get_item();
 private:
+    int beast_id;
     int max_health;
     int health;
     QString name;
@@ -34,6 +36,8 @@ private:
     int lvl;
     qreal * x_coord;
     QPixmap image;
+    int * animation_speed;
+    qreal * pixel_step;
 
     QGraphicsPixmapItem * item;
 

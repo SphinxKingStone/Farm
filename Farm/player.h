@@ -39,6 +39,8 @@ private:
     int lvl;
     qreal * x_coord;
     QPixmap image;
+    int * animation_speed;
+    qreal * pixel_step;
 
     QGraphicsPixmapItem * item;
 

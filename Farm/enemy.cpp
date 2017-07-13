@@ -3,6 +3,7 @@
 
 Enemy::Enemy(Beast beast)
 {
+    beast_id = beast.id;
     max_health = beast.health;
     health = max_health;
     attack = beast.attack;
@@ -16,6 +17,10 @@ Enemy::Enemy(Beast beast)
     QObject::connect(backward_timer, SIGNAL(timeout()), this, SLOT(backward_timer_tick()));
     // выделение и удаление памяти можно делать после движения, но я сделал так, потому что
     // экземпляры и так существуют недолго, плюс, так легче читается код
+
+    // Мои личные предпочтения по скорости анимации
+    animation_speed = new int(1);
+    pixel_step = new qreal(0.23);
 }
 
 Enemy::~Enemy()
@@ -23,6 +28,13 @@ Enemy::~Enemy()
     delete forward_timer;
     delete backward_timer;
     delete item;
+    delete animation_speed;
+    delete pixel_step;
+}
+
+int Enemy::get_beast_id()
+{
+    return beast_id;
 }
 
 QPixmap Enemy::get_image()
@@ -51,13 +63,13 @@ QString Enemy::get_name()
 int Enemy::hit()
 {
     //заменить 40 на константу - скорость передвижения
-    forward_timer->setInterval(40);
+    forward_timer->setInterval(*animation_speed);
     x_coord = new qreal();
     *x_coord = item->x();
     forward_timer->start();
 
 
-    backward_timer->setInterval(40);
+    backward_timer->setInterval(*animation_speed);
 
     //учесть что надо при атаке, шанс промаха, крита и т.д.
     return attack;
@@ -82,7 +94,7 @@ QGraphicsPixmapItem *Enemy::get_item()
 
 void Enemy::forward_timer_tick()
 {    
-    item->setPos(item->x() - 10, item->y());
+    item->setPos(item->x() - *pixel_step, item->y());
 
     QList<QGraphicsItem *> colliding_items = item->collidingItems();
 
@@ -101,7 +113,7 @@ void Enemy::forward_timer_tick()
 
 void Enemy::backward_timer_tick()
 {
-    item->setPos(item->x() + 10, item->y());
+    item->setPos(item->x() + *pixel_step, item->y());
     if (item->x() >= *x_coord)
     {
         delete x_coord;

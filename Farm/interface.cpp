@@ -238,8 +238,8 @@ void Interface::player_hit()
 {
     if (player->get_health() > 0)
     {
-        hit_value = new int();
-        enemy->get_hit(*hit_value = player->hit());
+        hit_value = new int(player->hit());
+        enemy->get_hit(*hit_value);
     }
     else
     {
@@ -260,7 +260,17 @@ void Interface::enemy_hit()
     {
         add_log(enemy->get_name() + " умер");
         player->restore_health();
-        add_log("Вам ничего не выпало");
+        int * tmp_id = new int(drop_class_variable->simulate_drop(enemy->get_beast_id()));
+//        нельзя написать if (int * tmp_id = new int(drop_class_variable->simulate_drop(enemy->get_beast_id()))), потому что будет возвращаться указатель на выделенную
+//        память, а не значение, которое мы присвоили, а вот if (int tmp = get_number()) написать можно, там будет значение tmp возвращаться.
+//        Только что узнал об этом, но запишу, чтобы лучше запомнилось, хоть это и гуглится по первой ссылке
+        if (*tmp_id)
+            add_log("Вам выпало: " + drop_class_variable->drop_mas[*tmp_id].name);
+        else
+            add_log("Вам ничего не выпало");
+
+        delete tmp_id;
+
         draw_Exit_battle_button();
 
     }

@@ -35,6 +35,8 @@ void Player::delete_after_battle()
     delete forward_timer;
     delete backward_timer;
     delete item;
+    delete animation_speed;
+    delete pixel_step;
 }
 
 void Player::increase_xp(int amount)
@@ -61,13 +63,13 @@ void Player::get_hit(int amount, QString type)
 int Player::hit()
 {
     // анимация подхода
-    forward_timer->setInterval(40);
+    forward_timer->setInterval(*animation_speed);
     x_coord = new qreal();
     *x_coord = item->x();
     forward_timer->start();
 
 
-    backward_timer->setInterval(40);
+    backward_timer->setInterval(*animation_speed);
 
     // здесь учесть все вещи, текущую атаку, шанс крита, шанс промаха и т.д.
     return attack;
@@ -133,11 +135,15 @@ void Player::allocate_timers()
     QObject::connect(forward_timer, SIGNAL(timeout()), this, SLOT(forward_timer_tick()));
     backward_timer = new QTimer();
     QObject::connect(backward_timer, SIGNAL(timeout()), this, SLOT(backward_timer_tick()));
+
+    // Мои личные предпочтения по скорости анимации
+    animation_speed = new int(1);
+    pixel_step = new qreal(0.23);
 }
 
 void Player::forward_timer_tick()
 {
-    item->setPos(item->x() + 10, item->y());
+    item->setPos(item->x() + *pixel_step, item->y());
 
     QList<QGraphicsItem *> colliding_items = item->collidingItems();
 
@@ -156,7 +162,7 @@ void Player::forward_timer_tick()
 
 void Player::backward_timer_tick()
 {
-    item->setPos(item->x() - 10, item->y());
+    item->setPos(item->x() - *pixel_step, item->y());
     if (item->x() <= *x_coord)
     {
         backward_timer->stop();
