@@ -55,6 +55,11 @@ int Enemy::get_health()
         return health;
 }
 
+int Enemy::get_xp()
+{
+    return xp_reward;
+}
+
 QString Enemy::get_name()
 {
     return name;

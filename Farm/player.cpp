@@ -13,7 +13,7 @@ Player::Player()
 
     max_health = 20;
     health = max_health;
-    attack = 80;
+    attack = 8;
     xp = 0;
     lvl = 1;
 
@@ -51,7 +51,9 @@ void Player::increase_lvl()
 {
     lvl++;
     max_health += 10;
-    attack += 1;
+    attack += 2;
+    skill_point += 2;
+    restore_health();
 }
 
 void Player::get_hit(int amount, QString type)
@@ -111,6 +113,11 @@ int Player::get_attack()
 int Player::get_xp_for_next_lvl()
 {
     return level_xp[lvl].second;
+}
+
+int Player::get_skill_point()
+{
+    return skill_point;
 }
 
 void Player::set_item(QGraphicsPixmapItem * new_item)

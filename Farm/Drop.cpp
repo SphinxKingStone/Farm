@@ -83,7 +83,7 @@ void Drop::fill_beast_mas(std::vector<Beast> &mas)
     mas[mas.size() - 1].drop_chance = 100;
     mas[mas.size() - 1].rarity = 100;
     mas[mas.size() - 1].health = 10;
-    mas[mas.size() - 1].xp = 5;
+    mas[mas.size() - 1].xp = 15;
     mas[mas.size() - 1].attack = 5;
     mas[mas.size() - 1].lvl = 1;
     mas[mas.size() - 1].image = (QPixmap(":/images/boar.png").scaled(200, 200, Qt::KeepAspectRatio));
@@ -92,8 +92,8 @@ void Drop::fill_beast_mas(std::vector<Beast> &mas)
     mas[mas.size() - 1].name = "Гоблин";
     mas[mas.size() - 1].drop_chance = 75;
     mas[mas.size() - 1].rarity = 75;
-    mas[mas.size() - 1].health = 30;
-    mas[mas.size() - 1].xp = 10;
+    mas[mas.size() - 1].health = 25;
+    mas[mas.size() - 1].xp = 25;
     mas[mas.size() - 1].attack = 10;
     mas[mas.size() - 1].lvl = 2;
     mas[mas.size() - 1].image = (QPixmap(":/images/goblin.png").transformed(QTransform().scale(-1, 1)).scaled(150, 200, Qt::KeepAspectRatio));
@@ -103,7 +103,7 @@ void Drop::fill_beast_mas(std::vector<Beast> &mas)
     mas[mas.size() - 1].drop_chance = 15;
     mas[mas.size() - 1].rarity = 15;
     mas[mas.size() - 1].health = 50;
-    mas[mas.size() - 1].xp = 20;
+    mas[mas.size() - 1].xp = 40;
     mas[mas.size() - 1].attack = 15;
     mas[mas.size() - 1].lvl = 3;
     mas[mas.size() - 1].image = (QPixmap(":/images/owl.png").scaled(250, 200, Qt::KeepAspectRatio));

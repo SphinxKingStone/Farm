@@ -27,7 +27,7 @@ void Interface::play_bt_click()
 {
     draw_mainScreen();
     player = new Player();
-    drop_class_variable = new Drop();
+    drop = new Drop();
 
     play_buttton->deleteLater();
 
@@ -40,14 +40,14 @@ void Interface::onLocation_list_item_clicked()
     switch (location_list->currentRow())
     {
     case 0:
-        beast_list->addItem(drop_class_variable->beast_mas[0].name + " (" + QString::number(drop_class_variable->beast_mas[0].lvl) + ")");
-        beast_list->addItem(drop_class_variable->beast_mas[2].name + " (" + QString::number(drop_class_variable->beast_mas[2].lvl) + ")");
+        beast_list->addItem(drop->beast_mas[0].name + " (" + QString::number(drop->beast_mas[0].lvl) + ")");
+        beast_list->addItem(drop->beast_mas[2].name + " (" + QString::number(drop->beast_mas[2].lvl) + ")");
         beast_list->setStyleSheet("background-color: rgba(255, 255, 255, 30%);"
                                   "font: 18px;");
         break;
     case 1:
-        beast_list->addItem(drop_class_variable->beast_mas[1].name + " (" + QString::number(drop_class_variable->beast_mas[1].lvl) + ")");
-        beast_list->addItem(drop_class_variable->beast_mas[2].name + " (" + QString::number(drop_class_variable->beast_mas[2].lvl) + ")");
+        beast_list->addItem(drop->beast_mas[1].name + " (" + QString::number(drop->beast_mas[1].lvl) + ")");
+        beast_list->addItem(drop->beast_mas[2].name + " (" + QString::number(drop->beast_mas[2].lvl) + ")");
         beast_list->setStyleSheet("background-color: rgba(255, 255, 255, 30%);"
                                   "font: 18px;");
         break;
@@ -57,9 +57,9 @@ void Interface::onLocation_list_item_clicked()
 void Interface::onBeast_list_item_selected()
 {
      //ищем итератор по имени существа (строка, пока не встретится пробле), которое получаем из выбранной строки в списке
-     auto it = std::find_if(drop_class_variable->beast_mas.begin(), drop_class_variable->beast_mas.end(), FindByName(beast_list->currentItem()->text().split(" ").at(0)));
+     auto it = std::find_if(drop->beast_mas.begin(), drop->beast_mas.end(), FindByName(beast_list->currentItem()->text().split(" ").at(0)));
      //Если не нашли, то итератор будет указывать на конец вектора, вот и проверяем, нашли ли
-     if (it != drop_class_variable->beast_mas.end())
+     if (it != drop->beast_mas.end())
         enemy = new Enemy(*it);
 
     close_mainScreen();
@@ -187,6 +187,19 @@ void Interface::draw_Exit_battle_button()
     QObject::connect(exit_battle_button,SIGNAL(clicked(bool)),this,SLOT(onExit_battle_button_click()));
 }
 
+void Interface::draw_Exit_profile_button()
+{
+    exit_profile_button = new QPushButton("Выход");
+    exit_profile_button->setStyleSheet("color: white;"
+                           "background-color: lightblue;"
+                           "font: 16px;"
+                           "font-weight: bold;");
+    exit_profile_button->resize(150,50);
+    scene->addWidget(exit_profile_button);
+    exit_profile_button->move(10, 10);
+    QObject::connect(exit_profile_button,SIGNAL(clicked(bool)),this,SLOT(onExit_profile_button_click()));
+}
+
 void Interface::close_mainScreen()
 {
     location_list->deleteLater();
@@ -201,32 +214,35 @@ void Interface::draw_profile()
 
     mas_profile_labels << new QLabel();
     mas_profile_labels[0]->setText("Уровень: " + QString::number(player->get_level()));
-    grid_layout->addWidget(mas_profile_labels[0],0,0,Qt::AlignBaseline);
+    grid_layout->addWidget(mas_profile_labels[0],0,0);
 
     mas_profile_labels << new QLabel();
     mas_profile_labels[1]->setText("Опыт: " + QString::number(player->get_xp()) + "/" + QString::number(player->get_xp_for_next_lvl()));
-    grid_layout->addWidget(mas_profile_labels[1],1,0,Qt::AlignBaseline);
+    grid_layout->addWidget(mas_profile_labels[1],1,0);
 
     mas_profile_labels << new QLabel();
     mas_profile_labels[2]->setText("Здоровье: " + QString::number(player->get_max_health()));
-    grid_layout->addWidget(mas_profile_labels[2],2,0,Qt::AlignBaseline);
+    grid_layout->addWidget(mas_profile_labels[2],2,0);
 
     mas_profile_labels << new QLabel();
     mas_profile_labels[3]->setText("Атака: " + QString::number(player->get_attack()));
-    grid_layout->addWidget(mas_profile_labels[3],3,0,Qt::AlignBaseline);
+    grid_layout->addWidget(mas_profile_labels[3],3,0);
 
-    for (int i = 0; i <= 3; i++)
-    {
-        mas_profile_buttons << new QPushButton("+");
-        grid_layout->addWidget(mas_profile_buttons[i],i,0,Qt::AlignRight);
-    }
+    if (player->get_skill_point())
+        for (int i = 0; i < mas_profile_labels.size() - 1; i++)
+        {
+            mas_profile_buttons << new QPushButton("+");
+            grid_layout->addWidget(mas_profile_buttons[i],i+1,1,Qt::AlignCenter);
+        }
 
     profile_frame = new QFrame();
-    profile_frame->resize(400, 500);
-    profile_frame->move(0,50);
+    profile_frame->resize(350,400);
+    profile_frame->move(10,150);
 
     scene->addWidget(profile_frame);
     profile_frame->setLayout(grid_layout);
+
+    draw_Exit_profile_button();
 }
 
 void Interface::add_log(QString str)
@@ -260,7 +276,7 @@ void Interface::enemy_hit()
     {
         add_log(enemy->get_name() + " умер");
         player->restore_health();
-        int * tmp_id = new int(drop_class_variable->simulate_drop(enemy->get_beast_id()));
+        int * tmp_id = new int(drop->simulate_drop(enemy->get_beast_id()));
 //        нельзя написать if (int * tmp_id = new int(drop_class_variable->simulate_drop(enemy->get_beast_id()))), потому что будет возвращаться указатель на выделенную
 //        память, а не значение, которое мы присвоили, а вот if (int tmp = get_number()) написать можно, там будет значение tmp возвращаться.
 //        Только что узнал об этом, но запишу, чтобы лучше запомнилось, хоть это и гуглится по первой ссылке
@@ -268,11 +284,13 @@ void Interface::enemy_hit()
         // Число 9999 значит, что ничего не выпало, не использутся ноль, потому что для его использования пришлось бы добавить фиктивную, нулевую запись
         // в массив с предметами, как обойти это по красивому у меня идей нет.
         if (*tmp_id != 9999)
-            add_log("Вам выпало: " + drop_class_variable->drop_mas[*tmp_id].name);
+            add_log("Вам выпало: " + drop->drop_mas[*tmp_id].name);
         else
             add_log("Вам ничего не выпало");
 
         delete tmp_id;
+
+        player->increase_xp(enemy->get_xp());
 
         draw_Exit_battle_button();
 
@@ -298,7 +316,7 @@ void Interface::update_log(int players_hit)
 
 void Interface::onExit_battle_button_click()
 {
-    disconnect(exit_battle_button, SIGNAL(pressed()), this, SLOT(onExit_battle_button_click()));
+    disconnect(exit_battle_button, SIGNAL(clicked(bool)), this, SLOT(onExit_battle_button_click()));
     disconnect(player, SIGNAL(hit_is_done()), this, SLOT(update_health_bar()));
     disconnect(enemy, SIGNAL(hit_is_done()), this, SLOT(update_health_bar()));
     disconnect(player, SIGNAL(hit_is_done()), signalMapper, SLOT(map()));
@@ -319,11 +337,21 @@ void Interface::onExit_battle_button_click()
         delete child->widget();
         delete child;
     }
-    delete grid_layout;
-    delete profile_frame;
+    grid_layout->deleteLater();
+    profile_frame->deleteLater();
     draw_mainScreen();
 
     exit_battle_button->deleteLater();
+}
+
+void Interface::onExit_profile_button_click()
+{
+    disconnect(exit_profile_button, SIGNAL(clicked(bool)), this, SLOT(onExit_profile_button_click()));
+    mas_profile_labels.clear();
+    mas_profile_buttons.clear();
+    grid_layout->deleteLater();
+    profile_frame->deleteLater();
+    draw_mainScreen();
 }
 
 void Interface::battle()

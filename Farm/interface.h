@@ -13,6 +13,7 @@
 #include <QTimer>
 #include <QSignalMapper>
 
+
 class Interface: public QGraphicsView
 {
     Q_OBJECT
@@ -22,12 +23,13 @@ public:
     void show_startWindow();
     void draw_mainScreen();
     void draw_Exit_battle_button();
+    void draw_Exit_profile_button();
     void close_mainScreen();
     void draw_profile();
     void add_log(QString str);
 
     Player * player;
-    Drop * drop_class_variable;
+    Drop * drop;
     Enemy * enemy;
 
 private:
@@ -43,6 +45,7 @@ private:
     QListWidget * log;
     QSignalMapper * signalMapper;
     QPushButton * exit_battle_button;
+    QPushButton * exit_profile_button;
 
     int * hit_value;
 
@@ -58,6 +61,7 @@ private slots:
     void update_health_bar();
     void update_log(int players_hit);
     void onExit_battle_button_click();
+    void onExit_profile_button_click();
 
     void player_hit();
     void enemy_hit();

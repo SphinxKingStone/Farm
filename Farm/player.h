@@ -27,6 +27,7 @@ public:
     int get_health();
     int get_attack();
     int get_xp_for_next_lvl();
+    int get_skill_point();
     void set_item(QGraphicsPixmapItem * new_item);
     QGraphicsPixmapItem * get_item();
     QPixmap get_image();
@@ -37,6 +38,7 @@ private:
     int attack;
     int xp;
     int lvl;
+    int skill_point;
     qreal * x_coord;
     QPixmap image;
     int * animation_speed;
