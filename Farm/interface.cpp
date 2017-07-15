@@ -228,8 +228,12 @@ void Interface::draw_profile()
     mas_profile_labels[3]->setText("Атака: " + QString::number(player->get_attack()));
     grid_layout->addWidget(mas_profile_labels[3],3,0);
 
+    mas_profile_labels << new QLabel();
+    mas_profile_labels[4]->setText("Очков навыков: " + QString::number(player->get_skill_point()));
+    grid_layout->addWidget(mas_profile_labels[4],0,1,Qt::AlignCenter);
+
     if (player->get_skill_point())
-        for (int i = 0; i < mas_profile_labels.size() - 1; i++)
+        for (int i = 0; i < mas_profile_labels.size() - 2; i++)
         {
             mas_profile_buttons << new QPushButton("+");
             grid_layout->addWidget(mas_profile_buttons[i],i+1,1,Qt::AlignCenter);
@@ -249,6 +253,59 @@ void Interface::add_log(QString str)
 {
     log->addItem(str);
 }
+
+/*
+// С полом будут проблемы у слов тень, бродяга, дятел, пень, конь
+QString Interface::declension(QString name, char sex,  bool isName)
+{
+    if (isName)
+    {
+        if ((name.right(1) == "а") || (name.right(1) == "я"))
+        {
+            name = name.left(name.length() - 1);
+            name += "е";
+        }
+        else if (name.right(1) == "о")
+        {
+            name = name.left(name.length() - 1);
+            name += "у";
+        }
+        else if ((name.right(1) == "ь") && (sex == "м"))
+        {
+            name = name.left(name.length() - 1);
+            name += "ю";
+        }
+        else if ((name.right(1) == "ь") && (sex == "ж"))
+        {
+            name = name.left(name.length() - 1);
+            name += "и";
+        }
+        else
+        {
+            name += "у";
+        }
+        return name;
+    }
+    else
+    {
+        if (((name.right(1) == "а") || (name.right(1) == "я")) && (sex == "ж"))
+        {
+            return ("нанесла");
+        }
+        else if (name.right(1) == "о")
+        {
+            return ("нанесло");
+        }
+        else
+        {
+            return ("нанёс");
+        }
+    }
+
+    return ("Ошибка склонения");
+
+}
+*/
 
 void Interface::player_hit()
 {

@@ -28,6 +28,8 @@ public:
     void draw_profile();
     void add_log(QString str);
 
+    //QString declension(QString name, char sex, bool isName); Надо будет доработать
+
     Player * player;
     Drop * drop;
     Enemy * enemy;
