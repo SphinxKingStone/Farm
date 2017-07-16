@@ -17,7 +17,7 @@ public:
     void increase_xp(int amount);
     void increase_lvl();
 
-    void get_hit(int amount, QString type = nullptr);
+    int get_hit(int amount, QString type = nullptr);
     int hit();
     void restore_health();
 
@@ -35,10 +35,14 @@ public:
 private:
     int max_health;
     int health;
+    int defense; // защита дается в десятках от брони, она в процентах поглощает физический урон
     int attack;
+    int agility; // шанс уворота
+    int intuition; // шанс крита
     int xp;
     int lvl;
     int skill_point;
+
     qreal * x_coord;
     QPixmap image;
     int * animation_speed;

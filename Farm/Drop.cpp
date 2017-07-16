@@ -4,6 +4,8 @@
 #include <QDebug>
 #include <time.h>
 
+
+
 Drop::Drop()
 {
     fill_beast_mas(beast_mas);
@@ -77,14 +79,18 @@ void Drop::fill_drop_mas(std::vector<drop> &mas)
 
 void Drop::fill_beast_mas(std::vector<Beast> &mas)
 {
+    // приблизительно 4000 характеристик - максимум, сколько можно набрать с прокачкой и шмотом
+    // 8000 def поглащает 100% урона; 8 - 0.1%; 1 - 0.0125%; 80 - 1%;
+    // 26700 def дают шанс блока 100%; 4000 - 15%; 1 - 0.004%; 267 - 1%;
     mas.insert(mas.end(), Beast());
     mas[mas.size() - 1].id = mas.size() - 1;
     mas[mas.size() - 1].name = "Кабан";
     mas[mas.size() - 1].drop_chance = 100;
     mas[mas.size() - 1].rarity = 100;
-    mas[mas.size() - 1].health = 10;
+    mas[mas.size() - 1].health = 100;
+    mas[mas.size() - 1].defense = 40;
     mas[mas.size() - 1].xp = 15;
-    mas[mas.size() - 1].attack = 5;
+    mas[mas.size() - 1].attack = 50;
     mas[mas.size() - 1].lvl = 1;
     mas[mas.size() - 1].image = (QPixmap(":/images/boar.png").scaled(200, 200, Qt::KeepAspectRatio));
     mas.insert(mas.end(), Beast());
@@ -92,9 +98,10 @@ void Drop::fill_beast_mas(std::vector<Beast> &mas)
     mas[mas.size() - 1].name = "Гоблин";
     mas[mas.size() - 1].drop_chance = 75;
     mas[mas.size() - 1].rarity = 75;
-    mas[mas.size() - 1].health = 25;
+    mas[mas.size() - 1].health = 250;
+    mas[mas.size() - 1].defense = 160;
     mas[mas.size() - 1].xp = 25;
-    mas[mas.size() - 1].attack = 10;
+    mas[mas.size() - 1].attack = 100;
     mas[mas.size() - 1].lvl = 2;
     mas[mas.size() - 1].image = (QPixmap(":/images/goblin.png").transformed(QTransform().scale(-1, 1)).scaled(150, 200, Qt::KeepAspectRatio));
     mas.insert(mas.end(), Beast());
@@ -102,9 +109,10 @@ void Drop::fill_beast_mas(std::vector<Beast> &mas)
     mas[mas.size() - 1].name = "Сова";
     mas[mas.size() - 1].drop_chance = 15;
     mas[mas.size() - 1].rarity = 15;
-    mas[mas.size() - 1].health = 50;
+    mas[mas.size() - 1].health = 500;
+    mas[mas.size() - 1].defense = 60;
     mas[mas.size() - 1].xp = 40;
-    mas[mas.size() - 1].attack = 15;
+    mas[mas.size() - 1].attack = 150;
     mas[mas.size() - 1].lvl = 3;
     mas[mas.size() - 1].image = (QPixmap(":/images/owl.png").scaled(250, 200, Qt::KeepAspectRatio));
 }

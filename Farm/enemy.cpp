@@ -6,6 +6,7 @@ Enemy::Enemy(Beast beast)
     beast_id = beast.id;
     max_health = beast.health;
     health = max_health;
+    defense = beast.defense;
     attack = beast.attack;
     xp_reward = beast.xp;
     lvl = beast.lvl;
@@ -80,10 +81,39 @@ int Enemy::hit()
     return attack;
 }
 
-void Enemy::get_hit(int amount, QString type)
+int Enemy::get_hit(int amount, QString type)
 {
     //кейсим тип, если магический, то одна защита, если физический, то другой
+
+    double * block_chance = new double(); // случайное от 0.004 до 100
+    int * my_block_chance = new int(); // шанс блока от 0 до 100 с шагом в 0.004
+    *block_chance = (double)qrand() / RAND_MAX;
+    *block_chance = (0.004 + (*block_chance) * (100.0 - 0.004));
+    *my_block_chance = defense * 0.004;
+
+    if (*my_block_chance >= *block_chance)
+    {
+        delete my_block_chance;
+        delete block_chance;
+        return 0;
+    }
+    delete my_block_chance;
+    delete block_chance;
+
+    double * armor_absorption = new double();
+
+    *armor_absorption = amount * (defense * 0.0125);
+    *armor_absorption /= 100;
+    amount -= round(*armor_absorption);
+
+    delete armor_absorption;
+
+    // чтобы при очень сильной защите здоровье в плюс не уходило
+    if (amount < 0)
+        amount = 0;
+
     health -= amount;
+    return amount;
 }
 
 void Enemy::set_item(QGraphicsPixmapItem *new_item, QGraphicsPixmapItem *players_item)

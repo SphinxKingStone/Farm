@@ -12,6 +12,7 @@ struct Beast
     int drop_chance;
     int rarity;
     int health;
+    int defense;
     int attack;
     int xp;
     int lvl;

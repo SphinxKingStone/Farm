@@ -23,7 +23,7 @@ public:
     QString get_name();
 
     int hit();
-    void get_hit(int amount, QString type = nullptr);
+    int get_hit(int amount, QString type = nullptr);
 
     void set_item(QGraphicsPixmapItem * new_item, QGraphicsPixmapItem * players_item);
     QGraphicsPixmapItem * get_item();
@@ -31,6 +31,7 @@ private:
     int beast_id;
     int max_health;
     int health;
+    int defense;
     QString name;
     int attack;
     int xp_reward;

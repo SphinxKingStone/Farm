@@ -18,6 +18,7 @@ Interface::Interface(QWidget *parent)
 
 }
 
+
 Interface::~Interface()
 {
     delete scene;
@@ -255,7 +256,7 @@ void Interface::add_log(QString str)
 }
 
 /*
-// С полом будут проблемы у слов тень, бродяга, дятел, пень, конь
+// С полом будут проблемы у слов: тень, бродяга, дятел, пень, конь и т.д.
 QString Interface::declension(QString name, char sex,  bool isName)
 {
     if (isName)
@@ -311,8 +312,8 @@ void Interface::player_hit()
 {
     if (player->get_health() > 0)
     {
-        hit_value = new int(player->hit());
-        enemy->get_hit(*hit_value);
+        hit_value = new int();
+        *hit_value = enemy->get_hit(player->hit());
     }
     else
     {
@@ -327,7 +328,7 @@ void Interface::enemy_hit()
     if (enemy->get_health() > 0)
     {
         hit_value = new int();
-        player->get_hit(*hit_value = enemy->hit());
+        *hit_value = player->get_hit(enemy->hit());
     }
     else
     {
@@ -338,7 +339,7 @@ void Interface::enemy_hit()
 //        память, а не значение, которое мы присвоили, а вот if (int tmp = get_number()) написать можно, там будет значение tmp возвращаться.
 //        Только что узнал об этом, но запишу, чтобы лучше запомнилось, хоть это и гуглится по первой ссылке
 
-        // Число 9999 значит, что ничего не выпало, не использутся ноль, потому что для его использования пришлось бы добавить фиктивную, нулевую запись
+        // Число 9999 значит, что ничего не выпало, не использутся ноль, потому что для его использования пришлось бы добавить фиктивную, нулевую запись,
         // в массив с предметами, как обойти это по красивому у меня идей нет.
         if (*tmp_id != 9999)
             add_log("Вам выпало: " + drop->drop_mas[*tmp_id].name);

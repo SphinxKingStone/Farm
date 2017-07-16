@@ -11,11 +11,14 @@ Player::Player()
         level_xp.insert(level_xp.end(), std::make_pair(i, i * 50));
     }
 
-    max_health = 20;
+    max_health = 200;
     health = max_health;
-    attack = 8;
+    attack = 45;
     xp = 0;
     lvl = 1;
+    defense = 0;
+    intuition = 0;
+    agility = 0;
 
     //Вызывает libpng warning: iCCP: known incorrect sRGB profile
     image = QPixmap(":/images/main_hero.png").scaled(150, 200, Qt::KeepAspectRatio);
@@ -50,16 +53,45 @@ void Player::increase_xp(int amount)
 void Player::increase_lvl()
 {
     lvl++;
-    max_health += 10;
-    attack += 2;
+    max_health += 20;
+    attack += 10;
     skill_point += 2;
     restore_health();
 }
 
-void Player::get_hit(int amount, QString type)
+int Player::get_hit(int amount, QString type)
 {
     //кейсим тип, если магический, то одна защита, если физический, то другой
+
+    double * block_chance = new double(); // случайное от 0.004 до 100
+    int * my_block_chance = new int(); // шанс блока от 0 до 100 с шагом в 0.004
+    *block_chance = (double)qrand() / RAND_MAX;
+    *block_chance = (0.004 + (*block_chance) * (100.0 - 0.004));
+    *my_block_chance = defense * 0.004;
+
+    if (*my_block_chance >= *block_chance)
+    {
+        delete my_block_chance;
+        delete block_chance;
+        return 0;
+    }
+    delete my_block_chance;
+    delete block_chance;
+
+    double * armor_absorption = new double();
+
+    *armor_absorption = amount * (defense * 0.0125);
+    *armor_absorption /= 100;
+    amount -= round(*armor_absorption);
+
+    delete armor_absorption;
+
+    // чтобы при очень сильной защите здоровье в плюс не уходило
+    if (amount < 0)
+        amount = 0;
+
     health -= amount;
+    return amount;
 }
 
 int Player::hit()
