@@ -106,6 +106,7 @@ int Player::hit()
     backward_timer->setInterval(*animation_speed);
 
     // здесь учесть все вещи, текущую атаку, шанс крита, шанс промаха и т.д.
+    // расхождение урона в 19% min - 81 %, max - 119% от текущей атаки
     return attack;
 }
 

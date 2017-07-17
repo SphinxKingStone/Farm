@@ -7,6 +7,7 @@
 #include <QObject>
 #include <typeinfo>
 
+
 class Player: public QObject
 {
     Q_OBJECT
