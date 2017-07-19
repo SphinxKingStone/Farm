@@ -18,7 +18,7 @@ public:
     void increase_xp(int amount);
     void increase_lvl();
 
-    int get_hit(int amount, QString type = nullptr);
+    int get_hit(int amount, QString type = nullptr); // 0 - dodge; -1 - block;
     int hit();
     void restore_health();
 
@@ -27,6 +27,9 @@ public:
     int get_max_health();
     int get_health();
     int get_attack();
+    int get_defense();
+    int get_agility();
+    int get_concentration();
     int get_xp_for_next_lvl();
     int get_skill_point();
     void set_item(QGraphicsPixmapItem * new_item);
@@ -39,7 +42,7 @@ private:
     int defense; // защита дается в десятках от брони, она в процентах поглощает физический урон
     int attack;
     int agility; // шанс уворота
-    int intuition; // шанс крита
+    int concentration; // шанс крита
     int xp;
     int lvl;
     int skill_point;

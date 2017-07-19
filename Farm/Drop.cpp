@@ -15,7 +15,6 @@ Drop::Drop()
 
 int Drop::simulate_drop(int beast_type)
 {
-    // динамически выделять память
     tmp_drop.clear();
 
     int * BeastType = new int(beast_type);
@@ -82,6 +81,9 @@ void Drop::fill_beast_mas(std::vector<Beast> &mas)
     // приблизительно 4000 характеристик - максимум, сколько можно набрать с прокачкой и шмотом
     // 8000 def поглащает 100% урона; 8 - 0.1%; 1 - 0.0125%; 80 - 1%;
     // 26700 def дают шанс блока 100%; 4000 - 15%; 1 - 0.004%; 267 - 1%;
+    // ловкость и концентрация могут быть около 800, с шмотом и прокачкой, Разница с шансами от def в 5 раз
+    // 800 концентрации/ловкости дает 50% шанс крита/уворота; 1600 - 100%; 1 - 0.0625%; 16 - 1%;
+    // пусть крит увеличивает урон на 1.75
     mas.insert(mas.end(), Beast());
     mas[mas.size() - 1].id = mas.size() - 1;
     mas[mas.size() - 1].name = "Кабан";
@@ -89,6 +91,8 @@ void Drop::fill_beast_mas(std::vector<Beast> &mas)
     mas[mas.size() - 1].rarity = 100;
     mas[mas.size() - 1].health = 100;
     mas[mas.size() - 1].defense = 40;
+    mas[mas.size() - 1].agility = 8;
+    mas[mas.size() - 1].concentration = 16;
     mas[mas.size() - 1].xp = 15;
     mas[mas.size() - 1].attack = 50;
     mas[mas.size() - 1].lvl = 1;
@@ -100,6 +104,8 @@ void Drop::fill_beast_mas(std::vector<Beast> &mas)
     mas[mas.size() - 1].rarity = 75;
     mas[mas.size() - 1].health = 250;
     mas[mas.size() - 1].defense = 160;
+    mas[mas.size() - 1].agility = 30;
+    mas[mas.size() - 1].concentration = 50;
     mas[mas.size() - 1].xp = 25;
     mas[mas.size() - 1].attack = 100;
     mas[mas.size() - 1].lvl = 2;
@@ -111,6 +117,8 @@ void Drop::fill_beast_mas(std::vector<Beast> &mas)
     mas[mas.size() - 1].rarity = 15;
     mas[mas.size() - 1].health = 500;
     mas[mas.size() - 1].defense = 60;
+    mas[mas.size() - 1].agility = 100;
+    mas[mas.size() - 1].concentration = 16;
     mas[mas.size() - 1].xp = 40;
     mas[mas.size() - 1].attack = 150;
     mas[mas.size() - 1].lvl = 3;

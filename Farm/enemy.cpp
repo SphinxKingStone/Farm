@@ -7,6 +7,8 @@ Enemy::Enemy(Beast beast)
     max_health = beast.health;
     health = max_health;
     defense = beast.defense;
+    agility = beast.agility;
+    concentration = beast.concentration;
     attack = beast.attack;
     xp_reward = beast.xp;
     lvl = beast.lvl;
@@ -78,7 +80,27 @@ int Enemy::hit()
     backward_timer->setInterval(*animation_speed);
 
     //учесть что надо при атаке, шанс промаха, крита и т.д.
-    return attack;
+    int tmp_attack = attack;
+    int * atk_discrepancy = new int();
+
+    *atk_discrepancy = (qrand () % 38) - 19;
+    tmp_attack += round((attack * *atk_discrepancy) / 100);
+
+    delete atk_discrepancy;
+
+    double * crit_chance = new double(); // случайное от 0.0625 до 100
+    double * my_crit_chance = new double(); // шанс блока от 0 до 100 с шагом в 0.0625
+    *crit_chance = (double)qrand() / RAND_MAX;
+    *crit_chance = (0.0625 + (*crit_chance) * (100.0 - 0.0625));
+    *my_crit_chance = concentration * 0.0625;
+
+    if (*my_crit_chance >= *crit_chance)
+        tmp_attack *= 1.8;
+
+    delete my_crit_chance;
+    delete crit_chance;
+
+    return tmp_attack;
 }
 
 int Enemy::get_hit(int amount, QString type)
@@ -95,10 +117,25 @@ int Enemy::get_hit(int amount, QString type)
     {
         delete my_block_chance;
         delete block_chance;
-        return 0;
+        return -1;
     }
     delete my_block_chance;
     delete block_chance;
+
+    double * dodge_chance = new double(); // случайное от 0.0625 до 100
+    double * my_dodge_chance = new double(); // шанс блока от 0 до 100 с шагом в 0.0625
+    *dodge_chance = (double)qrand() / RAND_MAX;
+    *dodge_chance = (0.0625 + (*dodge_chance) * (100.0 - 0.0625));
+    *my_dodge_chance = agility * 0.0625;
+
+    if (*my_dodge_chance >= *dodge_chance)
+    {
+        delete my_dodge_chance;
+        delete dodge_chance;
+        return 0;
+    }
+    delete my_dodge_chance;
+    delete dodge_chance;
 
     double * armor_absorption = new double();
 

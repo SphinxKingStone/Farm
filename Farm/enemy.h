@@ -32,6 +32,8 @@ private:
     int max_health;
     int health;
     int defense;
+    int agility;
+    int concentration;
     QString name;
     int attack;
     int xp_reward;

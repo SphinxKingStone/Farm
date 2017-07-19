@@ -13,6 +13,8 @@ struct Beast
     int rarity;
     int health;
     int defense;
+    int agility;
+    int concentration;
     int attack;
     int xp;
     int lvl;

@@ -214,27 +214,44 @@ void Interface::draw_profile()
     grid_layout = new QGridLayout();
 
     mas_profile_labels << new QLabel();
-    mas_profile_labels[0]->setText("Уровень: " + QString::number(player->get_level()));
-    grid_layout->addWidget(mas_profile_labels[0],0,0);
+    mas_profile_labels[mas_profile_labels.size() - 1]->setText("Уровень: " + QString::number(player->get_level()));
+    grid_layout->addWidget(mas_profile_labels[mas_profile_labels.size() - 1],0,0);
 
     mas_profile_labels << new QLabel();
-    mas_profile_labels[1]->setText("Опыт: " + QString::number(player->get_xp()) + "/" + QString::number(player->get_xp_for_next_lvl()));
-    grid_layout->addWidget(mas_profile_labels[1],1,0);
+    mas_profile_labels[mas_profile_labels.size() - 1]->setText("Опыт: " + QString::number(player->get_xp()) + "/" + QString::number(player->get_xp_for_next_lvl()));
+    grid_layout->addWidget(mas_profile_labels[mas_profile_labels.size() - 1],1,0);
 
     mas_profile_labels << new QLabel();
-    mas_profile_labels[2]->setText("Здоровье: " + QString::number(player->get_max_health()));
-    grid_layout->addWidget(mas_profile_labels[2],2,0);
+    mas_profile_labels[mas_profile_labels.size() - 1]->setText("Здоровье: " + QString::number(player->get_max_health()));
+    grid_layout->addWidget(mas_profile_labels[mas_profile_labels.size() - 1],2,0);
 
     mas_profile_labels << new QLabel();
-    mas_profile_labels[3]->setText("Атака: " + QString::number(player->get_attack()));
-    grid_layout->addWidget(mas_profile_labels[3],3,0);
+    mas_profile_labels[mas_profile_labels.size() - 1]->setText("Атака: " + QString::number(player->get_attack() - (player->get_attack() * 19 / 100)) + ".." +
+                                                               QString::number(player->get_attack() + (player->get_attack() * 19 / 100)));
+    grid_layout->addWidget(mas_profile_labels[mas_profile_labels.size() - 1],3,0);
 
     mas_profile_labels << new QLabel();
-    mas_profile_labels[4]->setText("Очков навыков: " + QString::number(player->get_skill_point()));
-    grid_layout->addWidget(mas_profile_labels[4],0,1,Qt::AlignCenter);
+    mas_profile_labels[mas_profile_labels.size() - 1]->setText("Очков навыков: " + QString::number(player->get_skill_point()));
+    grid_layout->addWidget(mas_profile_labels[mas_profile_labels.size() - 1],0,1,Qt::AlignCenter);
+
+    mas_profile_labels << new QLabel();
+    mas_profile_labels[mas_profile_labels.size() - 1]->setText("Очков навыков: " + QString::number(player->get_skill_point()));
+    grid_layout->addWidget(mas_profile_labels[mas_profile_labels.size() - 1],0,1,Qt::AlignCenter);
+
+    mas_profile_labels << new QLabel();
+    mas_profile_labels[mas_profile_labels.size() - 1]->setText("Защита: " + QString::number(player->get_defense()));
+    grid_layout->addWidget(mas_profile_labels[mas_profile_labels.size() - 1],4,0);
+
+    mas_profile_labels << new QLabel();
+    mas_profile_labels[mas_profile_labels.size() - 1]->setText("Ловкость: " + QString::number(player->get_agility()));
+    grid_layout->addWidget(mas_profile_labels[mas_profile_labels.size() - 1],5,0);
+
+    mas_profile_labels << new QLabel();
+    mas_profile_labels[mas_profile_labels.size() - 1]->setText("Концентрация: " + QString::number(player->get_concentration()));
+    grid_layout->addWidget(mas_profile_labels[mas_profile_labels.size() - 1],6,0);
 
     if (player->get_skill_point())
-        for (int i = 0; i < mas_profile_labels.size() - 2; i++)
+        for (int i = 0; i < mas_profile_labels.size() - 3; i++)
         {
             mas_profile_buttons << new QPushButton("+");
             grid_layout->addWidget(mas_profile_buttons[i],i+1,1,Qt::AlignCenter);
@@ -253,6 +270,7 @@ void Interface::draw_profile()
 void Interface::add_log(QString str)
 {
     log->addItem(str);
+    log->scrollToBottom();
 }
 
 /*
@@ -365,9 +383,23 @@ void Interface::update_health_bar()
 void Interface::update_log(int players_hit)
 {
     if (players_hit == 1)
-        add_log("Игрок нанёс " + enemy->get_name() + " " + QString::number(*hit_value) + " ед. урона");
+    {
+        if (*hit_value > 0)
+            add_log("Игрок нанёс " + enemy->get_name() + " " + QString::number(*hit_value) + " ед. урона");
+        else if (*hit_value == 0)
+            add_log( enemy->get_name() + " увернулся от удара");
+        else if (*hit_value == -1)
+            add_log( enemy->get_name() + " заблокировал удар");
+    }
     else
-        add_log(enemy->get_name() + " нанёс Игроку " + QString::number(*hit_value) + " ед. урона");
+    {
+        if (*hit_value > 0)
+            add_log(enemy->get_name() + " нанёс Игроку " + QString::number(*hit_value) + " ед. урона");
+        else if (*hit_value == 0)
+            add_log("Игрок увернулся от удара");
+        else if (*hit_value == -1)
+            add_log("Игрок заблокировал удар");
+    }
 
     delete hit_value;
 }
