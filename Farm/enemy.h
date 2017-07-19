@@ -19,6 +19,7 @@ public:
     QPixmap get_image();
     int get_max_health();
     int get_health();
+    int get_attack();
     int get_xp();
     QString get_name();
 

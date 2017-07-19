@@ -1,6 +1,7 @@
 #include "interface.h"
 #include <QDebug>
 
+
 Interface::Interface(QWidget *parent)
 {
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -14,8 +15,6 @@ Interface::Interface(QWidget *parent)
     setScene(scene);
 
     show_startWindow();
-
-
 }
 
 
@@ -226,8 +225,10 @@ void Interface::draw_profile()
     grid_layout->addWidget(mas_profile_labels[mas_profile_labels.size() - 1],2,0);
 
     mas_profile_labels << new QLabel();
-    mas_profile_labels[mas_profile_labels.size() - 1]->setText("Атака: " + QString::number(player->get_attack() - (player->get_attack() * 19 / 100)) + ".." +
-                                                               QString::number(player->get_attack() + (player->get_attack() * 19 / 100)));
+    mas_profile_labels[mas_profile_labels.size() - 1]->setText("Атака: " + QString::number(player->get_attack() - round(player->get_attack() * 0.19)) + ".." +
+                                                               QString::number(player->get_attack() + round(player->get_attack() * 0.19)));
+
+
     grid_layout->addWidget(mas_profile_labels[mas_profile_labels.size() - 1],3,0);
 
     mas_profile_labels << new QLabel();
@@ -385,7 +386,12 @@ void Interface::update_log(int players_hit)
     if (players_hit == 1)
     {
         if (*hit_value > 0)
-            add_log("Игрок нанёс " + enemy->get_name() + " " + QString::number(*hit_value) + " ед. урона");
+        {
+            if (*hit_value <= round(player->get_attack() * 1.19))
+                add_log("Игрок нанёс " + enemy->get_name() + " " + QString::number(*hit_value) + " ед. урона");
+            else
+                add_log("Игрок нанёс критическим ударом " + enemy->get_name() + " " + QString::number(*hit_value) + " ед. урона");
+        }
         else if (*hit_value == 0)
             add_log( enemy->get_name() + " увернулся от удара");
         else if (*hit_value == -1)
@@ -394,7 +400,12 @@ void Interface::update_log(int players_hit)
     else
     {
         if (*hit_value > 0)
-            add_log(enemy->get_name() + " нанёс Игроку " + QString::number(*hit_value) + " ед. урона");
+        {
+            if (*hit_value <= round(enemy->get_attack() * 1.19))
+                add_log(enemy->get_name() + " нанёс Игроку " + QString::number(*hit_value) + " ед. урона");
+            else
+                add_log(enemy->get_name() + " нанёс критическим ударом Игроку " + QString::number(*hit_value) + " ед. урона");
+        }
         else if (*hit_value == 0)
             add_log("Игрок увернулся от удара");
         else if (*hit_value == -1)

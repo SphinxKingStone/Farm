@@ -16,9 +16,9 @@ Player::Player()
     attack = 45;
     xp = 0;
     lvl = 1;
-    defense = 50;
-    concentration = 10;
-    agility = 10;
+    defense = 80;
+    concentration = 20;
+    agility = 20;
     skill_point = 0;
 
     //Вызывает libpng warning: iCCP: known incorrect sRGB profile
@@ -130,7 +130,7 @@ int Player::hit()
     int * atk_discrepancy = new int();
 
     *atk_discrepancy = (qrand () % 39) - 19;
-    tmp_attack += round((attack * *atk_discrepancy) / 100);
+    tmp_attack += round(double(attack * (*atk_discrepancy)) / 100);
 
     delete atk_discrepancy;
 
@@ -141,7 +141,7 @@ int Player::hit()
     *my_crit_chance = concentration * 0.0625;
 
     if (*my_crit_chance >= *crit_chance)
-        tmp_attack *= 1.8;
+        tmp_attack *= 1.75;
 
     delete my_crit_chance;
     delete crit_chance;
