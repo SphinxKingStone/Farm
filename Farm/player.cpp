@@ -60,41 +60,19 @@ void Player::increase_lvl()
     restore_health();
 }
 
+
+
 int Player::get_hit(int amount, QString type)
 {
-    //кейсим тип, если магический, то одна защита, если физический, то другой
+    // кейсим тип, если магический, то одна защита, если физический, то другой
 
-    double * block_chance = new double(); // случайное от 0.004 до 100
-    double * my_block_chance = new double(); // шанс блока от 0 до 100 с шагом в 0.004
-    *block_chance = (double)qrand() / RAND_MAX;
-    *block_chance = (0.004 + (*block_chance) * (100.0 - 0.004));
-    *my_block_chance = defense * 0.004;
-
-    if (*my_block_chance >= *block_chance)
-    {
-        delete my_block_chance;
-        delete block_chance;
+    // блок
+    if (avoid(defense, 0.004))
         return -1;
-    }
-    delete my_block_chance;
-    delete block_chance;
 
-    //код похож, может как - то объединить;
-
-    double * dodge_chance = new double(); // случайное от 0.0625 до 100
-    double * my_dodge_chance = new double(); // шанс блока от 0 до 100 с шагом в 0.0625
-    *dodge_chance = (double)qrand() / RAND_MAX;
-    *dodge_chance = (0.0625 + (*dodge_chance) * (100.0 - 0.0625));
-    *my_dodge_chance = agility * 0.0625;
-
-    if (*my_dodge_chance >= *dodge_chance)
-    {
-        delete my_dodge_chance;
-        delete dodge_chance;
+    // уворот
+    if (avoid(agility, 0.0625))
         return 0;
-    }
-    delete my_dodge_chance;
-    delete dodge_chance;
 
 
     double * armor_absorption = new double();

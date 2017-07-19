@@ -6,6 +6,7 @@
 #include <QTimer>
 #include <QObject>
 #include <typeinfo>
+#include <functions_for_persons.h>
 
 
 class Enemy: public QObject
@@ -24,7 +25,7 @@ public:
     QString get_name();
 
     int hit();
-    int get_hit(int amount, QString type = nullptr);
+    int get_hit(int amount, QString type = nullptr); // returns: 0 - dodge; -1 - block;
 
     void set_item(QGraphicsPixmapItem * new_item, QGraphicsPixmapItem * players_item);
     QGraphicsPixmapItem * get_item();

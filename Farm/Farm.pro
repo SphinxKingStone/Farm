@@ -27,14 +27,16 @@ SOURCES += main.cpp \
     interface.cpp \
     drop.cpp \
     player.cpp \
-    enemy.cpp
+    enemy.cpp \
+    functions_for_persons.cpp
 
 HEADERS  += \
     beast_n_drop.h \
     interface.h \
     drop.h \
     player.h \
-    enemy.h
+    enemy.h \
+    functions_for_persons.h
 
 FORMS    +=
 

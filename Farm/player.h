@@ -6,6 +6,7 @@
 #include <QTimer>
 #include <QObject>
 #include <typeinfo>
+#include <functions_for_persons.h>
 
 
 class Player: public QObject
@@ -18,7 +19,7 @@ public:
     void increase_xp(int amount);
     void increase_lvl();
 
-    int get_hit(int amount, QString type = nullptr); // 0 - dodge; -1 - block;
+    int get_hit(int amount, QString type = nullptr); // returns: 0 - dodge; -1 - block;
     int hit();
     void restore_health();
 

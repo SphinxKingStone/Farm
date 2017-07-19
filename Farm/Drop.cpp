@@ -116,7 +116,7 @@ void Drop::fill_beast_mas(std::vector<Beast> &mas)
     mas[mas.size() - 1].drop_chance = 15;
     mas[mas.size() - 1].rarity = 15;
     mas[mas.size() - 1].health = 500;
-    mas[mas.size() - 1].defense = 60;
+    mas[mas.size() - 1].defense = 200;
     mas[mas.size() - 1].agility = 100;
     mas[mas.size() - 1].concentration = 16;
     mas[mas.size() - 1].xp = 40;
