@@ -238,6 +238,7 @@ void Player::backward_timer_tick()
     if (item->x() <= *x_coord)
     {
         backward_timer->stop();
+        delete x_coord;
 
         if (health > 0)
         {

@@ -429,15 +429,9 @@ void Interface::onExit_battle_button_click()
     enemy->deleteLater();
     player->delete_after_battle();
     mas_profile_labels.clear();
-    delete signalMapper;
-    delete log;
+    log->deleteLater();
+    signalMapper->deleteLater();
 
-    QLayoutItem *child;
-    while ((child = grid_layout->takeAt(0)) != 0)
-    {
-        delete child->widget();
-        delete child;
-    }
     grid_layout->deleteLater();
     profile_frame->deleteLater();
     draw_mainScreen();
