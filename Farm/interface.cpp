@@ -28,6 +28,7 @@ void Interface::play_bt_click()
     draw_mainScreen();
     player = new Player();
     drop = new Drop();
+    inventory = new Inventory();
 
     play_buttton->deleteLater();
 
@@ -120,37 +121,13 @@ void Interface::onInventory_button_click()
 {
     close_mainScreen();
 
-    labels_map["1"] = new QLabel();
-    labels_map["1"]->setPixmap(QPixmap(":/images/square.png").scaled(55,55,Qt::KeepAspectRatio));
-    labels_map["1"]->move(10,150);
-    scene->addWidget(labels_map["1"]);
+    draw_players_cells();
 
-    labels_map["2"] = new QLabel();
-    labels_map["2"]->setPixmap(QPixmap(":/images/square.png").scaled(55,55,Qt::KeepAspectRatio));
-    labels_map["2"]->move(labels_map["1"]->x(), labels_map["1"]->y() + labels_map["1"]->height() + 20);
-    scene->addWidget(labels_map["2"]);
+    draw_inventory_cells();
 
-    labels_map["3"] = new QLabel();
-    labels_map["3"]->setPixmap(QPixmap(":/images/square.png").scaled(55,55,Qt::KeepAspectRatio));
-    labels_map["3"]->move(labels_map["2"]->x(), labels_map["2"]->y() + labels_map["2"]->height() + 20);
-    scene->addWidget(labels_map["3"]);
+    draw_Exit_button(exit_inventory_button);
+    exit_inventory_button->move(10,540);
 
-    player->set_item(scene->addPixmap(player->get_image()), labels_map["1"]->x() + labels_map["1"]->width() + 20, labels_map["1"]->y());
-
-    labels_map["4"] = new QLabel();
-    labels_map["4"]->setPixmap(QPixmap(":/images/square.png").scaled(55,55,Qt::KeepAspectRatio));
-    labels_map["4"]->move(player->get_item()->x() + player->get_item()->boundingRect().width() + 20, labels_map["1"]->y());
-    scene->addWidget(labels_map["4"]);
-
-    labels_map["5"] = new QLabel();
-    labels_map["5"]->setPixmap(QPixmap(":/images/square.png").scaled(55,55,Qt::KeepAspectRatio));
-    labels_map["5"]->move(labels_map["4"]->x(), labels_map["4"]->y() + labels_map["4"]->height() + 20);
-    scene->addWidget(labels_map["5"]);
-
-    labels_map["6"] = new QLabel();
-    labels_map["6"]->setPixmap(QPixmap(":/images/square.png").scaled(55,55,Qt::KeepAspectRatio));
-    labels_map["6"]->move(labels_map["5"]->x(), labels_map["5"]->y() + labels_map["5"]->height() + 20);
-    scene->addWidget(labels_map["6"]);
 }
 
 void Interface::show_startWindow()
@@ -322,6 +299,80 @@ void Interface::add_log(QString str)
 {
     log->addItem(str);
     log->scrollToBottom();
+}
+
+void Interface::draw_players_cells()
+{
+    QLabel * label = new QLabel();
+    label->setPixmap(QPixmap(":/images/square.png").scaled(55,55,Qt::KeepAspectRatio));
+    label->move(10,150);
+    scene->addWidget(label);
+    labels_map["weapon"] = label;
+
+    label = new QLabel();
+    label->setPixmap(QPixmap(":/images/square.png").scaled(55,55,Qt::KeepAspectRatio));
+    label->move(labels_map["weapon"]->x(), labels_map["weapon"]->y() + labels_map["weapon"]->height() + 20);
+    scene->addWidget(label);
+    labels_map["body"] = label;
+
+    label = new QLabel();
+    label->setPixmap(QPixmap(":/images/square.png").scaled(55,55,Qt::KeepAspectRatio));
+    label->move(labels_map["body"]->x(), labels_map["body"]->y() + labels_map["body"]->height() + 20);
+    scene->addWidget(label);
+    labels_map["arms"] = label;
+
+    player->set_item(scene->addPixmap(player->get_image()), labels_map["weapon"]->x() + labels_map["weapon"]->width() + 20, labels_map["weapon"]->y());
+
+    label = new QLabel();
+    label->setPixmap(QPixmap(":/images/square.png").scaled(55,55,Qt::KeepAspectRatio));
+    label->move(player->get_item()->x() + player->get_item()->boundingRect().width() + 20, labels_map["weapon"]->y());
+    scene->addWidget(label);
+    labels_map["shoulders"] = label;
+
+    label = new QLabel();
+    label->setPixmap(QPixmap(":/images/square.png").scaled(55,55,Qt::KeepAspectRatio));
+    label->move(labels_map["shoulders"]->x(), labels_map["shoulders"]->y() + labels_map["shoulders"]->height() + 20);
+    scene->addWidget(label);
+    labels_map["legs"] = label;
+
+    label = new QLabel();
+    label->setPixmap(QPixmap(":/images/square.png").scaled(55,55,Qt::KeepAspectRatio));
+    label->move(labels_map["legs"]->x(), labels_map["legs"]->y() + labels_map["legs"]->height() + 20);
+    scene->addWidget(label);
+    labels_map["feet"] = label;
+
+    label = new QLabel();
+    label->setPixmap(QPixmap(":/images/square.png").scaled(55,55,Qt::KeepAspectRatio));
+    label->move(labels_map["weapon"]->x() + labels_map["shoulders"]->x() / 2, player->get_item()->pos().y() - labels_map["weapon"]->height() - 20);
+    scene->addWidget(label);
+    labels_map["head"] = label;
+}
+
+void Interface::draw_inventory_cells()
+{
+    grid_layout = new QGridLayout();
+
+    signalMapper = new QSignalMapper();
+    for (int i = 0; i < 56; i++)
+    {
+    ClickableLabel * label = new ClickableLabel();
+    label->setPixmap(QPixmap(":/images/square.png").scaled(45,45,Qt::KeepAspectRatio));
+    grid_layout->addWidget(label,div(i, 7).quot, div(i, 7).rem,Qt::AlignAbsolute);
+    inventory->cells[i] = label;
+
+    signalMapper->setMapping(label, i);
+    QObject::connect(label, SIGNAL(rightClicked()), signalMapper, SLOT(map()));
+
+    QObject::connect(label, SIGNAL(clicked()), inventory, SLOT(onCell_click()));
+    }
+    QObject::connect(signalMapper, SIGNAL(mapped(int)), inventory, SLOT(onCell_right_click(int)));
+
+    profile_frame = new QFrame();
+    profile_frame->resize(400, 560);
+    profile_frame->move(380, 20);
+
+    scene->addWidget(profile_frame);
+    profile_frame->setLayout(grid_layout);
 }
 
 void Interface::delete_skill_buttons()

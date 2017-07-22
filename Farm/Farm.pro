@@ -28,7 +28,9 @@ SOURCES += main.cpp \
     drop.cpp \
     player.cpp \
     enemy.cpp \
-    functions_for_persons.cpp
+    functions_for_persons.cpp \
+    inventory.cpp \
+    clickablelabel.cpp
 
 HEADERS  += \
     beast_n_drop.h \
@@ -36,7 +38,9 @@ HEADERS  += \
     drop.h \
     player.h \
     enemy.h \
-    functions_for_persons.h
+    functions_for_persons.h \
+    inventory.h \
+    clickablelabel.h
 
 FORMS    +=
 

@@ -9,5 +9,8 @@
         <file>owl.png</file>
         <file>forest_road.png</file>
         <file>square.png</file>
+        <file>backpack.jpg</file>
+        <file>coin.png</file>
+        <file>trash_can.png</file>
     </qresource>
 </RCC>

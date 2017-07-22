@@ -10,8 +10,10 @@
 #include <player.h>
 #include "drop.h"
 #include "enemy.h"
+#include "inventory.h"
 #include <QTimer>
 #include <QSignalMapper>
+#include "clickablelabel.h"
 
 
 class Interface: public QGraphicsView
@@ -26,12 +28,15 @@ public:
     void close_mainScreen();
     void draw_profile();
     void add_log(QString str);
+    void draw_players_cells();
+    void draw_inventory_cells();
 
     //QString declension(QString name, char sex, bool isName); Надо будет доработать
 
     Player * player;
     Drop * drop;
     Enemy * enemy;
+    Inventory * inventory;
 
 private:
     QGraphicsScene * scene;
