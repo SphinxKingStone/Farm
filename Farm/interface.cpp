@@ -73,15 +73,15 @@ void Interface::onBeast_list_item_selected()
 
     profile_frame->setLayout(grid_layout);
 
-    mas_profile_labels << new QLabel();
-    mas_profile_labels.last()->setText("Здоровье: " + QString::number(player->get_max_health()) + "/" + QString::number(player->get_health()));
-    mas_profile_labels.last()->setStyleSheet("font: 16px;");
-    grid_layout->addWidget(mas_profile_labels.last(),0,0, Qt::AlignCenter | Qt::AlignTop);
+    labels_map["Player_health"] = new QLabel();
+    labels_map["Player_health"]->setText("Здоровье: " + QString::number(player->get_max_health()) + "/" + QString::number(player->get_health()));
+    labels_map["Player_health"]->setStyleSheet("font: 16px;");
+    grid_layout->addWidget(labels_map["Player_health"],0,0, Qt::AlignCenter | Qt::AlignTop);
 
-    mas_profile_labels << new QLabel();
-    mas_profile_labels.last()->setText("Здоровье: " + QString::number(enemy->get_max_health()) + "/" + QString::number(enemy->get_health()));
-    mas_profile_labels.last()->setStyleSheet("font: 16px;");
-    grid_layout->addWidget(mas_profile_labels.last(),0,1,Qt::AlignCenter | Qt::AlignTop);
+    labels_map["Enemy_health"] = new QLabel();
+    labels_map["Enemy_health"]->setText("Здоровье: " + QString::number(enemy->get_max_health()) + "/" + QString::number(enemy->get_health()));
+    labels_map["Enemy_health"]->setStyleSheet("font: 16px;");
+    grid_layout->addWidget(labels_map["Enemy_health"],0,1,Qt::AlignCenter | Qt::AlignTop);
 
     log = new QListWidget();
     log->setMaximumSize(800,120);
@@ -89,7 +89,7 @@ void Interface::onBeast_list_item_selected()
     log->setFocusPolicy(Qt::FocusPolicy::NoFocus);
     grid_layout->addWidget(log,1,0,1,0);
 
-    player->set_item(scene->addPixmap(player->get_image()));
+    player->set_item(scene->addPixmap(player->get_image()), 100, 150);
     enemy->set_item(scene->addPixmap(enemy->get_image()), player->get_item());
 
     QObject::connect(player, SIGNAL(hit_is_done()), this, SLOT(update_health_bar()));
@@ -110,10 +110,47 @@ void Interface::onBeast_list_item_selected()
     battle();
 }
 
-void Interface::onprofile_button_click()
+void Interface::onProfile_button_click()
 {
     close_mainScreen();
     draw_profile();
+}
+
+void Interface::onInventory_button_click()
+{
+    close_mainScreen();
+
+    labels_map["1"] = new QLabel();
+    labels_map["1"]->setPixmap(QPixmap(":/images/square.png").scaled(55,55,Qt::KeepAspectRatio));
+    labels_map["1"]->move(10,150);
+    scene->addWidget(labels_map["1"]);
+
+    labels_map["2"] = new QLabel();
+    labels_map["2"]->setPixmap(QPixmap(":/images/square.png").scaled(55,55,Qt::KeepAspectRatio));
+    labels_map["2"]->move(labels_map["1"]->x(), labels_map["1"]->y() + labels_map["1"]->height() + 20);
+    scene->addWidget(labels_map["2"]);
+
+    labels_map["3"] = new QLabel();
+    labels_map["3"]->setPixmap(QPixmap(":/images/square.png").scaled(55,55,Qt::KeepAspectRatio));
+    labels_map["3"]->move(labels_map["2"]->x(), labels_map["2"]->y() + labels_map["2"]->height() + 20);
+    scene->addWidget(labels_map["3"]);
+
+    player->set_item(scene->addPixmap(player->get_image()), labels_map["1"]->x() + labels_map["1"]->width() + 20, labels_map["1"]->y());
+
+    labels_map["4"] = new QLabel();
+    labels_map["4"]->setPixmap(QPixmap(":/images/square.png").scaled(55,55,Qt::KeepAspectRatio));
+    labels_map["4"]->move(player->get_item()->x() + player->get_item()->boundingRect().width() + 20, labels_map["1"]->y());
+    scene->addWidget(labels_map["4"]);
+
+    labels_map["5"] = new QLabel();
+    labels_map["5"]->setPixmap(QPixmap(":/images/square.png").scaled(55,55,Qt::KeepAspectRatio));
+    labels_map["5"]->move(labels_map["4"]->x(), labels_map["4"]->y() + labels_map["4"]->height() + 20);
+    scene->addWidget(labels_map["5"]);
+
+    labels_map["6"] = new QLabel();
+    labels_map["6"]->setPixmap(QPixmap(":/images/square.png").scaled(55,55,Qt::KeepAspectRatio));
+    labels_map["6"]->move(labels_map["5"]->x(), labels_map["5"]->y() + labels_map["5"]->height() + 20);
+    scene->addWidget(labels_map["6"]);
 }
 
 void Interface::show_startWindow()
@@ -158,7 +195,7 @@ void Interface::draw_mainScreen()
                            "background-color: lightblue;"
                            "font: 16px;"
                            "font-weight: bold;");
-    connect(profile_button, SIGNAL(clicked(bool)), this, SLOT(onprofile_button_click()));
+    connect(profile_button, SIGNAL(clicked(bool)), this, SLOT(onProfile_button_click()));
 
     inventory_button = new QPushButton("Инвентарь", nullptr);
     inventory_button->resize(150,60);
@@ -167,6 +204,7 @@ void Interface::draw_mainScreen()
                            "background-color: lightblue;"
                            "font: 16px;"
                            "font-weight: bold;");
+    connect(inventory_button, SIGNAL(clicked(bool)), this, SLOT(onInventory_button_click()));
 
     scene->addWidget(location_list);
     scene->addWidget(beast_list);
@@ -174,30 +212,17 @@ void Interface::draw_mainScreen()
     scene->addWidget(inventory_button);
 }
 
-void Interface::draw_Exit_battle_button()
+bool Interface::draw_Exit_button(QPushButton *&button)
 {
-    exit_battle_button = new QPushButton("Выход");
-    exit_battle_button->setStyleSheet("color: white;"
+    button = new QPushButton("Выход");
+    button->setStyleSheet("color: white;"
                            "background-color: lightblue;"
                            "font: 16px;"
                            "font-weight: bold;");
-    exit_battle_button->resize(150,50);
-    scene->addWidget(exit_battle_button);
-    exit_battle_button->move(scene->width() / 2 - exit_battle_button->width() / 2, scene->height() / 2 - exit_battle_button->height() / 2 - log->height());
-    QObject::connect(exit_battle_button,SIGNAL(clicked(bool)),this,SLOT(onExit_battle_button_click()));
-}
+    button->resize(150,50);
+    scene->addWidget(button);
 
-void Interface::draw_Exit_profile_button()
-{
-    exit_profile_button = new QPushButton("Выход");
-    exit_profile_button->setStyleSheet("color: white;"
-                           "background-color: lightblue;"
-                           "font: 16px;"
-                           "font-weight: bold;");
-    exit_profile_button->resize(150,50);
-    scene->addWidget(exit_profile_button);
-    exit_profile_button->move(10, 10);
-    QObject::connect(exit_profile_button,SIGNAL(clicked(bool)),this,SLOT(onExit_profile_button_click()));
+    return true;
 }
 
 void Interface::close_mainScreen()
@@ -212,51 +237,72 @@ void Interface::draw_profile()
 {
     grid_layout = new QGridLayout();
 
-    mas_profile_labels << new QLabel();
-    mas_profile_labels[mas_profile_labels.size() - 1]->setText("Уровень: " + QString::number(player->get_level()));
-    grid_layout->addWidget(mas_profile_labels[mas_profile_labels.size() - 1],0,0);
+    QLabel *label = new QLabel();
+    label->setText("Уровень: " + QString::number(player->get_level()));
+    grid_layout->addWidget(label,0,0);
+    labels_map["Level"] = label;
 
-    mas_profile_labels << new QLabel();
-    mas_profile_labels[mas_profile_labels.size() - 1]->setText("Опыт: " + QString::number(player->get_xp()) + "/" + QString::number(player->get_xp_for_next_lvl()));
-    grid_layout->addWidget(mas_profile_labels[mas_profile_labels.size() - 1],1,0);
+    label = new QLabel();
+    label->setText("Опыт: " + QString::number(player->get_xp()) + "/" + QString::number(player->get_xp_for_next_lvl()));
+    grid_layout->addWidget(label,1,0);
+    labels_map["Exp"] = label;
 
-    mas_profile_labels << new QLabel();
-    mas_profile_labels[mas_profile_labels.size() - 1]->setText("Здоровье: " + QString::number(player->get_max_health()));
-    grid_layout->addWidget(mas_profile_labels[mas_profile_labels.size() - 1],2,0);
+    label = new QLabel();
+    label->setText("Здоровье: " + QString::number(player->get_max_health()));
+    grid_layout->addWidget(label,2,0);
+    labels_map["Health"] = label;
 
-    mas_profile_labels << new QLabel();
-    mas_profile_labels[mas_profile_labels.size() - 1]->setText("Атака: " + QString::number(player->get_attack() - round(player->get_attack() * 0.19)) + ".." +
-                                                               QString::number(player->get_attack() + round(player->get_attack() * 0.19)));
+    label = new QLabel();
+    label->setText("Атака: " + QString::number(player->get_attack() - round(player->get_attack() * 0.19)) + ".." +
+                                  QString::number(player->get_attack() + round(player->get_attack() * 0.19)));
+    grid_layout->addWidget(label,3,0);
+    labels_map["Attack"] = label;
 
+    label = new QLabel();
+    label->setText("Очков навыков: " + QString::number(player->get_skill_point()));
+    grid_layout->addWidget(label,0,1,Qt::AlignCenter);
+    labels_map["Skill_points"] = label;
 
-    grid_layout->addWidget(mas_profile_labels[mas_profile_labels.size() - 1],3,0);
+    label = new QLabel();
+    label->setText("Защита: " + QString::number(player->get_defense()));
+    grid_layout->addWidget(label,4,0);
+    labels_map["Defense"] = label;
 
-    mas_profile_labels << new QLabel();
-    mas_profile_labels[mas_profile_labels.size() - 1]->setText("Очков навыков: " + QString::number(player->get_skill_point()));
-    grid_layout->addWidget(mas_profile_labels[mas_profile_labels.size() - 1],0,1,Qt::AlignCenter);
+    label = new QLabel();
+    label->setText("Ловкость: " + QString::number(player->get_agility()));
+    grid_layout->addWidget(label,5,0);
+    labels_map["Agility"] = label;
 
-    mas_profile_labels << new QLabel();
-    mas_profile_labels[mas_profile_labels.size() - 1]->setText("Очков навыков: " + QString::number(player->get_skill_point()));
-    grid_layout->addWidget(mas_profile_labels[mas_profile_labels.size() - 1],0,1,Qt::AlignCenter);
+    label = new QLabel();
+    label->setText("Концентрация: " + QString::number(player->get_concentration()));
+    grid_layout->addWidget(label,6,0);
+    labels_map["Concentration"] = label;
 
-    mas_profile_labels << new QLabel();
-    mas_profile_labels[mas_profile_labels.size() - 1]->setText("Защита: " + QString::number(player->get_defense()));
-    grid_layout->addWidget(mas_profile_labels[mas_profile_labels.size() - 1],4,0);
-
-    mas_profile_labels << new QLabel();
-    mas_profile_labels[mas_profile_labels.size() - 1]->setText("Ловкость: " + QString::number(player->get_agility()));
-    grid_layout->addWidget(mas_profile_labels[mas_profile_labels.size() - 1],5,0);
-
-    mas_profile_labels << new QLabel();
-    mas_profile_labels[mas_profile_labels.size() - 1]->setText("Концентрация: " + QString::number(player->get_concentration()));
-    grid_layout->addWidget(mas_profile_labels[mas_profile_labels.size() - 1],6,0);
 
     if (player->get_skill_point())
-        for (int i = 0; i < mas_profile_labels.size() - 3; i++)
-        {
-            mas_profile_buttons << new QPushButton("+");
-            grid_layout->addWidget(mas_profile_buttons[i],i+1,1,Qt::AlignCenter);
-        }
+    {
+        signalMapper = new QSignalMapper(this);
+
+        QPushButton *button = new QPushButton("+");
+        grid_layout->addWidget(button,4,1,Qt::AlignCenter);
+        buttons_map["Defense_button"] = button;
+        signalMapper->setMapping(button, "Defense_button");
+        QObject::connect(button, SIGNAL(clicked(bool)), signalMapper, SLOT(map()));
+
+        button = new QPushButton("+");
+        grid_layout->addWidget(button,5,1,Qt::AlignCenter);
+        buttons_map["Agility_button"] = button;
+        signalMapper->setMapping(button, "Agility_button");
+        QObject::connect(button, SIGNAL(clicked(bool)), signalMapper, SLOT(map()));
+
+        button = new QPushButton("+");
+        grid_layout->addWidget(button,6,1,Qt::AlignCenter);
+        buttons_map["Concentration_button"] = button;
+        signalMapper->setMapping(button, "Concentration_button");
+        QObject::connect(button, SIGNAL(clicked(bool)), signalMapper, SLOT(map()));
+
+        QObject::connect(signalMapper, SIGNAL(mapped(QString)), this, SLOT(onSkill_point_button_click(QString)));
+    }
 
     profile_frame = new QFrame();
     profile_frame->resize(350,400);
@@ -265,13 +311,38 @@ void Interface::draw_profile()
     scene->addWidget(profile_frame);
     profile_frame->setLayout(grid_layout);
 
-    draw_Exit_profile_button();
+    if (draw_Exit_button(exit_profile_button))
+    {
+        exit_profile_button->move(10, 10);
+        QObject::connect(exit_profile_button,SIGNAL(clicked(bool)),this,SLOT(onExit_profile_button_click()));
+    }
 }
 
 void Interface::add_log(QString str)
 {
     log->addItem(str);
     log->scrollToBottom();
+}
+
+void Interface::delete_skill_buttons()
+{
+    QObject::disconnect(buttons_map["Defense_button"], SIGNAL(clicked(bool)), signalMapper, SLOT(map()));
+    QObject::disconnect(buttons_map["Agility_button"], SIGNAL(clicked(bool)), signalMapper, SLOT(map()));
+    QObject::disconnect(buttons_map["Concentration_button"], SIGNAL(clicked(bool)), signalMapper, SLOT(map()));
+    QObject::disconnect(signalMapper, SIGNAL(mapped(int)), this, SLOT(onSkill_point_button_click(QString)));
+    for (auto i = buttons_map.begin(); i != buttons_map.end(); ++i)
+        i.value()->deleteLater();
+
+    buttons_map.clear();
+    signalMapper->deleteLater();
+}
+
+void Interface::update_profile()
+{
+    labels_map["Skill_points"]->setText("Очков навыков: " + QString::number(player->get_skill_point()));
+    labels_map["Defense"]->setText("Защита: " + QString::number(player->get_defense()));
+    labels_map["Agility"]->setText("Ловкость: " + QString::number(player->get_agility()));
+    labels_map["Concentration"]->setText("Концентрация: " + QString::number(player->get_concentration()));
 }
 
 /*
@@ -338,7 +409,11 @@ void Interface::player_hit()
     {
         add_log("Игрок умер");
         player->restore_health();
-        draw_Exit_battle_button();
+        if (draw_Exit_button(exit_battle_button))
+        {
+            exit_battle_button->move(scene->width() / 2 - exit_battle_button->width() / 2, scene->height() / 2 - exit_battle_button->height() / 2 - log->height());
+            QObject::connect(exit_battle_button,SIGNAL(clicked(bool)),this,SLOT(onExit_battle_button_click()));
+        }
     }
 }
 
@@ -369,15 +444,19 @@ void Interface::enemy_hit()
 
         player->increase_xp(enemy->get_xp());
 
-        draw_Exit_battle_button();
+        if (draw_Exit_button(exit_battle_button))
+        {
+            exit_battle_button->move(scene->width() / 2 - exit_battle_button->width() / 2, scene->height() / 2 - exit_battle_button->height() / 2 - log->height());
+            QObject::connect(exit_battle_button,SIGNAL(clicked(bool)),this,SLOT(onExit_battle_button_click()));
+        }
 
     }
 }
 
 void Interface::update_health_bar()
 {
-    mas_profile_labels[0]->setText("Здоровье: " + QString::number(player->get_max_health()) + "/" + QString::number(player->get_health()));
-    mas_profile_labels[1]->setText("Здоровье: " + QString::number(enemy->get_max_health()) + "/" + QString::number(enemy->get_health()));
+    labels_map["Player_health"]->setText("Здоровье: " + QString::number(player->get_max_health()) + "/" + QString::number(player->get_health()));
+    labels_map["Enemy_health"]->setText("Здоровье: " + QString::number(enemy->get_max_health()) + "/" + QString::number(enemy->get_health()));
 }
 
 //TODO: нормально склонять имена противников и слово "нанёс"
@@ -417,18 +496,19 @@ void Interface::update_log(int players_hit)
 
 void Interface::onExit_battle_button_click()
 {
-    disconnect(exit_battle_button, SIGNAL(clicked(bool)), this, SLOT(onExit_battle_button_click()));
-    disconnect(player, SIGNAL(hit_is_done()), this, SLOT(update_health_bar()));
-    disconnect(enemy, SIGNAL(hit_is_done()), this, SLOT(update_health_bar()));
-    disconnect(player, SIGNAL(hit_is_done()), signalMapper, SLOT(map()));
-    disconnect(enemy, SIGNAL(hit_is_done()), signalMapper, SLOT(map()));
-    disconnect(signalMapper, SIGNAL(mapped(int)), this, SLOT(update_log(int)));
-    disconnect(player, SIGNAL(is_alive()), this, SLOT(enemy_hit()));
-    disconnect(enemy, SIGNAL(is_alive()), this,SLOT(player_hit()));
+    QObject::disconnect(exit_battle_button, SIGNAL(clicked(bool)), this, SLOT(onExit_battle_button_click()));
+    QObject::disconnect(player, SIGNAL(hit_is_done()), this, SLOT(update_health_bar()));
+    QObject::disconnect(enemy, SIGNAL(hit_is_done()), this, SLOT(update_health_bar()));
+    QObject::disconnect(player, SIGNAL(hit_is_done()), signalMapper, SLOT(map()));
+    QObject::disconnect(enemy, SIGNAL(hit_is_done()), signalMapper, SLOT(map()));
+    QObject::disconnect(signalMapper, SIGNAL(mapped(int)), this, SLOT(update_log(int)));
+    QObject::disconnect(player, SIGNAL(is_alive()), this, SLOT(enemy_hit()));
+    QObject::disconnect(enemy, SIGNAL(is_alive()), this,SLOT(player_hit()));
 
-    enemy->deleteLater();
+    delete enemy;
     player->delete_after_battle();
-    mas_profile_labels.clear();
+    qDeleteAll(labels_map);
+    labels_map.clear();
     log->deleteLater();
     signalMapper->deleteLater();
 
@@ -441,12 +521,42 @@ void Interface::onExit_battle_button_click()
 
 void Interface::onExit_profile_button_click()
 {
-    disconnect(exit_profile_button, SIGNAL(clicked(bool)), this, SLOT(onExit_profile_button_click()));
-    mas_profile_labels.clear();
-    mas_profile_buttons.clear();
+    QObject::disconnect(exit_profile_button, SIGNAL(clicked(bool)), this, SLOT(onExit_profile_button_click()));
+
+    qDeleteAll(labels_map);
+    labels_map.clear();
+
+    if (player->get_skill_point() > 0)
+        delete_skill_buttons();
+
     grid_layout->deleteLater();
     profile_frame->deleteLater();
+    exit_profile_button->deleteLater();
     draw_mainScreen();
+}
+
+void Interface::onSkill_point_button_click(QString name)
+{
+    if (name == "Defense_button")
+    {
+        player->increase_defense(10);
+        player->decrease_skill_points();
+    }
+    else if (name == "Agility_button")
+    {
+        player->increase_agility(5);
+        player->decrease_skill_points();
+    }
+    else if (name == "Concentration_button")
+    {
+        player->increase_concentration(5);
+        player->decrease_skill_points();
+    }
+
+    if (player->get_skill_point() <= 0)
+        delete_skill_buttons();
+
+    update_profile();
 }
 
 void Interface::battle()

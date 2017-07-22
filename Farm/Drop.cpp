@@ -93,7 +93,7 @@ void Drop::fill_beast_mas(std::vector<Beast> &mas)
     mas[mas.size() - 1].defense = 500;
     mas[mas.size() - 1].agility = 8;
     mas[mas.size() - 1].concentration = 16;
-    mas[mas.size() - 1].xp = 15;
+    mas[mas.size() - 1].xp = 150;
     mas[mas.size() - 1].attack = 50;
     mas[mas.size() - 1].lvl = 1;
     mas[mas.size() - 1].image = (QPixmap(":/images/boar.png").scaled(200, 200, Qt::KeepAspectRatio));

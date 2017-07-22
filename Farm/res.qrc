@@ -8,5 +8,6 @@
         <file>boar.png</file>
         <file>owl.png</file>
         <file>forest_road.png</file>
+        <file>square.png</file>
     </qresource>
 </RCC>

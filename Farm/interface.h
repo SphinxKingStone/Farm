@@ -22,8 +22,7 @@ public:
     ~Interface();
     void show_startWindow();
     void draw_mainScreen();
-    void draw_Exit_battle_button();
-    void draw_Exit_profile_button();
+    bool draw_Exit_button(QPushButton *&button);
     void close_mainScreen();
     void draw_profile();
     void add_log(QString str);
@@ -48,22 +47,28 @@ private:
     QSignalMapper * signalMapper;
     QPushButton * exit_battle_button;
     QPushButton * exit_profile_button;
+    QPushButton * exit_inventory_button;
 
     int * hit_value;
 
-    QList<QLabel*> mas_profile_labels;
-    QList<QPushButton*> mas_profile_buttons;
+    QMap<QString, QLabel*> labels_map;
+    QMap<QString, QPushButton*> buttons_map;
+
+    void delete_skill_buttons();
+    void update_profile();
 
 private slots:
     void play_bt_click();
     void onLocation_list_item_clicked();
     void onBeast_list_item_selected();
-    void onprofile_button_click();
+    void onProfile_button_click();
+    void onInventory_button_click();
     void battle();
     void update_health_bar();
     void update_log(int players_hit);
     void onExit_battle_button_click();
     void onExit_profile_button_click();
+    void onSkill_point_button_click(QString name);
 
     void player_hit();
     void enemy_hit();

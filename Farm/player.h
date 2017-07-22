@@ -18,6 +18,11 @@ public:
     void delete_after_battle();
     void increase_xp(int amount);
     void increase_lvl();
+    void increase_defense(int amount);
+    void increase_agility(int amount);
+    void increase_concentration(int amount);
+
+    void decrease_skill_points();
 
     int get_hit(int amount, QString type = nullptr); // returns: 0 - dodge; -1 - block;
     int hit();
@@ -33,7 +38,7 @@ public:
     int get_concentration();
     int get_xp_for_next_lvl();
     int get_skill_point();
-    void set_item(QGraphicsPixmapItem * new_item);
+    void set_item(QGraphicsPixmapItem * new_item, qreal x, qreal y);
     QGraphicsPixmapItem * get_item();
     QPixmap get_image();
     void allocate_timers();

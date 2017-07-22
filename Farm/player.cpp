@@ -60,6 +60,26 @@ void Player::increase_lvl()
     restore_health();
 }
 
+void Player::increase_defense(int amount)
+{
+    defense += amount;
+}
+
+void Player::increase_agility(int amount)
+{
+    agility += amount;
+}
+
+void Player::increase_concentration(int amount)
+{
+    concentration += amount;
+}
+
+void Player::decrease_skill_points()
+{
+    skill_point--;
+}
+
 
 
 int Player::get_hit(int amount, QString type)
@@ -185,10 +205,10 @@ int Player::get_skill_point()
     return skill_point;
 }
 
-void Player::set_item(QGraphicsPixmapItem * new_item)
+void Player::set_item(QGraphicsPixmapItem * new_item, qreal x, qreal y)
 {
     item = new_item;
-    item->setPos(100, 200);
+    item->setPos(x, y);
 }
 
 QGraphicsPixmapItem *Player::get_item()

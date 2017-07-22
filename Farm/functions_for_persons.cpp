@@ -5,7 +5,7 @@ bool avoid(int base_value, double min_value)
 {
     double * chance = new double();
     double * my_chance = new double();
-    *chance = (double)qrand() / RAND_MAX;
+    *chance = static_cast<double>(qrand()) / RAND_MAX;
     *chance = (min_value + (*chance) * (100.0 - min_value));
     *my_chance = base_value * min_value;
 
