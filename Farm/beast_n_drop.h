@@ -30,11 +30,14 @@ struct FindByName {
     }
 };
 
-struct drop
+struct Item
 {
     int id;
     QString name;
+    QString type;
     int rarity;
+    QPixmap image;
+    int cost;
 };
 
 #endif // BEAST_N_DROP_H

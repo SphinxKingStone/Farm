@@ -12,5 +12,10 @@
         <file>backpack.jpg</file>
         <file>coin.png</file>
         <file>trash_can.png</file>
+        <file>equip.png</file>
+        <file>axe.png</file>
+        <file>garbage.png</file>
+        <file>diamond.png</file>
+        <file>iron.png</file>
     </qresource>
 </RCC>

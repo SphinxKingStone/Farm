@@ -1,9 +1,27 @@
 #include "inventory.h"
 #include <QDebug>
+#include <QSignalMapper>
 
-Inventory::Inventory()
+Inventory::Inventory(Player *p)
 {
+    player = p;
+}
 
+bool Inventory::equip(int id)
+{
+    if (player->get_items()[id].type == "weapon")
+    {
+        profile_cells["weapon"]->setPixmap(player->get_items()[id].image);
+        return true;
+    }
+    return false;
+}
+
+void Inventory::sell(int id)
+{
+    player->increase_money(player->get_items()[id].cost);
+    //удаляем предмет из инвентаря
+    player->remove_item(player->get_items().begin() + id);
 }
 
 Inventory::onCell_click()
@@ -14,16 +32,30 @@ Inventory::onCell_click()
 Inventory::onCell_right_click(int id)
 {
     qDebug() << "right click";
-    qDebug() << id;
+    //Надо чистить память
     QMenu * menu = new QMenu;
+    QSignalMapper * signalMapper = new QSignalMapper();
+    //если в выбраной клетке оружие, то его можно надеть
+//    добавить броню и т.д.
+    if (player->get_items()[id].type == "weapon")
+    {
+
+    QAction * equip = menu->addAction(QIcon(":/images/equip.png"),"Надеть");
+    signalMapper->setMapping(equip, id);
+    QObject::connect(equip, SIGNAL(triggered(bool)), signalMapper, SLOT(map()));
+    QObject::connect(signalMapper, SIGNAL(mapped(int)), this, SLOT(equip(int)));
+    }
+
 
     QAction * sell = menu->addAction(QIcon(":/images/coin.png"), "Продать");
-    connect(sell, SIGNAL(triggered(bool)), this, SLOT(onCell_click()));
+    signalMapper->setMapping(sell, id);
+    QObject::connect(sell, SIGNAL(triggered(bool)), signalMapper, SLOT(map()));
+    QObject::connect(signalMapper, SIGNAL(mapped(int)), this, SLOT(sell(int)));
 
     QAction * throw_out = menu->addAction(QIcon(":/images/trash_can.png"),"Выкинуть");
     connect(throw_out, SIGNAL(triggered(bool)), this, SLOT(onCell_click()));
 
     menu->setStyleSheet("color: white;"
                         "background-color: rgba(255,255,255,100);");
-    menu->exec(cells[0]->mapToGlobal(cells[id]->pos()));
+    menu->exec(inventory_cells[0]->mapToGlobal(inventory_cells[id]->pos()));
 }

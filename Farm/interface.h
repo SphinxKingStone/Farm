@@ -10,10 +10,11 @@
 #include <player.h>
 #include "drop.h"
 #include "enemy.h"
-#include "inventory.h"
 #include <QTimer>
 #include <QSignalMapper>
 #include "clickablelabel.h"
+#include "inventory.h"
+#include "beast_n_drop.h"
 
 
 class Interface: public QGraphicsView
@@ -30,6 +31,9 @@ public:
     void add_log(QString str);
     void draw_players_cells();
     void draw_inventory_cells();
+    void update_inventory();
+
+    void add_item_pic(QPixmap image, int row, int column, int i);
 
     //QString declension(QString name, char sex, bool isName); Надо будет доработать
 
@@ -53,6 +57,7 @@ private:
     QPushButton * exit_battle_button;
     QPushButton * exit_profile_button;
     QPushButton * exit_inventory_button;
+    QLabel * money_label;
 
     int * hit_value;
 
@@ -61,6 +66,8 @@ private:
 
     void delete_skill_buttons();
     void update_profile();
+
+    std::vector<ClickableLabel*> stupid_pointer;
 
 private slots:
     void play_bt_click();
@@ -74,6 +81,7 @@ private slots:
     void onExit_battle_button_click();
     void onExit_profile_button_click();
     void onSkill_point_button_click(QString name);
+    void onExit_inventory_button_click();
 
     void player_hit();
     void enemy_hit();

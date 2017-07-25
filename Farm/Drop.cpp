@@ -56,24 +56,39 @@ Drop::~Drop()
     tmp_drop.shrink_to_fit();
 }
 
-void Drop::fill_drop_mas(std::vector<drop> &mas)
+void Drop::fill_drop_mas(std::vector<Item> &mas)
 {
-    mas.insert(mas.end(), drop());
-    mas[mas.size() - 1].id = mas.size() - 1;
-    mas[mas.size() - 1].name = "Леденец";
-    mas[mas.size() - 1].rarity = 100;
-    mas.insert(mas.end(), drop());
-    mas[mas.size() - 1].id = mas.size() - 1;
-    mas[mas.size() - 1].name = "Золото";
-    mas[mas.size() - 1].rarity = 75;
-    mas.insert(mas.end(), drop());
-    mas[mas.size() - 1].id = mas.size() - 1;
-    mas[mas.size() - 1].name = "Бриллиант";
-    mas[mas.size() - 1].rarity = 15;
-    mas.insert(mas.end(), drop());
-    mas[mas.size() - 1].id = mas.size() - 1;
-    mas[mas.size() - 1].name = "Мусор";
-    mas[mas.size() - 1].rarity = 100;
+    mas.insert(mas.end(), Item());
+    mas.back().id = mas.size() - 1;
+    mas.back().name = "Топор";
+    mas.back().rarity = 100;
+    mas.back().type = "weapon";
+    mas.back().image = (QPixmap(":/images/axe.png").scaled(40, 40, Qt::KeepAspectRatio));
+    mas.back().cost = 100;
+
+    mas.insert(mas.end(), Item());
+    mas.back().id = mas.size() - 1;
+    mas.back().name = "Железо";
+    mas.back().rarity = 75;
+    mas.back().type = "scrap";
+    mas.back().image = (QPixmap(":/images/iron.png").scaled(40, 40, Qt::KeepAspectRatio));
+    mas.back().cost = 300;
+
+    mas.insert(mas.end(), Item());
+    mas.back().id = mas.size() - 1;
+    mas.back().name = "Бриллиант";
+    mas.back().rarity = 15;
+    mas.back().type = "scrap";
+    mas.back().image = (QPixmap(":/images/diamond.png").scaled(40, 40, Qt::KeepAspectRatio));
+    mas.back().cost = 700;
+
+    mas.insert(mas.end(), Item());
+    mas.back().id = mas.size() - 1;
+    mas.back().name = "Мусор";
+    mas.back().rarity = 100;
+    mas.back().type = "scrap";
+    mas.back().image = (QPixmap(":/images/garbage.png").scaled(40, 40, Qt::KeepAspectRatio));
+    mas.back().cost = 10;
 }
 
 void Drop::fill_beast_mas(std::vector<Beast> &mas)
@@ -89,7 +104,7 @@ void Drop::fill_beast_mas(std::vector<Beast> &mas)
     mas[mas.size() - 1].name = "Кабан";
     mas[mas.size() - 1].drop_chance = 100;
     mas[mas.size() - 1].rarity = 100;
-    mas[mas.size() - 1].health = 100;
+    mas[mas.size() - 1].health = 10;
     mas[mas.size() - 1].defense = 500;
     mas[mas.size() - 1].agility = 8;
     mas[mas.size() - 1].concentration = 16;

@@ -4,15 +4,26 @@
 #include <QMap>
 #include "clickablelabel.h"
 #include <QMenu>
+#include "beast_n_drop.h"
+#include "player.h"
 
 
 class Inventory: public QObject
 {
     Q_OBJECT
 public:
-    Inventory();
+    Inventory(Player *p);
 
-    QMap<int, ClickableLabel*> cells;
+    QMap<int, QLabel*> inventory_cells;
+    QMap<QString, ClickableLabel*> profile_cells;
+
+private:
+    Player * player;
+
+private slots:
+    bool equip(int id);
+    void sell(int id);
+
 public slots:
     onCell_click();
     onCell_right_click(int id);

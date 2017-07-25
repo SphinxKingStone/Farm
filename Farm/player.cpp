@@ -20,6 +20,7 @@ Player::Player()
     concentration = 20;
     agility = 20;
     skill_point = 0;
+    money = 0;
 
     //Вызывает libpng warning: iCCP: known incorrect sRGB profile
     image = QPixmap(":/images/main_hero.png").scaled(150, 200, Qt::KeepAspectRatio);
@@ -41,6 +42,11 @@ void Player::delete_after_battle()
     delete item;
     delete animation_speed;
     delete pixel_step;
+}
+
+void Player::delete_item()
+{
+    delete item;
 }
 
 void Player::increase_xp(int amount)
@@ -73,6 +79,11 @@ void Player::increase_agility(int amount)
 void Player::increase_concentration(int amount)
 {
     concentration += amount;
+}
+
+void Player::increase_money(int amount)
+{
+    money += amount;
 }
 
 void Player::decrease_skill_points()
@@ -205,6 +216,11 @@ int Player::get_skill_point()
     return skill_point;
 }
 
+int Player::get_money()
+{
+    return money;
+}
+
 void Player::set_item(QGraphicsPixmapItem * new_item, qreal x, qreal y)
 {
     item = new_item;
@@ -231,6 +247,28 @@ void Player::allocate_timers()
     // Мои личные предпочтения по скорости анимации
     animation_speed = new int(1);
     pixel_step = new qreal(0.23);
+}
+
+bool Player::add_item(Item item)
+{
+    if (items.size() >= 56)
+        return false;
+    else
+    {
+        items.insert(items.end(), item);
+        return true;
+    }
+    return false;
+}
+
+std::vector<Item> Player::get_items()
+{
+    return items;
+}
+
+void Player::remove_item(std::vector<Item>::iterator it)
+{
+    items.erase(it);
 }
 
 void Player::forward_timer_tick()

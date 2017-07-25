@@ -7,6 +7,7 @@
 #include <QObject>
 #include <typeinfo>
 #include <functions_for_persons.h>
+#include "beast_n_drop.h"
 
 
 class Player: public QObject
@@ -16,11 +17,13 @@ public:
     Player();
     ~Player();
     void delete_after_battle();
+    void delete_item();
     void increase_xp(int amount);
     void increase_lvl();
     void increase_defense(int amount);
     void increase_agility(int amount);
     void increase_concentration(int amount);
+    void increase_money(int amount);
 
     void decrease_skill_points();
 
@@ -38,10 +41,15 @@ public:
     int get_concentration();
     int get_xp_for_next_lvl();
     int get_skill_point();
+    int get_money();
     void set_item(QGraphicsPixmapItem * new_item, qreal x, qreal y);
     QGraphicsPixmapItem * get_item();
     QPixmap get_image();
     void allocate_timers();
+
+    bool add_item(Item item);
+    std::vector<Item> get_items();
+    void remove_item(std::vector<Item>::iterator it);
 private:
     int max_health;
     int health;
@@ -52,6 +60,9 @@ private:
     int xp;
     int lvl;
     int skill_point;
+
+    std::vector<Item> items;
+    int money;
 
     qreal * x_coord;
     QPixmap image;
