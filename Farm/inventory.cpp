@@ -20,8 +20,12 @@ bool Inventory::equip(int id)
 void Inventory::sell(int id)
 {
     player->increase_money(player->get_items()[id].cost);
-    //удаляем предмет из инвентаря
-    player->remove_item(player->get_items().begin() + id);
+    //удаляем предмет из инвентаря по id
+    auto it = player->get_items().begin();
+    player->remove_item(it + id);
+    qDebug() << "(*(it+id)).name";
+    emit item_deleted();
+    qDebug() << "(*(it+id)).name";
 }
 
 Inventory::onCell_click()

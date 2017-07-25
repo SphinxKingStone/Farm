@@ -31,7 +31,6 @@ public:
     void add_log(QString str);
     void draw_players_cells();
     void draw_inventory_cells();
-    void update_inventory();
 
     void add_item_pic(QPixmap image, int row, int column, int i);
 
@@ -78,6 +77,7 @@ private slots:
     void battle();
     void update_health_bar();
     void update_log(int players_hit);
+    void update_inventory();
     void onExit_battle_button_click();
     void onExit_profile_button_click();
     void onSkill_point_button_click(QString name);

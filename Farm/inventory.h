@@ -6,6 +6,7 @@
 #include <QMenu>
 #include "beast_n_drop.h"
 #include "player.h"
+#include "inventory.h"
 
 
 class Inventory: public QObject
@@ -27,6 +28,9 @@ private slots:
 public slots:
     onCell_click();
     onCell_right_click(int id);
+
+signals:
+    void item_deleted();
 };
 
 #endif // INVENTORY_H
