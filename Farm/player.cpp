@@ -268,6 +268,7 @@ std::vector<Item> Player::get_items()
 
 void Player::remove_item(std::vector<Item>::iterator it)
 {
+    qDebug() << (*it).name;
     items.erase(it);
 }
 

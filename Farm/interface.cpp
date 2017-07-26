@@ -204,12 +204,13 @@ bool Interface::draw_Exit_button(QPushButton *&button)
     return true;
 }
 
-void Interface::close_mainScreen()
+bool Interface::close_mainScreen()
 {
     location_list->deleteLater();
     beast_list->deleteLater();
     profile_button->deleteLater();
     inventory_button->deleteLater();
+    return true;
 }
 
 void Interface::draw_profile()
@@ -392,8 +393,9 @@ void Interface::draw_inventory_cells()
 }
 
 void Interface::update_inventory()
-{
-    qDebug() << "я тут";
+{/*
+    QObject::disconnect(signalMapper, SIGNAL(mapped(int)), inventory, SLOT(onCell_right_click(int)));
+
     for (auto it = stupid_pointer.begin(); it != stupid_pointer.end(); it++)
         QObject::disconnect((*it), SIGNAL(rightClicked()), signalMapper, SLOT(map()));
 
@@ -409,12 +411,17 @@ void Interface::update_inventory()
     }
     delete i;
     tmp.clear();
+    QObject::connect(signalMapper, SIGNAL(mapped(int)), inventory, SLOT(onCell_right_click(int)));
 
     money_label->setText("Золото: " + QString::number(player->get_money()));
     money_label->setStyleSheet("background-color: rgba(255,255,255,0);"
                            "font: 16px;"
                            "font-weight: bold;");
     money_label->move(profile_frame->x() - money_label->width() - 10, profile_frame->y());
+    qDebug() << "закончил update";*/
+    if (onExit_inventory_button_click())
+        if(close_mainScreen())
+            onInventory_button_click();
 }
 
 void Interface::add_item_pic(QPixmap image, int row, int column, int i)
@@ -426,7 +433,7 @@ void Interface::add_item_pic(QPixmap image, int row, int column, int i)
     signalMapper->setMapping(label, i);
     QObject::connect(label, SIGNAL(rightClicked()), signalMapper, SLOT(map()));
 
-    stupid_pointer.push_back(label);
+    stupid_pointer.insert(stupid_pointer.end(), label);
 }
 
 void Interface::delete_skill_buttons()
@@ -667,7 +674,7 @@ void Interface::onSkill_point_button_click(QString name)
     update_profile();
 }
 
-void Interface::onExit_inventory_button_click()
+bool Interface::onExit_inventory_button_click()
 {
     QObject::disconnect(signalMapper, SIGNAL(mapped(int)), inventory, SLOT(onCell_right_click(int)));
     QObject::disconnect(exit_inventory_button, SIGNAL(clicked(bool)), this, SLOT(onExit_inventory_button_click()));
@@ -690,6 +697,7 @@ void Interface::onExit_inventory_button_click()
 
     exit_inventory_button->deleteLater();
     draw_mainScreen();
+    return true;
 }
 
 void Interface::battle()

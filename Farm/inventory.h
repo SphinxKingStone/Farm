@@ -4,6 +4,7 @@
 #include <QMap>
 #include "clickablelabel.h"
 #include <QMenu>
+#include <QSignalMapper>
 #include "beast_n_drop.h"
 #include "player.h"
 #include "inventory.h"
@@ -20,6 +21,7 @@ public:
 
 private:
     Player * player;
+    QSignalMapper * signalMapper;
 
 private slots:
     bool equip(int id);

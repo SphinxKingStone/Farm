@@ -26,7 +26,7 @@ public:
     void show_startWindow();
     void draw_mainScreen();
     bool draw_Exit_button(QPushButton *&button);
-    void close_mainScreen();
+    bool close_mainScreen();
     void draw_profile();
     void add_log(QString str);
     void draw_players_cells();
@@ -81,7 +81,7 @@ private slots:
     void onExit_battle_button_click();
     void onExit_profile_button_click();
     void onSkill_point_button_click(QString name);
-    void onExit_inventory_button_click();
+    bool onExit_inventory_button_click();
 
     void player_hit();
     void enemy_hit();
