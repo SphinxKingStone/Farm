@@ -255,21 +255,41 @@ bool Player::add_item(Item item)
         return false;
     else
     {
-        items.insert(items.end(), item);
+        qDebug() << items.size();
+        items[items.size()] = item;
         return true;
     }
     return false;
 }
 
-std::vector<Item> Player::get_items()
+QMap<int, Item> Player::get_items()
 {
     return items;
 }
 
-void Player::remove_item(std::vector<Item>::iterator it)
+void Player::remove_item(int id)
 {
-    qDebug() << (*it).name;
-    items.erase(it);
+//    0 1 2 3
+//    0 2 3
+//    0 1 2
+    qDebug() << id;
+    if (items.find(id) != items.end())
+    {
+
+        items.erase(items.find(id));
+        if (id != items.size())
+        {
+            qDebug() << "вошел";
+            int * d = new int(items.size());
+            for (int i = id; i < *d; i++)
+            {
+                items[i] = items[i+1];
+            }
+            delete d;
+            items.erase(std::prev(items.end()));
+        }
+    }
+    qDebug() << "вышел";
 }
 
 void Player::forward_timer_tick()

@@ -48,8 +48,8 @@ public:
     void allocate_timers();
 
     bool add_item(Item item);
-    std::vector<Item> get_items();
-    void remove_item(std::vector<Item>::iterator it);
+    QMap<int, Item> get_items();
+    void remove_item(int id);
 private:
     int max_health;
     int health;
@@ -61,7 +61,7 @@ private:
     int lvl;
     int skill_point;
 
-    std::vector<Item> items;
+    QMap<int, Item> items;
     int money;
 
     qreal * x_coord;

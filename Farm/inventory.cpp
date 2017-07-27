@@ -19,10 +19,7 @@ bool Inventory::equip(int id)
 void Inventory::sell(int id)
 {
     player->increase_money(player->get_items()[id].cost);
-    //удаляем предмет из инвентаря по id
-    std::vector<Item>::iterator it = (player->get_items().begin() + id);
-    qDebug() << id;
-    player->remove_item(it);
+    player->remove_item(id);
     emit item_deleted();
     qDebug() << "Emit прошел";
 }

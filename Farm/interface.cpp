@@ -365,11 +365,11 @@ void Interface::draw_inventory_cells()
     }
 
     //заполняем временный вектор всеми вещами персонажа
-    std::vector<Item> tmp = player->get_items();
+    QMap<int, Item> tmp = player->get_items();
     int * i = new int(0);
     for (auto itv = tmp.begin(); itv != tmp.end(); itv++)
     {
-        add_item_pic((*itv).image, div((*i), 7).quot, div((*i), 7).rem, (*i));
+        add_item_pic((*itv).image, div(*i, 7).quot, div(*i, 7).rem, *i);
         (*i)++;
     }
     delete i;
@@ -393,20 +393,23 @@ void Interface::draw_inventory_cells()
 }
 
 void Interface::update_inventory()
-{/*
+{
     QObject::disconnect(signalMapper, SIGNAL(mapped(int)), inventory, SLOT(onCell_right_click(int)));
 
     for (auto it = stupid_pointer.begin(); it != stupid_pointer.end(); it++)
-        QObject::disconnect((*it), SIGNAL(rightClicked()), signalMapper, SLOT(map()));
-
-    qDeleteAll(stupid_pointer);
+    {
+        (*it)->deleteLater();
+        if (stupid_pointer.size() == 0)
+            break;
+    }
     stupid_pointer.clear();
 
-    std::vector<Item> tmp = player->get_items();
+
+    QMap<int, Item> tmp = player->get_items();
     int * i = new int(0);
     for (auto itv = tmp.begin(); itv != tmp.end(); itv++)
     {
-        add_item_pic((*itv).image, div((*i), 7).quot, div((*i), 7).rem, (*i));
+        add_item_pic((*itv).image, div(*i, 7).quot, div(*i, 7).rem, *i);
         (*i)++;
     }
     delete i;
@@ -418,10 +421,12 @@ void Interface::update_inventory()
                            "font: 16px;"
                            "font-weight: bold;");
     money_label->move(profile_frame->x() - money_label->width() - 10, profile_frame->y());
-    qDebug() << "закончил update";*/
+    qDebug() << "закончил update";
+    /*
     if (onExit_inventory_button_click())
         if(close_mainScreen())
             onInventory_button_click();
+            */
 }
 
 void Interface::add_item_pic(QPixmap image, int row, int column, int i)
@@ -679,9 +684,6 @@ bool Interface::onExit_inventory_button_click()
     QObject::disconnect(signalMapper, SIGNAL(mapped(int)), inventory, SLOT(onCell_right_click(int)));
     QObject::disconnect(exit_inventory_button, SIGNAL(clicked(bool)), this, SLOT(onExit_inventory_button_click()));
 
-    for (auto it = stupid_pointer.begin(); it != stupid_pointer.end(); it++)
-        QObject::disconnect((*it), SIGNAL(rightClicked()), signalMapper, SLOT(map()));
-
     profile_frame->deleteLater();
     grid_layout->deleteLater();
     signalMapper->deleteLater();
@@ -691,8 +693,15 @@ bool Interface::onExit_inventory_button_click()
     inventory->inventory_cells.clear();
     qDeleteAll(inventory->profile_cells);
     inventory->profile_cells.clear();
-    qDeleteAll(stupid_pointer);
+
+    for (auto it = stupid_pointer.begin(); it != stupid_pointer.end(); it++)
+    {
+        (*it)->deleteLater();
+        if (stupid_pointer.size() == 0)
+            break;
+    }
     stupid_pointer.clear();
+
     money_label->deleteLater();
 
     exit_inventory_button->deleteLater();
