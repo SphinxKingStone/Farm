@@ -10,7 +10,8 @@ ClickableLabel::~ClickableLabel() {}
 void ClickableLabel::mousePressEvent(QMouseEvent* event) {
     if (event->button() == Qt::LeftButton)
         emit clicked();
-    else if (event->button() == Qt::RightButton)
+    //убрал баг при котором после клика на виджет дальнейшим кликам было не важно, где курсор, все равно тригеррилось нажатие на виджет (пкм + qmenu)
+    else if ((event->button() == Qt::RightButton) && (this->rect().contains(event->pos())))
     {
         emit rightClicked();
     }
