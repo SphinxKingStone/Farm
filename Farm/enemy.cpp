@@ -86,24 +86,19 @@ int Enemy::hit()
 
     //учесть что надо при атаке, шанс промаха, крита и т.д.
     int tmp_attack = attack;
-    int * atk_discrepancy = new int();
+    int atk_discrepancy;
 
-    *atk_discrepancy = (qrand () % 38) - 19;
-    tmp_attack += round(double(attack * (*atk_discrepancy)) / 100);
+    atk_discrepancy = (qrand () % 38) - 19;
+    tmp_attack += round(double(attack * (atk_discrepancy)) / 100);
 
-    delete atk_discrepancy;
+    double crit_chance; // случайное от 0.0625 до 100
+    double my_crit_chance; // шанс блока от 0 до 100 с шагом в 0.0625
+    crit_chance = (double)qrand() / RAND_MAX;
+    crit_chance = (0.0625 + (crit_chance) * (100.0 - 0.0625));
+    my_crit_chance = concentration * 0.0625;
 
-    double * crit_chance = new double(); // случайное от 0.0625 до 100
-    double * my_crit_chance = new double(); // шанс блока от 0 до 100 с шагом в 0.0625
-    *crit_chance = (double)qrand() / RAND_MAX;
-    *crit_chance = (0.0625 + (*crit_chance) * (100.0 - 0.0625));
-    *my_crit_chance = concentration * 0.0625;
-
-    if (*my_crit_chance >= *crit_chance)
+    if (my_crit_chance >= crit_chance)
         tmp_attack *= 1.75;
-
-    delete my_crit_chance;
-    delete crit_chance;
 
     return tmp_attack;
 }
@@ -120,13 +115,11 @@ int Enemy::get_hit(int amount, QString type)
     if (avoid(agility, 0.0625))
         return 0;
 
-    double * armor_absorption = new double();
+    double armor_absorption;
 
-    *armor_absorption = amount * (defense * 0.0125);
-    *armor_absorption /= 100;
-    amount -= round(*armor_absorption);
-
-    delete armor_absorption;
+    armor_absorption = amount * (defense * 0.0125);
+    armor_absorption /= 100;
+    amount -= round(armor_absorption);
 
     // чтобы при очень сильной защите здоровье в плюс не уходило
     if (amount < 0)

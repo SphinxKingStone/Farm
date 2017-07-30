@@ -26,12 +26,13 @@ Interface::~Interface()
 
 void Interface::play_bt_click()
 {
-    draw_mainScreen();
     player = new Player();
     drop = new Drop();
     inventory = new Inventory(player);
     QObject::connect(inventory, SIGNAL(item_deleted()), this, SLOT(update_inventory()));
     QObject::connect(inventory, SIGNAL(item_equiped(QString,QPixmap)), this, SLOT(draw_equipped_item(QString,QPixmap))) ;
+
+    draw_mainScreen();
 
     play_buttton->deleteLater();
 
@@ -41,32 +42,17 @@ void Interface::onLocation_list_item_clicked()
 {
     beast_list->clear();
 
-    switch (location_list->currentRow())
-    {
-    case 0:
-        beast_list->addItem(drop->beast_mas[0].name + " (" + QString::number(drop->beast_mas[0].lvl) + ")");
-        beast_list->addItem(drop->beast_mas[2].name + " (" + QString::number(drop->beast_mas[2].lvl) + ")");
-        beast_list->setStyleSheet("background-color: rgba(255, 255, 255, 30%);"
+    // проходим по массиву монстров в выбранной локации
+    for (auto it = drop->location_mas[location_list->currentRow()].habitat_beasts.begin(); it != drop->location_mas[location_list->currentRow()].habitat_beasts.end(); ++it)
+        beast_list->addItem(drop->beast_mas[*it].name + " (" + QString::number(drop->beast_mas[*it].lvl) + ")");
+
+    beast_list->setStyleSheet("background-color: rgba(255, 255, 255, 30%);"
                                   "font: 18px;");
-        break;
-    case 1:
-        beast_list->addItem(drop->beast_mas[1].name + " (" + QString::number(drop->beast_mas[1].lvl) + ")");
-        beast_list->addItem(drop->beast_mas[2].name + " (" + QString::number(drop->beast_mas[2].lvl) + ")");
-        beast_list->setStyleSheet("background-color: rgba(255, 255, 255, 30%);"
-                                  "font: 18px;");
-        break;
-    case 2:
-        beast_list->addItem(drop->beast_mas[0].name + " (" + QString::number(drop->beast_mas[0].lvl) + ")");
-        beast_list->addItem(drop->beast_mas[3].name + " (" + QString::number(drop->beast_mas[3].lvl) + ")");
-        beast_list->setStyleSheet("background-color: rgba(255, 255, 255, 30%);"
-                                  "font: 18px;");
-        break;
-    }
 }
 
 void Interface::onBeast_list_item_selected()
 {
-     //ищем итератор по имени существа (строка, пока не встретится пробле), которое получаем из выбранной строки в списке
+     //ищем итератор по имени существа (строка, пока не встретится пробел), которое получаем из выбранной строки в списке
      auto it = std::find_if(drop->beast_mas.begin(), drop->beast_mas.end(), FindByName(beast_list->currentItem()->text().split(" ").at(0)));
      //Если не нашли, то итератор будет указывать на конец вектора, вот и проверяем, нашли ли
      if (it != drop->beast_mas.end())
@@ -163,17 +149,17 @@ void Interface::draw_mainScreen()
                                  "font: 18px;");
 
     //Todo: составить список локаций в отдельном файле и добавлять их одной строкой
-    location_list->addItem("Лес");
-    location_list->addItem("Тропинка");
-    location_list->addItem("Перекрёсток");
-    connect(location_list,SIGNAL(itemClicked(QListWidgetItem*)),this,SLOT(onLocation_list_item_clicked()));
+    for (auto it = drop->location_mas.begin(); it != drop->location_mas.end(); ++it)
+        location_list->addItem((*it).name);
+
+    QObject::connect(location_list,SIGNAL(itemClicked(QListWidgetItem*)),this,SLOT(onLocation_list_item_clicked()));
 
     beast_list = new QListWidget();
     beast_list->move(location_list->x() + location_list->width() + 30, location_list->y());
     beast_list->resize(scene->width() - beast_list->x() - 10, location_list->height());
     beast_list->setStyleSheet("background-color: rgba(255, 255, 255, 30%);"
                               "font: 18px;");
-    connect(beast_list, SIGNAL(itemActivated(QListWidgetItem*)), this, SLOT(onBeast_list_item_selected()));
+    QObject::connect(beast_list, SIGNAL(itemActivated(QListWidgetItem*)), this, SLOT(onBeast_list_item_selected()));
 
     profile_button = new QPushButton("Профиль", nullptr);
     profile_button->resize(150,60);
@@ -182,7 +168,7 @@ void Interface::draw_mainScreen()
                            "background-color: lightblue;"
                            "font: 16px;"
                            "font-weight: bold;");
-    connect(profile_button, SIGNAL(clicked(bool)), this, SLOT(onProfile_button_click()));
+    QObject::connect(profile_button, SIGNAL(clicked(bool)), this, SLOT(onProfile_button_click()));
 
     inventory_button = new QPushButton("Инвентарь", nullptr);
     inventory_button->resize(150,60);
@@ -191,7 +177,7 @@ void Interface::draw_mainScreen()
                            "background-color: lightblue;"
                            "font: 16px;"
                            "font-weight: bold;");
-    connect(inventory_button, SIGNAL(clicked(bool)), this, SLOT(onInventory_button_click()));
+    QObject::connect(inventory_button, SIGNAL(clicked(bool)), this, SLOT(onInventory_button_click()));
 
     scene->addWidget(location_list);
     scene->addWidget(beast_list);
@@ -376,13 +362,12 @@ void Interface::draw_inventory_cells()
 
     //заполняем временный вектор всеми вещами персонажа
     QMap<int, Item> tmp = player->get_items();
-    int * i = new int(0);
+    int i = 0;
     for (auto itv = tmp.begin(); itv != tmp.end(); itv++)
     {
-        add_item_pic((*itv).image, div(*i, 7).quot, div(*i, 7).rem, *i);
-        (*i)++;
+        add_item_pic((*itv).image, div(i, 7).quot, div(i, 7).rem, i);
+        i++;
     }
-    delete i;
     tmp.clear();
     QObject::connect(signalMapper, SIGNAL(mapped(int)), inventory, SLOT(onCell_right_click(int)));
 
@@ -416,13 +401,12 @@ void Interface::update_inventory()
 
 
     QMap<int, Item> tmp = player->get_items();
-    int * i = new int(0);
+    int i = 0;
     for (auto itv = tmp.begin(); itv != tmp.end(); itv++)
     {
-        add_item_pic((*itv).image, div(*i, 7).quot, div(*i, 7).rem, *i);
-        (*i)++;
+        add_item_pic((*itv).image, div(i, 7).quot, div(i, 7).rem, i);
+        i++;
     }
-    delete i;
     tmp.clear();
     QObject::connect(signalMapper, SIGNAL(mapped(int)), inventory, SLOT(onCell_right_click(int)));
 
@@ -555,22 +539,20 @@ void Interface::enemy_hit()
     {
         add_log(enemy->get_name() + " умер");
         player->restore_health();
-        int * tmp_id = new int(drop->simulate_drop(enemy->get_beast_id()));
+        int tmp_id = drop->simulate_drop(enemy->get_beast_id());
 //        нельзя написать if (int * tmp_id = new int(drop_class_variable->simulate_drop(enemy->get_beast_id()))), потому что будет возвращаться указатель на выделенную
 //        память, а не значение, которое мы присвоили, а вот if (int tmp = get_number()) написать можно, там будет значение tmp возвращаться.
 //        Только что узнал об этом, но запишу, чтобы лучше запомнилось, хоть это и гуглится по первой ссылке
 
         // Число 9999 значит, что ничего не выпало, не использутся ноль, потому что для его использования пришлось бы добавить фиктивную, нулевую запись,
         // в массив с предметами, как обойти это по красивому у меня идей нет.
-        if (*tmp_id != 9999)
+        if (tmp_id != 9999)
         {
-            add_log("Вам выпало: " + drop->drop_mas[*tmp_id].name);
-            player->add_item(drop->drop_mas[*tmp_id]);
+            add_log("Вам выпало: " + drop->drop_mas[tmp_id].name);
+            player->add_item(drop->drop_mas[tmp_id]);
         }
         else
             add_log("Вам ничего не выпало");
-
-        delete tmp_id;
 
         player->increase_xp(enemy->get_xp());
 
@@ -738,7 +720,7 @@ void Interface::draw_equipped_item(QString place, QPixmap image)
         ClickableLabel * label = new ClickableLabel();
         label->setPixmap(image);
         scene->addWidget(label);
-        label->move(inventory->profile_cells[place]->pos().);
+        label->move(inventory->profile_cells[place]->pos());
     //  делаем вещи кликабельными
 
         stupid_pointer.insert(stupid_pointer.end(), label);

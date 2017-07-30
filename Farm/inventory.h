@@ -33,7 +33,6 @@ private slots:
     bool equip(int id);
     void sell(int id);
     void throw_out(int id);
-    void onMenu_close();
 
 public slots:
     onCell_click();

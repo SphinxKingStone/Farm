@@ -22,22 +22,20 @@ Inventory::Inventory(Player *p)
 bool Inventory::equip(int id)
 {
     //сперва удаляем предмет из инвентаря
-    Item * tmp_item = new Item();
-    *tmp_item = player->get_item(id);
+    Item tmp_item = player->get_item(id);
     player->remove_item(id);
     emit item_deleted();
     // теперь надо надевать предмет на соответствующую ячейку (else if)
-    if (tmp_item->type == "weapon")
+    if (tmp_item.type == "weapon")
     {
-        player->equip_item("weapon", *tmp_item);
-        emit item_equiped("weapon", tmp_item->image);
+        player->equip_item("weapon", tmp_item);
+        emit item_equiped("weapon", tmp_item.image);
     }
-    else if (tmp_item->type == "helmet")
+    else if (tmp_item.type == "helmet")
     {
-        player->equip_item("head", *tmp_item);
-        emit item_equiped("head", tmp_item->image);
+        player->equip_item("head", tmp_item);
+        emit item_equiped("head", tmp_item.image);
     }
-    delete tmp_item;
 }
 
 void Inventory::sell(int id)
@@ -52,11 +50,6 @@ void Inventory::throw_out(int id)
 {
     player->remove_item(id);
     emit item_deleted();
-}
-
-void Inventory::onMenu_close()
-{
-    qDebug() << "SLOOOT";
 }
 
 Inventory::onCell_click()

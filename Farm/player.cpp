@@ -105,13 +105,11 @@ int Player::get_hit(int amount, QString type)
         return 0;
 
 
-    double * armor_absorption = new double();
+    double armor_absorption;
 
-    *armor_absorption = amount * (defense * 0.0125);
-    *armor_absorption /= 100;
-    amount -= round(*armor_absorption);
-
-    delete armor_absorption;
+    armor_absorption = amount * (defense * 0.0125);
+    armor_absorption /= 100;
+    amount -= round(armor_absorption);
 
     // чтобы при очень сильной защите здоровье в плюс не уходило
     if (amount < 0)
@@ -135,24 +133,19 @@ int Player::hit()
     // здесь учесть все вещи, текущую атаку, шанс крита, шанс промаха и т.д.
     // расхождение урона в 19%; min - 81 %, max - 119% от текущей атаки
     int tmp_attack = attack;
-    int * atk_discrepancy = new int();
+    int atk_discrepancy;
 
-    *atk_discrepancy = (qrand () % 39) - 19;
-    tmp_attack += round(double(attack * (*atk_discrepancy)) / 100);
+    atk_discrepancy = (qrand () % 39) - 19;
+    tmp_attack += round(double(attack * (atk_discrepancy)) / 100);
 
-    delete atk_discrepancy;
+    double crit_chance; // случайное от 0.0625 до 100
+    double my_crit_chance; // шанс блока от 0 до 100 с шагом в 0.0625
+    crit_chance = (double)qrand() / RAND_MAX;
+    crit_chance = (0.0625 + (crit_chance) * (100.0 - 0.0625));
+    my_crit_chance = concentration * 0.0625;
 
-    double * crit_chance = new double(); // случайное от 0.0625 до 100
-    double * my_crit_chance = new double(); // шанс блока от 0 до 100 с шагом в 0.0625
-    *crit_chance = (double)qrand() / RAND_MAX;
-    *crit_chance = (0.0625 + (*crit_chance) * (100.0 - 0.0625));
-    *my_crit_chance = concentration * 0.0625;
-
-    if (*my_crit_chance >= *crit_chance)
+    if (my_crit_chance >= crit_chance)
         tmp_attack *= 1.75;
-
-    delete my_crit_chance;
-    delete crit_chance;
 
     return tmp_attack;
 }
@@ -276,7 +269,6 @@ void Player::remove_item(int id)
 //    0 1 2 3
 //    0 2 3
 //    0 1 2
-    qDebug() << id;
     if (items.find(id) != items.end())
     {
 
@@ -284,16 +276,14 @@ void Player::remove_item(int id)
         if (id != items.size())
         {
             qDebug() << "вошел";
-            int * d = new int(items.size());
-            for (int i = id; i < *d; i++)
+            int d = items.size();
+            for (int i = id; i < d; i++)
             {
                 items[i] = items[i+1];
             }
-            delete d;
             items.erase(std::prev(items.end()));
         }
     }
-    qDebug() << "вышел";
 }
 
 void Player::equip_item(QString place, Item item)

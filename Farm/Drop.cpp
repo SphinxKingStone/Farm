@@ -10,6 +10,7 @@ Drop::Drop()
 {
     fill_beast_mas(beast_mas);
     fill_drop_mas(drop_mas);
+    fill_location_mas(location_mas);
 }
 
 
@@ -103,6 +104,19 @@ void Drop::fill_drop_mas(std::vector<Item> &mas)
 void Drop::fill_location_mas(std::vector<Location> &mas)
 {
     mas.push_back(Location());
+    mas.back().name = "Лес";
+    mas.back().habitat_beasts.push_back(0);
+    mas.back().habitat_beasts.push_back(2);
+
+    mas.push_back(Location());
+    mas.back().name = "Тропинка";
+    mas.back().habitat_beasts.push_back(1);
+    mas.back().habitat_beasts.push_back(2);
+
+    mas.push_back(Location());
+    mas.back().name = "Перекрёсток";
+    mas.back().habitat_beasts.push_back(0);
+    mas.back().habitat_beasts.push_back(3);
 }
 
 void Drop::fill_beast_mas(std::vector<Beast> &mas)
