@@ -30,7 +30,6 @@ void Interface::play_bt_click()
     drop = new Drop();
     inventory = new Inventory(player);
     QObject::connect(inventory, SIGNAL(item_deleted()), this, SLOT(update_inventory()));
-    QObject::connect(inventory, SIGNAL(item_equiped(QString,QPixmap)), this, SLOT(draw_equipped_item(QString,QPixmap))) ;
 
     draw_mainScreen();
 
@@ -116,6 +115,7 @@ void Interface::onInventory_button_click()
 {
     close_mainScreen();
 
+    signalMapper = new QSignalMapper();
     draw_players_cells();
     draw_inventory_cells();
 
@@ -209,8 +209,6 @@ bool Interface::close_mainScreen()
 
 void Interface::draw_profile()
 {
-    player->add_item(*(drop->drop_mas.end() - 1));
-    player->add_item(drop->drop_mas[0]);
     grid_layout = new QGridLayout();
 
     QLabel *label = new QLabel();
@@ -300,57 +298,93 @@ void Interface::add_log(QString str)
     log->scrollToBottom();
 }
 
+QPair<int,int> gridPosition(QWidget * widget)
+{
+  auto gp = qMakePair(-1,-1);
+  if (! widget->parentWidget()) return gp;
+  auto layout = dynamic_cast<QGridLayout*>(widget->parentWidget()->layout());
+  if (! layout) return gp;
+  int index = layout->indexOf(widget);
+  Q_ASSERT(index >= 0);
+  int rs,cs;
+  layout->getItemPosition(index, &gp.first, &gp.second, &rs, &cs);
+  return gp;
+}
+
 void Interface::draw_players_cells()
 {
+    players_layout = new QGridLayout();
+    players_view = new QGraphicsView();
+    players_view->move(10, 80);
+    players_view->resize(280, 270);
+    players_view->setLayout(players_layout);
+    players_view->setStyleSheet("background: transparent;"
+                        "border: transparent;");
+    scene->addWidget(players_view);
+
     ClickableLabel * label = new ClickableLabel();
     label->setPixmap(QPixmap(":/images/square.png").scaled(45,45,Qt::KeepAspectRatio));
-    label->move(10,150);
-    scene->addWidget(label);
-    inventory->profile_cells["weapon"] = label;
+    inventory->profile_cells["hands"] = label;
+    players_layout->addWidget(label,1,0,Qt::AlignLeft);
 
     label = new ClickableLabel();
     label->setPixmap(QPixmap(":/images/square.png").scaled(45,45,Qt::KeepAspectRatio));
-    label->move(inventory->profile_cells["weapon"]->x(), inventory->profile_cells["weapon"]->y() + inventory->profile_cells["weapon"]->height() + 20);
-    scene->addWidget(label);
     inventory->profile_cells["body"] = label;
+    players_layout->addWidget(label,2,0,Qt::AlignLeft);
 
     label = new ClickableLabel();
     label->setPixmap(QPixmap(":/images/square.png").scaled(45,45,Qt::KeepAspectRatio));
-    label->move(inventory->profile_cells["body"]->x(), inventory->profile_cells["body"]->y() + inventory->profile_cells["body"]->height() + 20);
-    scene->addWidget(label);
     inventory->profile_cells["arms"] = label;
+    players_layout->addWidget(label,3,0,Qt::AlignLeft);
 
-    player->set_item(scene->addPixmap(player->get_image()), inventory->profile_cells["weapon"]->x() + inventory->profile_cells["weapon"]->width() + 20, inventory->profile_cells["weapon"]->y());
+    player->set_item(scene->addPixmap(player->get_image()), players_view->pos().x()+45+20, players_view->pos().y()+45+20);
 
     label = new ClickableLabel();
     label->setPixmap(QPixmap(":/images/square.png").scaled(45,45,Qt::KeepAspectRatio));
-    label->move(player->get_Pixmap_item()->x() + player->get_Pixmap_item()->boundingRect().width() + 20, inventory->profile_cells["weapon"]->y());
-    scene->addWidget(label);
     inventory->profile_cells["shoulders"] = label;
+    players_layout->addWidget(label,1,2,Qt::AlignRight);
 
     label = new ClickableLabel();
     label->setPixmap(QPixmap(":/images/square.png").scaled(45,45,Qt::KeepAspectRatio));
-    label->move(inventory->profile_cells["shoulders"]->x(), inventory->profile_cells["shoulders"]->y() + inventory->profile_cells["shoulders"]->height() + 20);
-    scene->addWidget(label);
     inventory->profile_cells["legs"] = label;
+    players_layout->addWidget(label,2,2,Qt::AlignRight);
 
     label = new ClickableLabel();
     label->setPixmap(QPixmap(":/images/square.png").scaled(45,45,Qt::KeepAspectRatio));
-    label->move(inventory->profile_cells["legs"]->x(), inventory->profile_cells["legs"]->y() + inventory->profile_cells["legs"]->height() + 20);
-    scene->addWidget(label);
     inventory->profile_cells["feet"] = label;
+    players_layout->addWidget(label,3,2,Qt::AlignRight);
 
     label = new ClickableLabel();
     label->setPixmap(QPixmap(":/images/square.png").scaled(45,45,Qt::KeepAspectRatio));
-    label->move(inventory->profile_cells["weapon"]->x() + inventory->profile_cells["shoulders"]->x() / 2, player->get_Pixmap_item()->pos().y() - inventory->profile_cells["weapon"]->height() - 20);
-    scene->addWidget(label);
     inventory->profile_cells["head"] = label;
+    players_layout->addWidget(label,0,1,Qt::AlignCenter);
+
+    QMap<QString, Item> tmp = player->get_equipped_items();
+    for (auto itv = tmp.begin(); itv != tmp.end(); itv++)
+    {
+        ClickableLabel * label = new ClickableLabel();
+        label->setPixmap((*itv).image);
+
+        signalMapper->setMapping(label, itv.key());
+        QObject::connect(label, SIGNAL(rightClicked()), signalMapper, SLOT(map()));
+
+        auto p = gridPosition(inventory->profile_cells[itv.key()]);
+        if (itv.key() == "head")
+            players_layout->addWidget(label, p.first, p.second, Qt::AlignCenter);
+        else if ((itv.key() == "hands") || (itv.key() == "body") || (itv.key() == "arms"))
+            players_layout->addWidget(label, p.first, p.second, Qt::AlignLeft);
+        else if ((itv.key() == "shoulders")|| (itv.key() == "legs") || (itv.key() == "feet"))
+            players_layout->addWidget(label, p.first, p.second, Qt::AlignRight);
+
+        stupid_pointer.push_back(label);
+    }
+    tmp.clear();
+    QObject::connect(signalMapper, SIGNAL(mapped(QString)), inventory, SLOT(onPlayers_cell_right_click(QString)));
 }
 
 void Interface::draw_inventory_cells()
 {
     grid_layout = new QGridLayout();
-    signalMapper = new QSignalMapper();
     //рисуем клетки
     for (int i = 0; i < 56; i++)
     {
@@ -365,7 +399,7 @@ void Interface::draw_inventory_cells()
     int i = 0;
     for (auto itv = tmp.begin(); itv != tmp.end(); itv++)
     {
-        add_item_pic((*itv).image, div(i, 7).quot, div(i, 7).rem, i);
+        add_item_pic(grid_layout, (*itv).image, div(i, 7).quot, div(i, 7).rem, i);
         i++;
     }
     tmp.clear();
@@ -390,6 +424,7 @@ void Interface::draw_inventory_cells()
 void Interface::update_inventory()
 {
     QObject::disconnect(signalMapper, SIGNAL(mapped(int)), inventory, SLOT(onCell_right_click(int)));
+    QObject::disconnect(signalMapper, SIGNAL(mapped(QString)), inventory, SLOT(onPlayers_cell_right_click(QString)));
 
     for (auto it = stupid_pointer.begin(); it != stupid_pointer.end(); it++)
     {
@@ -404,30 +439,46 @@ void Interface::update_inventory()
     int i = 0;
     for (auto itv = tmp.begin(); itv != tmp.end(); itv++)
     {
-        add_item_pic((*itv).image, div(i, 7).quot, div(i, 7).rem, i);
+        add_item_pic(grid_layout, (*itv).image, div(i, 7).quot, div(i, 7).rem, i);
         i++;
     }
     tmp.clear();
     QObject::connect(signalMapper, SIGNAL(mapped(int)), inventory, SLOT(onCell_right_click(int)));
+
+    QMap<QString, Item> tmp2 = player->get_equipped_items();
+    for (auto itv = tmp2.begin(); itv != tmp2.end(); itv++)
+    {
+        ClickableLabel * label = new ClickableLabel();
+        label->setPixmap((*itv).image);
+
+        signalMapper->setMapping(label, itv.key());
+        QObject::connect(label, SIGNAL(rightClicked()), signalMapper, SLOT(map()));
+
+        auto p = gridPosition(inventory->profile_cells[itv.key()]);
+        if (itv.key() == "head")
+            players_layout->addWidget(label, p.first, p.second, Qt::AlignCenter);
+        else if ((itv.key() == "hands") || (itv.key() == "body") || (itv.key() == "arms"))
+            players_layout->addWidget(label, p.first, p.second, Qt::AlignLeft);
+        else if ((itv.key() == "shoulders")|| (itv.key() == "legs") || (itv.key() == "feet"))
+            players_layout->addWidget(label, p.first, p.second, Qt::AlignRight);
+
+        stupid_pointer.insert(stupid_pointer.end(), label);
+    }
+    tmp2.clear();
+    QObject::connect(signalMapper, SIGNAL(mapped(QString)), inventory, SLOT(onPlayers_cell_right_click(QString)));
 
     money_label->setText("Золото: " + QString::number(player->get_money()));
     money_label->setStyleSheet("background-color: rgba(255,255,255,0);"
                            "font: 16px;"
                            "font-weight: bold;");
     money_label->move(profile_frame->x() - money_label->width() - 10, profile_frame->y());
-    qDebug() << "закончил update";
-    /*
-    if (onExit_inventory_button_click())
-        if(close_mainScreen())
-            onInventory_button_click();
-            */
 }
 
-void Interface::add_item_pic(QPixmap image, int row, int column, int i)
+void Interface::add_item_pic(QGridLayout *layout, QPixmap image, int row, int column, int i)
 {
     ClickableLabel * label = new ClickableLabel();
     label->setPixmap(image);
-    grid_layout->addWidget(label,row, column,Qt::AlignAbsolute);
+    layout->addWidget(label,row, column,Qt::AlignAbsolute);
 //  делаем вещи кликабельными
     signalMapper->setMapping(label, i);
     QObject::connect(label, SIGNAL(rightClicked()), signalMapper, SLOT(map()));
@@ -674,12 +725,15 @@ void Interface::onSkill_point_button_click(QString name)
 bool Interface::onExit_inventory_button_click()
 {
     QObject::disconnect(signalMapper, SIGNAL(mapped(int)), inventory, SLOT(onCell_right_click(int)));
+    QObject::disconnect(signalMapper, SIGNAL(mapped(QString)), inventory, SLOT(onPlayers_cell_right_click(QString)));
     QObject::disconnect(exit_inventory_button, SIGNAL(clicked(bool)), this, SLOT(onExit_inventory_button_click()));
 
     profile_frame->deleteLater();
     grid_layout->deleteLater();
     signalMapper->deleteLater();
     player->delete_item();
+    players_layout->deleteLater();
+    players_view->deleteLater();
 
     qDeleteAll(inventory->inventory_cells);
     inventory->inventory_cells.clear();
@@ -699,32 +753,6 @@ bool Interface::onExit_inventory_button_click()
     exit_inventory_button->deleteLater();
     draw_mainScreen();
     return true;
-}
-
-void Interface::draw_equipped_item(QString place, QPixmap image)
-{
-    // код не подходит, надо переделать отображение layout'ом, чтобы нормально распологалось
-    // 0,0,центр; 1,0,лево; 1,1,прво; и т.д.
-    if (place == "weapon")
-    {
-        ClickableLabel * label = new ClickableLabel();
-        label->setPixmap(image);
-        scene->addWidget(label);
-        label->move(inventory->profile_cells[place]->pos());
-    //  делаем вещи кликабельными
-
-        stupid_pointer.insert(stupid_pointer.end(), label);
-    }
-    else if (place == "head")
-    {
-        ClickableLabel * label = new ClickableLabel();
-        label->setPixmap(image);
-        scene->addWidget(label);
-        label->move(inventory->profile_cells[place]->pos());
-    //  делаем вещи кликабельными
-
-        stupid_pointer.insert(stupid_pointer.end(), label);
-    }
 }
 
 void Interface::battle()

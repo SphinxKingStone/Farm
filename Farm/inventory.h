@@ -28,19 +28,23 @@ private:
     QAction * throw_outA;
     QAction * equipA;
     QAction * sellA;
+    QAction * unequipA;
+
+    std::map<QString, QString> equippable_types;
 
 private slots:
-    bool equip(int id);
+    void equip(int id);
     void sell(int id);
     void throw_out(int id);
+    void unequip(QString place);
 
 public slots:
-    onCell_click();
-    onCell_right_click(int id);
+    void onCell_click();
+    void onCell_right_click(int id);
+    void onPlayers_cell_right_click(QString place);
 
 signals:
     void item_deleted();
-    void item_equiped(QString place, QPixmap image);
 };
 
 #endif // INVENTORY_H

@@ -32,7 +32,7 @@ public:
     void draw_players_cells();
     void draw_inventory_cells();
 
-    void add_item_pic(QPixmap image, int row, int column, int i);
+    void add_item_pic(QGridLayout * layout, QPixmap image, int row, int column, int i = 0);
 
     //QString declension(QString name, char sex, bool isName); Надо будет доработать
 
@@ -57,11 +57,14 @@ private:
     QPushButton * exit_profile_button;
     QPushButton * exit_inventory_button;
     QLabel * money_label;
+    QGridLayout * players_layout;
+    QGraphicsView * players_view;
 
     int * hit_value;
 
     QMap<QString, QLabel*> labels_map;
     QMap<QString, QPushButton*> buttons_map;
+    QMap<QString, ClickableLabel*> clickable_labels_map;
 
     void delete_skill_buttons();
     void update_profile();
@@ -82,11 +85,12 @@ private slots:
     void onExit_profile_button_click();
     void onSkill_point_button_click(QString name);
     bool onExit_inventory_button_click();
-    void draw_equipped_item(QString place, QPixmap image);
 
     void player_hit();
     void enemy_hit();
 };
+
+QPair<int,int> gridPosition(QWidget * widget); //получить ряд и столб виджета из layout, в случае ошибки вернет -1 -1
 
 
 #endif // INTERFACE_H

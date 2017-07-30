@@ -5,11 +5,13 @@ std::vector<std::pair<int, int>> level_xp;
 
 Player::Player()
 {
-    //Todo: инициализировать не в конструкторе, а как - то единожды, при запуске программы
-    for (int i = 0; i < 100; i++)
-    {
-        level_xp.insert(level_xp.end(), std::make_pair(i, i * 50));
-    }
+    //Todo: инициализировать не в конструкторе, а как - то единожды, при запуске программы; из файла читать
+    level_xp.push_back(std::make_pair(level_xp.size() + 1, 0));
+    level_xp.push_back(std::make_pair(level_xp.size() + 1, 50));
+    level_xp.push_back(std::make_pair(level_xp.size() + 1, 100));
+    level_xp.push_back(std::make_pair(level_xp.size() + 1, 150));
+    for (int i = 0; i < 10; i++)
+        level_xp.push_back(std::make_pair(level_xp.size() + 1, level_xp.back().second * 2));
 
     max_health = 200;
     health = max_health;
@@ -237,8 +239,8 @@ void Player::allocate_timers()
     QObject::connect(backward_timer, SIGNAL(timeout()), this, SLOT(backward_timer_tick()));
 
     // Мои личные предпочтения по скорости анимации
-    animation_speed = new int(1);
-    pixel_step = new qreal(0.23);
+    animation_speed = new int(2);
+    pixel_step = new qreal(0.46);
 }
 
 bool Player::add_item(Item item)
@@ -257,6 +259,11 @@ bool Player::add_item(Item item)
 QMap<int, Item> Player::get_items()
 {
     return items;
+}
+
+QMap<QString, Item> Player::get_equipped_items()
+{
+    return equipped_items;
 }
 
 Item Player::get_item(int id)
@@ -286,14 +293,15 @@ void Player::remove_item(int id)
     }
 }
 
+void Player::unequip_item(QString place)
+{
+    add_item((*equipped_items.find(place)));
+    equipped_items.erase(equipped_items.find(place));
+}
+
 void Player::equip_item(QString place, Item item)
 {
     equipped_items[place] = item;
-}
-
-void Player::take_off_item(QString place, Item item)
-{
-    equipped_items.erase(equipped_items.find(place));
 }
 
 void Player::forward_timer_tick()

@@ -49,10 +49,11 @@ public:
 
     bool add_item(Item item);
     QMap<int, Item> get_items();
+    QMap<QString, Item> get_equipped_items();
     Item get_item(int id);
     void remove_item(int id);
+    void unequip_item(QString place);
     void equip_item(QString place, Item item);
-    void take_off_item(QString place, Item item);
 private:
     int max_health;
     int health;

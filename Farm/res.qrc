@@ -1,13 +1,10 @@
 <RCC>
     <qresource prefix="/images">
         <file>green_bg.jpg</file>
-        <file>forest_bg.png</file>
-        <file>rsz_forest_bg.png</file>
         <file>main_hero.png</file>
         <file>goblin.png</file>
         <file>boar.png</file>
         <file>owl.png</file>
-        <file>forest_road.png</file>
         <file>square.png</file>
         <file>backpack.jpg</file>
         <file>coin.png</file>
@@ -19,5 +16,12 @@
         <file>iron.png</file>
         <file>wolf.png</file>
         <file>helmet1.png</file>
+        <file>shoulders_1.png</file>
+        <file>white_man.png</file>
+        <file>boots_1.png</file>
+        <file>arms_armor_1.png</file>
+        <file>body_armor_1.png</file>
+        <file>legs_armor_1.png</file>
+        <file>spider.png</file>
     </qresource>
 </RCC>

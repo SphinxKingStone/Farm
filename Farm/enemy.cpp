@@ -22,8 +22,8 @@ Enemy::Enemy(Beast beast)
     // экземпляры и так существуют недолго, плюс, так легче читается код
 
     // Мои личные предпочтения по скорости анимации
-    animation_speed = new int(1);
-    pixel_step = new qreal(0.23);
+    animation_speed = new int(2);
+    pixel_step = new qreal(0.46);
 }
 
 Enemy::~Enemy()
