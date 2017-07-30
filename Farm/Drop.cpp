@@ -58,7 +58,7 @@ Drop::~Drop()
 
 void Drop::fill_drop_mas(std::vector<Item> &mas)
 {
-    mas.insert(mas.end(), Item());
+    mas.push_back(Item());
     mas.back().id = mas.size() - 1;
     mas.back().name = "Топор";
     mas.back().rarity = 100;
@@ -66,7 +66,7 @@ void Drop::fill_drop_mas(std::vector<Item> &mas)
     mas.back().image = (QPixmap(":/images/axe.png").scaled(40, 40, Qt::KeepAspectRatio));
     mas.back().cost = 100;
 
-    mas.insert(mas.end(), Item());
+    mas.push_back(Item());
     mas.back().id = mas.size() - 1;
     mas.back().name = "Железо";
     mas.back().rarity = 75;
@@ -74,7 +74,7 @@ void Drop::fill_drop_mas(std::vector<Item> &mas)
     mas.back().image = (QPixmap(":/images/iron.png").scaled(40, 40, Qt::KeepAspectRatio));
     mas.back().cost = 300;
 
-    mas.insert(mas.end(), Item());
+    mas.push_back(Item());
     mas.back().id = mas.size() - 1;
     mas.back().name = "Бриллиант";
     mas.back().rarity = 15;
@@ -82,13 +82,27 @@ void Drop::fill_drop_mas(std::vector<Item> &mas)
     mas.back().image = (QPixmap(":/images/diamond.png").scaled(40, 40, Qt::KeepAspectRatio));
     mas.back().cost = 700;
 
-    mas.insert(mas.end(), Item());
+    mas.push_back(Item());
     mas.back().id = mas.size() - 1;
     mas.back().name = "Мусор";
     mas.back().rarity = 100;
     mas.back().type = "scrap";
     mas.back().image = (QPixmap(":/images/garbage.png").scaled(40, 40, Qt::KeepAspectRatio));
     mas.back().cost = 10;
+
+    mas.push_back(Item());
+    mas.back().id = mas.size() - 1;
+    mas.back().name = "Простой шлем";
+    mas.back().rarity = 100;
+    mas.back().type = "helmet";
+    //Вызывает libpng warning: iCCP: known incorrect sRGB profile
+    mas.back().image = (QPixmap(":/images/helmet1.png").scaled(40, 40, Qt::KeepAspectRatio));
+    mas.back().cost = 80;
+}
+
+void Drop::fill_location_mas(std::vector<Location> &mas)
+{
+    mas.push_back(Location());
 }
 
 void Drop::fill_beast_mas(std::vector<Beast> &mas)
@@ -99,43 +113,59 @@ void Drop::fill_beast_mas(std::vector<Beast> &mas)
     // ловкость и концентрация могут быть около 800, с шмотом и прокачкой, Разница с шансами от def в 5 раз
     // 800 концентрации/ловкости дает 50% шанс крита/уворота; 1600 - 100%; 1 - 0.0625%; 16 - 1%;
     // пусть крит увеличивает урон на 1.75
-    mas.insert(mas.end(), Beast());
-    mas[mas.size() - 1].id = mas.size() - 1;
-    mas[mas.size() - 1].name = "Кабан";
-    mas[mas.size() - 1].drop_chance = 100;
-    mas[mas.size() - 1].rarity = 100;
-    mas[mas.size() - 1].health = 10;
-    mas[mas.size() - 1].defense = 500;
-    mas[mas.size() - 1].agility = 8;
-    mas[mas.size() - 1].concentration = 16;
-    mas[mas.size() - 1].xp = 150;
-    mas[mas.size() - 1].attack = 50;
-    mas[mas.size() - 1].lvl = 1;
-    mas[mas.size() - 1].image = (QPixmap(":/images/boar.png").scaled(200, 200, Qt::KeepAspectRatio));
-    mas.insert(mas.end(), Beast());
-    mas[mas.size() - 1].id = mas.size() - 1;
-    mas[mas.size() - 1].name = "Гоблин";
-    mas[mas.size() - 1].drop_chance = 75;
-    mas[mas.size() - 1].rarity = 75;
-    mas[mas.size() - 1].health = 250;
-    mas[mas.size() - 1].defense = 1200;
-    mas[mas.size() - 1].agility = 30;
-    mas[mas.size() - 1].concentration = 50;
-    mas[mas.size() - 1].xp = 25;
-    mas[mas.size() - 1].attack = 100;
-    mas[mas.size() - 1].lvl = 2;
-    mas[mas.size() - 1].image = (QPixmap(":/images/goblin.png").transformed(QTransform().scale(-1, 1)).scaled(150, 200, Qt::KeepAspectRatio));
-    mas.insert(mas.end(), Beast());
-    mas[mas.size() - 1].id = mas.size() - 1;
-    mas[mas.size() - 1].name = "Сова";
-    mas[mas.size() - 1].drop_chance = 15;
-    mas[mas.size() - 1].rarity = 15;
-    mas[mas.size() - 1].health = 500;
-    mas[mas.size() - 1].defense = 200;
-    mas[mas.size() - 1].agility = 100;
-    mas[mas.size() - 1].concentration = 16;
-    mas[mas.size() - 1].xp = 40;
-    mas[mas.size() - 1].attack = 150;
-    mas[mas.size() - 1].lvl = 3;
-    mas[mas.size() - 1].image = (QPixmap(":/images/owl.png").scaled(250, 200, Qt::KeepAspectRatio));
+    mas.push_back(Beast());
+    mas.back().id = mas.size() - 1;
+    mas.back().name = "Кабан";
+    mas.back().drop_chance = 100;
+    mas.back().rarity = 100;
+    mas.back().health = 100;
+    mas.back().defense = 500;
+    mas.back().agility = 8;
+    mas.back().concentration = 16;
+    mas.back().xp = 15;
+    mas.back().attack = 50;
+    mas.back().lvl = 1;
+    mas.back().image = (QPixmap(":/images/boar.png").scaled(200, 200, Qt::KeepAspectRatio));
+
+    mas.push_back(Beast());
+    mas.back().id = mas.size() - 1;
+    mas.back().name = "Гоблин";
+    mas.back().drop_chance = 75;
+    mas.back().rarity = 75;
+    mas.back().health = 250;
+    mas.back().defense = 1200;
+    mas.back().agility = 30;
+    mas.back().concentration = 50;
+    mas.back().xp = 25;
+    mas.back().attack = 100;
+    mas.back().lvl = 2;
+    mas.back().image = (QPixmap(":/images/goblin.png").transformed(QTransform().scale(-1, 1)).scaled(150, 200, Qt::KeepAspectRatio));
+
+    mas.push_back(Beast());
+    mas.back().id = mas.size() - 1;
+    mas.back().name = "Сова";
+    mas.back().drop_chance = 15;
+    mas.back().rarity = 15;
+    mas.back().health = 500;
+    mas.back().defense = 200;
+    mas.back().agility = 100;
+    mas.back().concentration = 16;
+    mas.back().xp = 40;
+    mas.back().attack = 150;
+    mas.back().lvl = 3;
+    mas.back().image = (QPixmap(":/images/owl.png").scaled(250, 200, Qt::KeepAspectRatio));
+
+    mas.push_back(Beast());
+    mas.back().id = mas.size() - 1;
+    mas.back().name = "Волк";
+    mas.back().drop_chance = 65;
+    mas.back().rarity = 65;
+    mas.back().health = 120;
+    mas.back().defense = 700;
+    mas.back().agility = 100;
+    mas.back().concentration = 100;
+    mas.back().xp = 20;
+    mas.back().attack = 75;
+    mas.back().lvl = 2;
+    mas.back().image = (QPixmap(":/images/wolf.png").scaled(180, 180, Qt::KeepAspectRatio));
 }

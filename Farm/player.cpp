@@ -52,9 +52,8 @@ void Player::delete_item()
 void Player::increase_xp(int amount)
 {
     xp += amount;
-    if (xp >= level_xp[lvl].second)
+    while (xp >= level_xp[lvl].second)
         increase_lvl();
-
 }
 
 void Player::increase_lvl()
@@ -227,7 +226,7 @@ void Player::set_item(QGraphicsPixmapItem * new_item, qreal x, qreal y)
     item->setPos(x, y);
 }
 
-QGraphicsPixmapItem *Player::get_item()
+QGraphicsPixmapItem *Player::get_Pixmap_item()
 {
     return item;
 }
@@ -267,6 +266,11 @@ QMap<int, Item> Player::get_items()
     return items;
 }
 
+Item Player::get_item(int id)
+{
+    return items[id];
+}
+
 void Player::remove_item(int id)
 {
 //    0 1 2 3
@@ -290,6 +294,16 @@ void Player::remove_item(int id)
         }
     }
     qDebug() << "вышел";
+}
+
+void Player::equip_item(QString place, Item item)
+{
+    equipped_items[place] = item;
+}
+
+void Player::take_off_item(QString place, Item item)
+{
+    equipped_items.erase(equipped_items.find(place));
 }
 
 void Player::forward_timer_tick()

@@ -43,13 +43,16 @@ public:
     int get_skill_point();
     int get_money();
     void set_item(QGraphicsPixmapItem * new_item, qreal x, qreal y);
-    QGraphicsPixmapItem * get_item();
+    QGraphicsPixmapItem * get_Pixmap_item();
     QPixmap get_image();
     void allocate_timers();
 
     bool add_item(Item item);
     QMap<int, Item> get_items();
+    Item get_item(int id);
     void remove_item(int id);
+    void equip_item(QString place, Item item);
+    void take_off_item(QString place, Item item);
 private:
     int max_health;
     int health;
@@ -61,7 +64,8 @@ private:
     int lvl;
     int skill_point;
 
-    QMap<int, Item> items;
+    QMap<int, Item> items; // вещи в рюкзаке
+    QMap<QString, Item> equipped_items; // вещи надетые на персонажа
     int money;
 
     qreal * x_coord;

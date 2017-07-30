@@ -41,6 +41,7 @@ public slots:
 
 signals:
     void item_deleted();
+    void item_equiped(QString place, QPixmap image);
 };
 
 #endif // INVENTORY_H

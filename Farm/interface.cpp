@@ -31,6 +31,7 @@ void Interface::play_bt_click()
     drop = new Drop();
     inventory = new Inventory(player);
     QObject::connect(inventory, SIGNAL(item_deleted()), this, SLOT(update_inventory()));
+    QObject::connect(inventory, SIGNAL(item_equiped(QString,QPixmap)), this, SLOT(draw_equipped_item(QString,QPixmap))) ;
 
     play_buttton->deleteLater();
 
@@ -51,6 +52,12 @@ void Interface::onLocation_list_item_clicked()
     case 1:
         beast_list->addItem(drop->beast_mas[1].name + " (" + QString::number(drop->beast_mas[1].lvl) + ")");
         beast_list->addItem(drop->beast_mas[2].name + " (" + QString::number(drop->beast_mas[2].lvl) + ")");
+        beast_list->setStyleSheet("background-color: rgba(255, 255, 255, 30%);"
+                                  "font: 18px;");
+        break;
+    case 2:
+        beast_list->addItem(drop->beast_mas[0].name + " (" + QString::number(drop->beast_mas[0].lvl) + ")");
+        beast_list->addItem(drop->beast_mas[3].name + " (" + QString::number(drop->beast_mas[3].lvl) + ")");
         beast_list->setStyleSheet("background-color: rgba(255, 255, 255, 30%);"
                                   "font: 18px;");
         break;
@@ -93,7 +100,7 @@ void Interface::onBeast_list_item_selected()
     grid_layout->addWidget(log,1,0,1,0);
 
     player->set_item(scene->addPixmap(player->get_image()), 100, 150);
-    enemy->set_item(scene->addPixmap(enemy->get_image()), player->get_item());
+    enemy->set_item(scene->addPixmap(enemy->get_image()), player->get_Pixmap_item());
 
     QObject::connect(player, SIGNAL(hit_is_done()), this, SLOT(update_health_bar()));
     QObject::connect(enemy, SIGNAL(hit_is_done()), this, SLOT(update_health_bar()));
@@ -158,6 +165,7 @@ void Interface::draw_mainScreen()
     //Todo: составить список локаций в отдельном файле и добавлять их одной строкой
     location_list->addItem("Лес");
     location_list->addItem("Тропинка");
+    location_list->addItem("Перекрёсток");
     connect(location_list,SIGNAL(itemClicked(QListWidgetItem*)),this,SLOT(onLocation_list_item_clicked()));
 
     beast_list = new QListWidget();
@@ -215,6 +223,8 @@ bool Interface::close_mainScreen()
 
 void Interface::draw_profile()
 {
+    player->add_item(*(drop->drop_mas.end() - 1));
+    player->add_item(drop->drop_mas[0]);
     grid_layout = new QGridLayout();
 
     QLabel *label = new QLabel();
@@ -328,7 +338,7 @@ void Interface::draw_players_cells()
 
     label = new ClickableLabel();
     label->setPixmap(QPixmap(":/images/square.png").scaled(45,45,Qt::KeepAspectRatio));
-    label->move(player->get_item()->x() + player->get_item()->boundingRect().width() + 20, inventory->profile_cells["weapon"]->y());
+    label->move(player->get_Pixmap_item()->x() + player->get_Pixmap_item()->boundingRect().width() + 20, inventory->profile_cells["weapon"]->y());
     scene->addWidget(label);
     inventory->profile_cells["shoulders"] = label;
 
@@ -346,7 +356,7 @@ void Interface::draw_players_cells()
 
     label = new ClickableLabel();
     label->setPixmap(QPixmap(":/images/square.png").scaled(45,45,Qt::KeepAspectRatio));
-    label->move(inventory->profile_cells["weapon"]->x() + inventory->profile_cells["shoulders"]->x() / 2, player->get_item()->pos().y() - inventory->profile_cells["weapon"]->height() - 20);
+    label->move(inventory->profile_cells["weapon"]->x() + inventory->profile_cells["shoulders"]->x() / 2, player->get_Pixmap_item()->pos().y() - inventory->profile_cells["weapon"]->height() - 20);
     scene->addWidget(label);
     inventory->profile_cells["head"] = label;
 }
@@ -707,6 +717,32 @@ bool Interface::onExit_inventory_button_click()
     exit_inventory_button->deleteLater();
     draw_mainScreen();
     return true;
+}
+
+void Interface::draw_equipped_item(QString place, QPixmap image)
+{
+    // код не подходит, надо переделать отображение layout'ом, чтобы нормально распологалось
+    // 0,0,центр; 1,0,лево; 1,1,прво; и т.д.
+    if (place == "weapon")
+    {
+        ClickableLabel * label = new ClickableLabel();
+        label->setPixmap(image);
+        scene->addWidget(label);
+        label->move(inventory->profile_cells[place]->pos());
+    //  делаем вещи кликабельными
+
+        stupid_pointer.insert(stupid_pointer.end(), label);
+    }
+    else if (place == "head")
+    {
+        ClickableLabel * label = new ClickableLabel();
+        label->setPixmap(image);
+        scene->addWidget(label);
+        label->move(inventory->profile_cells[place]->pos().);
+    //  делаем вещи кликабельными
+
+        stupid_pointer.insert(stupid_pointer.end(), label);
+    }
 }
 
 void Interface::battle()

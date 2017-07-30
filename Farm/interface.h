@@ -82,6 +82,7 @@ private slots:
     void onExit_profile_button_click();
     void onSkill_point_button_click(QString name);
     bool onExit_inventory_button_click();
+    void draw_equipped_item(QString place, QPixmap image);
 
     void player_hit();
     void enemy_hit();

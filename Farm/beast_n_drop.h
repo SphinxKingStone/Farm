@@ -22,10 +22,12 @@ struct Beast
 };
 
 //Для поиска по имени для std::find_if
-struct FindByName {
+struct FindByName
+{
     const QString name;
     FindByName(const QString& name) : name(name) {}
-    bool operator()(const Beast& j) const {
+    bool operator()(const Beast& j) const
+    {
         return j.name == name;
     }
 };
@@ -39,5 +41,12 @@ struct Item
     QPixmap image;
     int cost;
 };
+
+struct Location
+{
+    QString name;
+    std::vector<int> habitat_beasts;
+};
+
 
 #endif // BEAST_N_DROP_H

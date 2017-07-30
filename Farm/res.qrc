@@ -17,5 +17,7 @@
         <file>garbage.png</file>
         <file>diamond.png</file>
         <file>iron.png</file>
+        <file>wolf.png</file>
+        <file>helmet1.png</file>
     </qresource>
 </RCC>

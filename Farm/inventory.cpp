@@ -22,9 +22,22 @@ Inventory::Inventory(Player *p)
 bool Inventory::equip(int id)
 {
     //сперва удаляем предмет из инвентаря
+    Item * tmp_item = new Item();
+    *tmp_item = player->get_item(id);
     player->remove_item(id);
     emit item_deleted();
     // теперь надо надевать предмет на соответствующую ячейку (else if)
+    if (tmp_item->type == "weapon")
+    {
+        player->equip_item("weapon", *tmp_item);
+        emit item_equiped("weapon", tmp_item->image);
+    }
+    else if (tmp_item->type == "helmet")
+    {
+        player->equip_item("head", *tmp_item);
+        emit item_equiped("head", tmp_item->image);
+    }
+    delete tmp_item;
 }
 
 void Inventory::sell(int id)
@@ -53,10 +66,8 @@ Inventory::onCell_click()
 
 Inventory::onCell_right_click(int id)
 {
-    qDebug() << "right click";
     //если в выбраной клетке оружие, то его можно надеть
-//    добавить броню и т.д.
-    if (player->get_items()[id].type == "weapon")
+    if ((player->get_item(id).type == "weapon") || (player->get_item(id).type == "helmet"))
     {
         equipA = menu->addAction(QIcon(":/images/equip.png"),"Надеть");
         signalMapperE->setMapping(equipA, id);
