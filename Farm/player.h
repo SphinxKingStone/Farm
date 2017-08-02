@@ -23,7 +23,15 @@ public:
     void increase_defense(int amount);
     void increase_agility(int amount);
     void increase_concentration(int amount);
+    void increase_max_health(int amount);
     void increase_money(int amount);
+    void increase_attack(int amount);
+
+    void decrease_defense(int amount);
+    void decrease_agility(int amount);
+    void decrease_concentration(int amount);
+    void decrease_max_health(int amount);
+    void decrease_attack(int amount);
 
     void decrease_skill_points();
 
@@ -51,6 +59,7 @@ public:
     QMap<int, Item> get_items();
     QMap<QString, Item> get_equipped_items();
     Item get_item(int id);
+    Item get_equipped_item(QString place);
     void remove_item(int id);
     void unequip_item(QString place);
     void equip_item(QString place, Item item);

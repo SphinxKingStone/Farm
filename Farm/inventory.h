@@ -32,6 +32,9 @@ private:
 
     std::map<QString, QString> equippable_types;
 
+    typedef void (Player::*inc_func)(int);
+    QMap<QString, QPair<inc_func, inc_func>> stats_mas;
+
 private slots:
     void equip(int id);
     void sell(int id);

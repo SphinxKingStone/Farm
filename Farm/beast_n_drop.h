@@ -2,6 +2,7 @@
 #define BEAST_N_DROP_H
 
 #include <QString>
+#include <QMap>
 #include <QPixmap>
 
 
@@ -40,6 +41,7 @@ struct Item
     int rarity;
     QPixmap image;
     int cost;
+    QMap<QString, int> stats;
 };
 
 struct Location

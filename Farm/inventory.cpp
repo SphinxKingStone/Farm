@@ -28,15 +28,30 @@ Inventory::Inventory(Player *p)
     equippable_types["arms_armor"] = "arms";
     equippable_types["breastplate"] = "body";
     equippable_types["legs_armor"] = "legs";
+
+    stats_mas["defense"].first = player->increase_defense;
+    stats_mas["health"].first = player->increase_max_health;
+    stats_mas["agility"].first = player->increase_agility;
+    stats_mas["concentration"].first = player->increase_concentration;
+    stats_mas["attack"].first = player->increase_attack;
+
+    stats_mas["defense"].second = player->decrease_defense;
+    stats_mas["health"].second = player->decrease_max_health;
+    stats_mas["agility"].second = player->decrease_agility;
+    stats_mas["concentration"].second = player->decrease_concentration;
+    stats_mas["attack"].second = player->decrease_attack;
 }
 
 void Inventory::equip(int id)
 {
     Item tmp_item = player->get_item(id);
 
+//    из stats_mas получаем указатель на функцию увеличения соответствующей характеристики и передаем значение предмета
+    for (auto it = tmp_item.stats.begin(); it != tmp_item.stats.end(); ++it)
+        (player->*(stats_mas[it.key()].first))(it.value());
+
 //    ищем тип выбранного предмета в контейнере предметов, которые можно надевать
     auto it = equippable_types.find(tmp_item.type);
-
     player->equip_item((*it).second, tmp_item);
 
 //    удаляем предмет из инвентаря
@@ -59,6 +74,11 @@ void Inventory::throw_out(int id)
 
 void Inventory::unequip(QString place)
 {
+    Item tmp_item = player->get_equipped_item(place);
+
+    for (auto it = tmp_item.stats.begin(); it != tmp_item.stats.end(); ++it)
+        (player->*(stats_mas[it.key()].second))(it.value());
+
     player->unequip_item(place);
     emit item_deleted();
 }

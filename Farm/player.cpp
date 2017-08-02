@@ -82,17 +82,52 @@ void Player::increase_concentration(int amount)
     concentration += amount;
 }
 
+void Player::increase_max_health(int amount)
+{
+    max_health += amount;
+    restore_health();
+}
+
 void Player::increase_money(int amount)
 {
     money += amount;
+}
+
+void Player::increase_attack(int amount)
+{
+    attack += amount;
+}
+
+void Player::decrease_defense(int amount)
+{
+    defense -= amount;
+}
+
+void Player::decrease_agility(int amount)
+{
+    agility -= amount;
+}
+
+void Player::decrease_concentration(int amount)
+{
+    concentration -= amount;
+}
+
+void Player::decrease_max_health(int amount)
+{
+    max_health -= amount;
+    restore_health();
+}
+
+void Player::decrease_attack(int amount)
+{
+    attack -= amount;
 }
 
 void Player::decrease_skill_points()
 {
     skill_point--;
 }
-
-
 
 int Player::get_hit(int amount, QString type)
 {
@@ -269,6 +304,11 @@ QMap<QString, Item> Player::get_equipped_items()
 Item Player::get_item(int id)
 {
     return items[id];
+}
+
+Item Player::get_equipped_item(QString place)
+{
+    return (*equipped_items.find(place));
 }
 
 void Player::remove_item(int id)
