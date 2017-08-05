@@ -22,6 +22,7 @@ public:
     std::vector<Item> drop_mas;
     std::vector<Item> tmp_drop;
     std::vector<Location> location_mas;
+    std::map<QString, QString> item_types_translate;
 };
 
 #endif // DROP_H

@@ -1,4 +1,5 @@
 #include "clickablelabel.h"
+#include <QDebug>
 
 ClickableLabel::ClickableLabel(QWidget* parent, Qt::WindowFlags f)
     : QLabel(parent) {
@@ -14,5 +15,22 @@ void ClickableLabel::mousePressEvent(QMouseEvent* event) {
     else if ((event->button() == Qt::RightButton) && (this->rect().contains(event->pos())))
     {
         emit rightClicked();
+    }
+}
+
+bool can_del = false;
+
+void ClickableLabel::enterEvent(QEvent *)
+{
+    can_del = true;
+    emit entered();
+}
+
+void ClickableLabel::leaveEvent(QEvent *)
+{
+    if (can_del)
+    {
+        emit left();
+        can_del = false;
     }
 }

@@ -15,9 +15,8 @@ Inventory::Inventory(Player *p)
     signalMapperS = new QSignalMapper();
     QObject::connect(signalMapperS, SIGNAL(mapped(int)), this, SLOT(sell(int)));
 
-    signalMapperT = new QSignalMapper();
-    QObject::connect(signalMapperT, SIGNAL(mapped(int)), this, SLOT(throw_out(int)));
-    QObject::connect(signalMapperT, SIGNAL(mapped(QString)), this, SLOT(unequip(QString)));
+    signalMapperU = new QSignalMapper();
+    QObject::connect(signalMapperU, SIGNAL(mapped(QString)), this, SLOT(unequip(QString)));
 
 //    equippable_types["тип"] = "место";
 
@@ -66,12 +65,6 @@ void Inventory::sell(int id)
     emit item_deleted();
 }
 
-void Inventory::throw_out(int id)
-{
-    player->remove_item(id);
-    emit item_deleted();
-}
-
 void Inventory::unequip(QString place)
 {
     Item tmp_item = player->get_equipped_item(place);
@@ -81,11 +74,6 @@ void Inventory::unequip(QString place)
 
     player->unequip_item(place);
     emit item_deleted();
-}
-
-void Inventory::onCell_click()
-{
-    qDebug() << "click";
 }
 
 void Inventory::onCell_right_click(int id)
@@ -103,10 +91,6 @@ void Inventory::onCell_right_click(int id)
     signalMapperS->setMapping(sellA, id);
     QObject::connect(sellA, SIGNAL(triggered(bool)), signalMapperS, SLOT(map()));
 
-    throw_outA = menu->addAction(QIcon(":/images/trash_can.png"),"Выкинуть");
-    signalMapperT->setMapping(throw_outA, id);
-    QObject::connect(throw_outA, SIGNAL(triggered(bool)), signalMapperT, SLOT(map()));
-
     menu->exec(QCursor::pos());
     menu->clear();
 }
@@ -114,10 +98,13 @@ void Inventory::onCell_right_click(int id)
 void Inventory::onPlayers_cell_right_click(QString place)
 {
 //    libpng warning: iCCP: known incorrect sRGB profile
-    unequipA = menu->addAction(QIcon(":/images/white_man.png"), "Снять");
-    signalMapperT->setMapping(unequipA, place);
-    QObject::connect(unequipA, SIGNAL(triggered(bool)), signalMapperT, SLOT(map()));
+    if (player->get_items().size() < 56)
+    {
+        unequipA = menu->addAction(QIcon(":/images/white_man.png"), "Снять");
+        signalMapperU->setMapping(unequipA, place);
+        QObject::connect(unequipA, SIGNAL(triggered(bool)), signalMapperU, SLOT(map()));
 
-    menu->exec(QCursor::pos());
-    menu->clear();
+        menu->exec(QCursor::pos());
+        menu->clear();
+    }
 }

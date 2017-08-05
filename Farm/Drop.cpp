@@ -11,6 +11,16 @@ Drop::Drop()
     fill_beast_mas(beast_mas);
     fill_drop_mas(drop_mas);
     fill_location_mas(location_mas);
+
+    item_types_translate["weapon"] = "Руки";
+    item_types_translate["shoulder_armor"] = "Плечи";
+    item_types_translate["helmet"] = "Голова";
+    item_types_translate["boots"] = "Ступни";
+    item_types_translate["arms_armor"] = "Руки";
+    item_types_translate["breastplate"] = "Тело";
+    item_types_translate["legs_armor"] = "Ноги";
+    item_types_translate["scrap"] = "Мусор";
+
 }
 
 

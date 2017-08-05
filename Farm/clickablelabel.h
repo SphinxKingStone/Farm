@@ -16,9 +16,13 @@ public:
 signals:
     void clicked();
     void rightClicked();
+    void entered();
+    void left();
 
 protected:
     void mousePressEvent(QMouseEvent* event);
+    void enterEvent(QEvent *);
+    void leaveEvent(QEvent *);
 
 };
 

@@ -6,7 +6,8 @@ Interface::Interface(QWidget *parent)
 {
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    setFixedSize(800,600);
+    // с 602 пролистывание с помощью колеса отключается, чего я и хочу
+    setFixedSize(800,602);
 
     scene = new QGraphicsScene(0,0,800,600,nullptr);
 
@@ -114,15 +115,17 @@ void Interface::onProfile_button_click()
 void Interface::onInventory_button_click()
 {
     close_mainScreen();
+    for (auto &it: drop->drop_mas)    player->add_item(it);
 
     signalMapper = new QSignalMapper();
+    entersMapper = new QSignalMapper();
     draw_players_cells();
     draw_inventory_cells();
 
     draw_Exit_button(exit_inventory_button);
     exit_inventory_button->move(10,540);
     QObject::connect(exit_inventory_button,SIGNAL(clicked(bool)),this, SLOT(onExit_inventory_button_click()));
-
+    draw_inventory_stats();
 }
 
 void Interface::show_startWindow()
@@ -359,6 +362,11 @@ void Interface::draw_players_cells()
     inventory->profile_cells["head"] = label;
     players_layout->addWidget(label,0,1,Qt::AlignCenter);
 
+    draw_equppied_items();
+}
+
+void Interface::draw_equppied_items()
+{
     QMap<QString, Item> tmp = player->get_equipped_items();
     for (auto itv = tmp.begin(); itv != tmp.end(); itv++)
     {
@@ -367,6 +375,9 @@ void Interface::draw_players_cells()
 
         signalMapper->setMapping(label, itv.key());
         QObject::connect(label, SIGNAL(rightClicked()), signalMapper, SLOT(map()));
+        entersMapper->setMapping(label, itv.key());
+        QObject::connect(label, SIGNAL(entered()), entersMapper, SLOT(map()));
+        QObject::connect(label,SIGNAL(left()), this, SLOT(onLeft()));
 
         auto p = gridPosition(inventory->profile_cells[itv.key()]);
         if (itv.key() == "head")
@@ -380,6 +391,21 @@ void Interface::draw_players_cells()
     }
     tmp.clear();
     QObject::connect(signalMapper, SIGNAL(mapped(QString)), inventory, SLOT(onPlayers_cell_right_click(QString)));
+    QObject::connect(entersMapper, SIGNAL(mapped(QString)), this, SLOT(onEntered(QString)));
+}
+
+void Interface::draw_items()
+{
+    QMap<int, Item> tmp = player->get_items();
+    int i = 0;
+    for (auto itv = tmp.begin(); itv != tmp.end(); itv++)
+    {
+        add_item_pic(grid_layout, (*itv).image, div(i, 7).quot, div(i, 7).rem, i);
+        i++;
+    }
+    tmp.clear();
+    QObject::connect(signalMapper, SIGNAL(mapped(int)), inventory, SLOT(onCell_right_click(int)));
+    QObject::connect(entersMapper, SIGNAL(mapped(int)), this, SLOT(onEntered(int)));
 }
 
 void Interface::draw_inventory_cells()
@@ -395,15 +421,7 @@ void Interface::draw_inventory_cells()
     }
 
     //заполняем временный вектор всеми вещами персонажа
-    QMap<int, Item> tmp = player->get_items();
-    int i = 0;
-    for (auto itv = tmp.begin(); itv != tmp.end(); itv++)
-    {
-        add_item_pic(grid_layout, (*itv).image, div(i, 7).quot, div(i, 7).rem, i);
-        i++;
-    }
-    tmp.clear();
-    QObject::connect(signalMapper, SIGNAL(mapped(int)), inventory, SLOT(onCell_right_click(int)));
+    draw_items();
 
     profile_frame = new QFrame();
     profile_frame->resize(400, 560);
@@ -421,10 +439,66 @@ void Interface::draw_inventory_cells()
     money_label->move(profile_frame->x() - money_label->width() - 10, profile_frame->y());
 }
 
+void Interface::draw_inventory_stats()
+{
+    inventory_layout = new QGridLayout();
+    inventory_view = new QGraphicsView();
+    inventory_view->setLayout(inventory_layout);
+    inventory_view->setStyleSheet("border: transparent;"
+                                  "background: white;");
+
+    QLabel *label = new QLabel();
+    label->setText("Здоровье: " + QString::number(player->get_max_health()));
+    label->setAttribute(Qt::WA_TranslucentBackground);
+    label->setStyleSheet("font: 15px;");
+    inventory_layout->addWidget(label,0,0,Qt::AlignBaseline);
+    inventory_stats_labels.push_back(label);
+
+    label = new QLabel();
+    label->setText("Защита: " + QString::number(player->get_defense()));
+    label->setAttribute(Qt::WA_TranslucentBackground);
+    label->setStyleSheet("font: 14px;");
+    inventory_layout->addWidget(label,0,1,Qt::AlignBaseline);
+    inventory_stats_labels.push_back(label);
+
+    label = new QLabel();
+    label->setText("Атака: " + QString::number(player->get_attack() - round(player->get_attack() * 0.19)) + ".." +
+                                  QString::number(player->get_attack() + round(player->get_attack() * 0.19)));
+    label->setAttribute(Qt::WA_TranslucentBackground);
+    label->setStyleSheet("font: 14px;");
+    inventory_layout->addWidget(label,0,2,Qt::AlignBaseline);
+    inventory_stats_labels.push_back(label);
+
+    label = new QLabel();
+    label->setText("Ловкость: " + QString::number(player->get_agility()));
+    label->setAttribute(Qt::WA_TranslucentBackground);
+    label->setStyleSheet("font: 14px;");
+    inventory_layout->addWidget(label,1,0,Qt::AlignBaseline);
+    inventory_stats_labels.push_back(label);
+
+    label = new QLabel();
+    label->setText("Концентрация: " + QString::number(player->get_concentration()));
+    label->setAttribute(Qt::WA_TranslucentBackground);
+    label->setStyleSheet("font: 14px;");
+    inventory_layout->addWidget(label,1,1,Qt::AlignBaseline);
+    inventory_stats_labels.push_back(label);
+
+    scene->addWidget(inventory_view);
+
+    inventory_layout->setSpacing(15);
+    inventory_view->setMaximumSize(350, 150);
+    inventory_view->move(exit_inventory_button->x(), exit_inventory_button->y() - inventory_view->height() - 20);
+}
+
 void Interface::update_inventory()
 {
+    delete_inventory_stats();
+    draw_inventory_stats();
+
     QObject::disconnect(signalMapper, SIGNAL(mapped(int)), inventory, SLOT(onCell_right_click(int)));
     QObject::disconnect(signalMapper, SIGNAL(mapped(QString)), inventory, SLOT(onPlayers_cell_right_click(QString)));
+    QObject::disconnect(entersMapper, SIGNAL(mapped(QString)), this, SLOT(onEntered(QString)));
+    QObject::disconnect(entersMapper, SIGNAL(mapped(int)), this, SLOT(onEntered(int)));
 
     for (auto it = stupid_pointer.begin(); it != stupid_pointer.end(); it++)
     {
@@ -434,38 +508,9 @@ void Interface::update_inventory()
     }
     stupid_pointer.clear();
 
+    draw_items();
 
-    QMap<int, Item> tmp = player->get_items();
-    int i = 0;
-    for (auto itv = tmp.begin(); itv != tmp.end(); itv++)
-    {
-        add_item_pic(grid_layout, (*itv).image, div(i, 7).quot, div(i, 7).rem, i);
-        i++;
-    }
-    tmp.clear();
-    QObject::connect(signalMapper, SIGNAL(mapped(int)), inventory, SLOT(onCell_right_click(int)));
-
-    QMap<QString, Item> tmp2 = player->get_equipped_items();
-    for (auto itv = tmp2.begin(); itv != tmp2.end(); itv++)
-    {
-        ClickableLabel * label = new ClickableLabel();
-        label->setPixmap((*itv).image);
-
-        signalMapper->setMapping(label, itv.key());
-        QObject::connect(label, SIGNAL(rightClicked()), signalMapper, SLOT(map()));
-
-        auto p = gridPosition(inventory->profile_cells[itv.key()]);
-        if (itv.key() == "head")
-            players_layout->addWidget(label, p.first, p.second, Qt::AlignCenter);
-        else if ((itv.key() == "hands") || (itv.key() == "body") || (itv.key() == "arms"))
-            players_layout->addWidget(label, p.first, p.second, Qt::AlignLeft);
-        else if ((itv.key() == "shoulders")|| (itv.key() == "legs") || (itv.key() == "feet"))
-            players_layout->addWidget(label, p.first, p.second, Qt::AlignRight);
-
-        stupid_pointer.insert(stupid_pointer.end(), label);
-    }
-    tmp2.clear();
-    QObject::connect(signalMapper, SIGNAL(mapped(QString)), inventory, SLOT(onPlayers_cell_right_click(QString)));
+    draw_equppied_items();
 
     money_label->setText("Золото: " + QString::number(player->get_money()));
     money_label->setStyleSheet("background-color: rgba(255,255,255,0);"
@@ -478,10 +523,14 @@ void Interface::add_item_pic(QGridLayout *layout, QPixmap image, int row, int co
 {
     ClickableLabel * label = new ClickableLabel();
     label->setPixmap(image);
+//    label->setMouseTracking(true);
     layout->addWidget(label,row, column,Qt::AlignAbsolute);
 //  делаем вещи кликабельными
     signalMapper->setMapping(label, i);
     QObject::connect(label, SIGNAL(rightClicked()), signalMapper, SLOT(map()));
+    entersMapper->setMapping(label, i);
+    QObject::connect(label, SIGNAL(entered()), entersMapper, SLOT(map()));
+    QObject::connect(label,SIGNAL(left()), this, SLOT(onLeft()));
 
     stupid_pointer.insert(stupid_pointer.end(), label);
 }
@@ -505,6 +554,20 @@ void Interface::update_profile()
     labels_map["Defense"]->setText("Защита: " + QString::number(player->get_defense()));
     labels_map["Agility"]->setText("Ловкость: " + QString::number(player->get_agility()));
     labels_map["Concentration"]->setText("Концентрация: " + QString::number(player->get_concentration()));
+}
+
+void Interface::delete_inventory_stats()
+{
+    inventory_layout->deleteLater();
+    inventory_view->deleteLater();
+
+    for (auto it = inventory_stats_labels.begin(); it != inventory_stats_labels.end(); it++)
+    {
+        (*it)->deleteLater();
+        if (inventory_stats_labels.size() == 0)
+            break;
+    }
+    inventory_stats_labels.clear();
 }
 
 /*
@@ -724,13 +787,16 @@ void Interface::onSkill_point_button_click(QString name)
 
 bool Interface::onExit_inventory_button_click()
 {
+    delete_inventory_stats();
     QObject::disconnect(signalMapper, SIGNAL(mapped(int)), inventory, SLOT(onCell_right_click(int)));
+    QObject::disconnect(entersMapper, SIGNAL(mapped(int)), this, SLOT(onEntered(int)));
     QObject::disconnect(signalMapper, SIGNAL(mapped(QString)), inventory, SLOT(onPlayers_cell_right_click(QString)));
     QObject::disconnect(exit_inventory_button, SIGNAL(clicked(bool)), this, SLOT(onExit_inventory_button_click()));
 
     profile_frame->deleteLater();
     grid_layout->deleteLater();
     signalMapper->deleteLater();
+    entersMapper->deleteLater();
     player->delete_item();
     players_layout->deleteLater();
     players_view->deleteLater();
@@ -753,6 +819,88 @@ bool Interface::onExit_inventory_button_click()
     exit_inventory_button->deleteLater();
     draw_mainScreen();
     return true;
+}
+
+void Interface::drawInfoFrame(Item item)
+{
+    info_layout = new QVBoxLayout();
+    info_view = new QGraphicsView();
+    info_view->setLayout(info_layout);
+    info_view->setStyleSheet("border: transparent;"
+                             "background: rgba(0,0,0,180);");
+
+    QLabel * label = new QLabel("Название: " + item.name);
+    info_labels.push_back(label);
+    label->setStyleSheet("color: white;"
+                         "font: 15px;");
+    label->setAttribute(Qt::WA_TranslucentBackground);
+    info_layout->addWidget(label);
+
+    label = new QLabel();
+    info_labels.push_back(label);
+    label->setText("Тип: " + drop->item_types_translate[item.type]);
+    label->setStyleSheet("color: white;"
+                         "font: 15px;");
+    label->setAttribute(Qt::WA_TranslucentBackground);
+    info_layout->addWidget(label);
+    for (auto it = item.stats.begin(); it != item.stats.end(); ++it)
+    {
+        QLabel * label = new QLabel();
+        info_labels.push_back(label);
+        if (it.key() == "defense")
+            label->setText("Защита: " + QString::number(it.value()));
+        else if (it.key() == "attack")
+            label->setText("Урон: " + QString::number(it.value()));
+        else if (it.key() == "health")
+            label->setText("Здоровье: " + QString::number(it.value()));
+        else if (it.key() == "agility")
+            label->setText("Ловкость: " + QString::number(it.value()));
+        else if (it.key() == "concentration")
+            label->setText("Концентрация: " + QString::number(it.value()));
+
+        label->setStyleSheet("color: white;"
+                             "font: 15px;");
+        label->setAttribute(Qt::WA_TranslucentBackground);
+        info_layout->addWidget(label);
+    }
+    label = new QLabel();
+    info_labels.push_back(label);
+    label->setText("Цена: " + QString::number(item.cost));
+    label->setStyleSheet("color: white;"
+                         "font: 15px;");
+    label->setAttribute(Qt::WA_TranslucentBackground);
+    info_layout->addWidget(label);
+
+    scene->addWidget(info_view);
+
+    if (QWidget::mapFromGlobal(QCursor::pos()).x() + info_view->width() <= 800)
+        info_view->move(QWidget::mapFromGlobal(QCursor::pos()));
+    else
+        info_view->move(QWidget::mapFromGlobal(QCursor::pos()).x() - info_view->width(), QWidget::mapFromGlobal(QCursor::pos()).y());
+}
+
+void Interface::onEntered(int id)
+{
+    drawInfoFrame(player->get_item(id));
+}
+
+void Interface::onEntered(QString place)
+{
+    drawInfoFrame(player->get_equipped_item(place));
+}
+
+void Interface::onLeft()
+{
+    for (auto it = info_labels.begin(); it != info_labels.end(); it++)
+    {
+        (*it)->deleteLater();
+        if (info_labels.size() == 0)
+            break;
+    }
+    info_labels.clear();
+
+    info_layout->deleteLater();
+    info_view->deleteLater();
 }
 
 void Interface::battle()

@@ -31,6 +31,10 @@ public:
     void add_log(QString str);
     void draw_players_cells();
     void draw_inventory_cells();
+    void draw_inventory_stats();
+    void drawInfoFrame(Item item);
+    void draw_equppied_items();
+    void draw_items();
 
     void add_item_pic(QGridLayout * layout, QPixmap image, int row, int column, int i = 0);
 
@@ -53,12 +57,17 @@ private:
     QTimer * timer;
     QListWidget * log;
     QSignalMapper * signalMapper;
+    QSignalMapper * entersMapper;
     QPushButton * exit_battle_button;
     QPushButton * exit_profile_button;
     QPushButton * exit_inventory_button;
     QLabel * money_label;
     QGridLayout * players_layout;
     QGraphicsView * players_view;
+    QVBoxLayout * info_layout;
+    QGraphicsView * info_view;
+    QGridLayout * inventory_layout;
+    QGraphicsView * inventory_view;
 
     int * hit_value;
 
@@ -68,8 +77,11 @@ private:
 
     void delete_skill_buttons();
     void update_profile();
+    void delete_inventory_stats();
 
-    std::vector<ClickableLabel*> stupid_pointer;
+    QList<ClickableLabel*> stupid_pointer;
+    QList<QLabel*> info_labels;
+    QList<QLabel*> inventory_stats_labels;
 
 private slots:
     void play_bt_click();
@@ -85,6 +97,9 @@ private slots:
     void onExit_profile_button_click();
     void onSkill_point_button_click(QString name);
     bool onExit_inventory_button_click();
+    void onEntered(int id);
+    void onEntered(QString place);
+    void onLeft();
 
     void player_hit();
     void enemy_hit();
