@@ -15,6 +15,7 @@
 #include "clickablelabel.h"
 #include "inventory.h"
 #include "beast_n_drop.h"
+#include "graphicmap.h"
 
 
 class Interface: public QGraphicsView

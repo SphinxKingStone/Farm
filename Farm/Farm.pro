@@ -30,7 +30,8 @@ SOURCES += main.cpp \
     enemy.cpp \
     functions_for_persons.cpp \
     inventory.cpp \
-    clickablelabel.cpp
+    clickablelabel.cpp \
+    graphicmap.cpp
 
 HEADERS  += \
     beast_n_drop.h \
@@ -40,7 +41,8 @@ HEADERS  += \
     enemy.h \
     functions_for_persons.h \
     inventory.h \
-    clickablelabel.h
+    clickablelabel.h \
+    graphicmap.h
 
 FORMS    +=
 

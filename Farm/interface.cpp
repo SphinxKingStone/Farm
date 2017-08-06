@@ -42,12 +42,10 @@ void Interface::onLocation_list_item_clicked()
 {
     beast_list->clear();
 
-    // проходим по массиву монстров в выбранной локации
-    for (auto it = drop->location_mas[location_list->currentRow()].habitat_beasts.begin(); it != drop->location_mas[location_list->currentRow()].habitat_beasts.end(); ++it)
-        beast_list->addItem(drop->beast_mas[*it].name + " (" + QString::number(drop->beast_mas[*it].lvl) + ")");
-
-    beast_list->setStyleSheet("background-color: rgba(255, 255, 255, 30%);"
-                                  "font: 18px;");
+    GraphicMap * map = new GraphicMap(drop);
+    map->draw_map(location_list->currentItem()->text(), location_list->x() + location_list->width() + 30, location_list->y(),
+                  scene->width() - beast_list->x() - 10, location_list->height());
+    scene->addWidget(map);
 }
 
 void Interface::onBeast_list_item_selected()
