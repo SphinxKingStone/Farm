@@ -16,6 +16,7 @@
 #include "inventory.h"
 #include "beast_n_drop.h"
 #include "graphicmap.h"
+#include "gamesave.h"
 
 
 class Interface: public QGraphicsView
@@ -49,7 +50,9 @@ public:
 
 private:
     QGraphicsScene * scene;
-    QPushButton * play_buttton;
+    QPushButton * play_button;
+    QPushButton * load_button;
+    QPushButton * save_button;
     QGridLayout * grid_layout;
     QListWidget * location_list;
     QPushButton * profile_button;
@@ -88,6 +91,8 @@ private:
 
 private slots:
     void play_bt_click();
+    void load_bt_click();
+    void save_bt_click();
     void onLocation_list_item_clicked();
     void onBeast_list_item_selected(Beast beast);
     void onProfile_button_click();

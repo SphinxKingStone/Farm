@@ -27,6 +27,16 @@ public:
     void increase_money(int amount);
     void increase_attack(int amount);
 
+    void set_xp(int amount);
+    void set_lvl(int amount);
+    void set_defense(int amount);
+    void set_agility(int amount);
+    void set_concentration(int amount);
+    void set_max_health(int amount);
+    void set_money(int amount);
+    void set_attack(int amount);
+    void set_skill_points(int amount);
+
     void decrease_defense(int amount);
     void decrease_agility(int amount);
     void decrease_concentration(int amount);

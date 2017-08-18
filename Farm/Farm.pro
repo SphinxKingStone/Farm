@@ -31,7 +31,8 @@ SOURCES += main.cpp \
     functions_for_persons.cpp \
     inventory.cpp \
     clickablelabel.cpp \
-    graphicmap.cpp
+    graphicmap.cpp \
+    gamesave.cpp
 
 HEADERS  += \
     beast_n_drop.h \
@@ -42,7 +43,8 @@ HEADERS  += \
     functions_for_persons.h \
     inventory.h \
     clickablelabel.h \
-    graphicmap.h
+    graphicmap.h \
+    gamesave.h
 
 FORMS    +=
 

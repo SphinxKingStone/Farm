@@ -15,6 +15,11 @@ Interface::Interface(QWidget *parent)
 
     setScene(scene);
 
+    drop = new Drop();
+    player = new Player();
+    inventory = new Inventory(player);
+    QObject::connect(inventory, SIGNAL(item_deleted()), this, SLOT(update_inventory()));
+
     show_startWindow();
 }
 
@@ -27,15 +32,20 @@ Interface::~Interface()
 
 void Interface::play_bt_click()
 {
-    player = new Player();
-    drop = new Drop();
-    inventory = new Inventory(player);
-    QObject::connect(inventory, SIGNAL(item_deleted()), this, SLOT(update_inventory()));
-
     draw_mainScreen();
+    play_button->deleteLater();
+    load_button->deleteLater();
+}
 
-    play_buttton->deleteLater();
+void Interface::load_bt_click()
+{
+    GameSave::loadProgress(player, drop);
+    play_bt_click();
+}
 
+void Interface::save_bt_click()
+{
+    GameSave::saveProgress(player);
 }
 
 void Interface::onLocation_list_item_clicked()
@@ -104,7 +114,7 @@ void Interface::onProfile_button_click()
 void Interface::onInventory_button_click()
 {
     close_mainScreen();
-    for (auto &it: drop->drop_mas)    player->add_item(it);
+    //for (auto &it: drop->drop_mas)    player->add_item(it);
 
     signalMapper = new QSignalMapper();
     entersMapper = new QSignalMapper();
@@ -119,17 +129,29 @@ void Interface::onInventory_button_click()
 
 void Interface::show_startWindow()
 {
-     play_buttton = new QPushButton("Играть", nullptr);
-     play_buttton->setFixedSize(300,70);
-     play_buttton->setStyleSheet("color: white;"
+     play_button = new QPushButton("Новая игра", nullptr);
+     play_button->setFixedSize(300,70);
+     play_button->setStyleSheet("color: white;"
                             "background-color: lightblue;"
                             "font: 16px;"
                             "font-weight: bold;");
 
-     scene->addWidget(play_buttton);
-     play_buttton->move(scene->width() / 2 - play_buttton->width() / 2, scene->height() / 2 - play_buttton->height() / 2);
+     scene->addWidget(play_button);
 
-     QObject::connect(play_buttton, SIGNAL(clicked(bool)), this, SLOT(play_bt_click()));
+     QObject::connect(play_button, SIGNAL(clicked(bool)), this, SLOT(play_bt_click()));
+
+     load_button = new QPushButton("Продолжить игру", nullptr);
+     load_button->setFixedSize(300,70);
+     load_button->setStyleSheet("color: white;"
+                            "background-color: lightblue;"
+                            "font: 16px;"
+                            "font-weight: bold;");
+
+     scene->addWidget(load_button);
+     load_button->move(scene->width() / 2 - load_button->width() / 2, scene->height() / 2 - load_button->height() - 25);
+     play_button->move(load_button->x(), load_button->y() + play_button->height() + 50);
+
+     QObject::connect(load_button, SIGNAL(clicked(bool)), this, SLOT(load_bt_click()));
 }
 
 void Interface::draw_mainScreen()
@@ -290,6 +312,18 @@ void Interface::draw_profile()
         exit_profile_button->move(10, 10);
         QObject::connect(exit_profile_button,SIGNAL(clicked(bool)),this,SLOT(onExit_profile_button_click()));
     }
+
+    save_button = new QPushButton("Сохранение", nullptr);
+    save_button->setStyleSheet("color: white;"
+                           "background-color: lightblue;"
+                           "font: 16px;"
+                           "font-weight: bold;");
+    save_button->setFixedSize(150,50);
+
+    scene->addWidget(save_button);
+    save_button->move(exit_profile_button->x() + save_button->width()  + 50 , exit_profile_button->y());
+
+    QObject::connect(save_button, SIGNAL(clicked(bool)), this, SLOT(save_bt_click()));
 }
 
 void Interface::add_log(QString str)
@@ -642,6 +676,7 @@ void Interface::player_hit()
             exit_battle_button->move(scene->width() / 2 - exit_battle_button->width() / 2, scene->height() / 2 - exit_battle_button->height() / 2 - log->height());
             QObject::connect(exit_battle_button,SIGNAL(clicked(bool)),this,SLOT(onExit_battle_button_click()));
         }
+        GameSave::saveProgress(player);
     }
 }
 
@@ -678,7 +713,7 @@ void Interface::enemy_hit()
             exit_battle_button->move(scene->width() / 2 - exit_battle_button->width() / 2, scene->height() / 2 - exit_battle_button->height() / 2 - log->height());
             QObject::connect(exit_battle_button,SIGNAL(clicked(bool)),this,SLOT(onExit_battle_button_click()));
         }
-
+        GameSave::saveProgress(player);
     }
 }
 
@@ -761,6 +796,8 @@ void Interface::onExit_profile_button_click()
     grid_layout->deleteLater();
     profile_frame->deleteLater();
     exit_profile_button->deleteLater();
+    QObject::disconnect(save_button, SIGNAL(clicked(bool)), this, SLOT(save_bt_click()));
+    save_button->deleteLater();
     draw_mainScreen();
 }
 

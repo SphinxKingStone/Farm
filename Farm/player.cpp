@@ -98,6 +98,52 @@ void Player::increase_attack(int amount)
     attack += amount;
 }
 
+void Player::set_xp(int amount)
+{
+    xp = amount;
+}
+
+void Player::set_lvl(int amount)
+{
+    lvl = amount;
+}
+
+void Player::set_defense(int amount)
+{
+    defense = amount;
+}
+
+void Player::set_agility(int amount)
+{
+    agility = amount;
+}
+
+void Player::set_concentration(int amount)
+{
+    concentration = amount;
+}
+
+void Player::set_max_health(int amount)
+{
+    max_health = amount;
+    restore_health();
+}
+
+void Player::set_money(int amount)
+{
+    money = amount;
+}
+
+void Player::set_attack(int amount)
+{
+    attack = amount;
+}
+
+void Player::set_skill_points(int amount)
+{
+    skill_point = amount;
+}
+
 void Player::decrease_defense(int amount)
 {
     defense -= amount;
