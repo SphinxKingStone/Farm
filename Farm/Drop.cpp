@@ -74,7 +74,7 @@ void Drop::fill_drop_mas(std::vector<Item> &mas)
     mas.back().name = "Топор";
     mas.back().rarity = 100;
     mas.back().type = "weapon";
-    mas.back().image = (QPixmap(":/images/axe.png").scaled(40, 40, Qt::KeepAspectRatio));
+    mas.back().image = (QPixmap(":/images/resources/axe.png").scaled(40, 40, Qt::KeepAspectRatio));
     mas.back().cost = 100;
     mas.back().stats["attack"] = 10;
     mas.back().stats["concentration"] = 35;
@@ -84,7 +84,7 @@ void Drop::fill_drop_mas(std::vector<Item> &mas)
     mas.back().name = "Железо";
     mas.back().rarity = 75;
     mas.back().type = "scrap";
-    mas.back().image = (QPixmap(":/images/iron.png").scaled(40, 40, Qt::KeepAspectRatio));
+    mas.back().image = (QPixmap(":/images/resources/iron.png").scaled(40, 40, Qt::KeepAspectRatio));
     mas.back().cost = 300;
 
     mas.push_back(Item());
@@ -92,7 +92,7 @@ void Drop::fill_drop_mas(std::vector<Item> &mas)
     mas.back().name = "Бриллиант";
     mas.back().rarity = 15;
     mas.back().type = "scrap";
-    mas.back().image = (QPixmap(":/images/diamond.png").scaled(40, 40, Qt::KeepAspectRatio));
+    mas.back().image = (QPixmap(":/images/resources/diamond.png").scaled(40, 40, Qt::KeepAspectRatio));
     mas.back().cost = 700;
 
     mas.push_back(Item());
@@ -100,7 +100,7 @@ void Drop::fill_drop_mas(std::vector<Item> &mas)
     mas.back().name = "Мусор";
     mas.back().rarity = 100;
     mas.back().type = "scrap";
-    mas.back().image = (QPixmap(":/images/garbage.png").scaled(40, 40, Qt::KeepAspectRatio));
+    mas.back().image = (QPixmap(":/images/resources/garbage.png").scaled(40, 40, Qt::KeepAspectRatio));
     mas.back().cost = 10;
 
     mas.push_back(Item());
@@ -109,7 +109,7 @@ void Drop::fill_drop_mas(std::vector<Item> &mas)
     mas.back().rarity = 100;
     mas.back().type = "helmet";
     //Вызывает libpng warning: iCCP: known incorrect sRGB profile
-    mas.back().image = (QPixmap(":/images/helmet1.png").scaled(40, 40, Qt::KeepAspectRatio));
+    mas.back().image = (QPixmap(":/images/resources/helmet1.png").scaled(40, 40, Qt::KeepAspectRatio));
     mas.back().cost = 80;
     mas.back().stats["defense"] = 40;
     mas.back().stats["agility"] = 15;
@@ -119,7 +119,7 @@ void Drop::fill_drop_mas(std::vector<Item> &mas)
     mas.back().name = "Наплечники Чумы";
     mas.back().rarity = 35;
     mas.back().type = "shoulder_armor";
-    mas.back().image = (QPixmap(":/images/shoulders_1.png").scaled(40, 40, Qt::KeepAspectRatio));
+    mas.back().image = (QPixmap(":/images/resources/shoulders_1.png").scaled(40, 40, Qt::KeepAspectRatio));
     mas.back().cost = 450;
     mas.back().stats["defense"] = 60;
     mas.back().stats["concentration"] = 25;
@@ -130,7 +130,7 @@ void Drop::fill_drop_mas(std::vector<Item> &mas)
     mas.back().name = "Кожаные ботинки";
     mas.back().rarity = 80;
     mas.back().type = "boots";
-    mas.back().image = (QPixmap(":/images/boots_1.png").scaled(40, 40, Qt::KeepAspectRatio));
+    mas.back().image = (QPixmap(":/images/resources/boots_1.png").scaled(40, 40, Qt::KeepAspectRatio));
     mas.back().cost = 80;
     mas.back().stats["defense"] = 30;
     mas.back().stats["agility"] = 15;
@@ -140,7 +140,7 @@ void Drop::fill_drop_mas(std::vector<Item> &mas)
     mas.back().name = "Кожаные наручи";
     mas.back().rarity = 80;
     mas.back().type = "arms_armor";
-    mas.back().image = (QPixmap(":/images/arms_armor_1.png").scaled(40, 40, Qt::KeepAspectRatio));
+    mas.back().image = (QPixmap(":/images/resources/arms_armor_1.png").scaled(40, 40, Qt::KeepAspectRatio));
     mas.back().cost = 80;
     mas.back().stats["defense"] = 30;
     mas.back().stats["agility"] = 15;
@@ -150,7 +150,7 @@ void Drop::fill_drop_mas(std::vector<Item> &mas)
     mas.back().name = "Кожаный нагрудник";
     mas.back().rarity = 80;
     mas.back().type = "breastplate";
-    mas.back().image = (QPixmap(":/images/body_armor_1.png").scaled(40, 40, Qt::KeepAspectRatio));
+    mas.back().image = (QPixmap(":/images/resources/body_armor_1.png").scaled(40, 40, Qt::KeepAspectRatio));
     mas.back().cost = 80;
     mas.back().stats["defense"] = 45;
     mas.back().stats["agility"] = 25;
@@ -160,7 +160,7 @@ void Drop::fill_drop_mas(std::vector<Item> &mas)
     mas.back().name = "Утеплённые поножи";
     mas.back().rarity = 70;
     mas.back().type = "legs_armor";
-    mas.back().image = (QPixmap(":/images/legs_armor_1.png").scaled(40, 40, Qt::KeepAspectRatio));
+    mas.back().image = (QPixmap(":/images/resources/legs_armor_1.png").scaled(40, 40, Qt::KeepAspectRatio));
     mas.back().cost = 135;
     mas.back().stats["defense"] = 50;
     mas.back().stats["health"] = 10;
@@ -205,7 +205,7 @@ void Drop::fill_beast_mas(std::vector<Beast> &mas)
     mas.back().xp = 15;
     mas.back().attack = 50;
     mas.back().lvl = 1;
-    mas.back().image = (QPixmap(":/images/boar.png").scaled(200, 200, Qt::KeepAspectRatio));
+    mas.back().image = (QPixmap(":/images/resources/boar.png").scaled(200, 200, Qt::KeepAspectRatio));
 
     mas.push_back(Beast());
     mas.back().id = mas.size() - 1;
@@ -219,7 +219,7 @@ void Drop::fill_beast_mas(std::vector<Beast> &mas)
     mas.back().xp = 35;
     mas.back().attack = 100;
     mas.back().lvl = 4;
-    mas.back().image = (QPixmap(":/images/goblin.png").transformed(QTransform().scale(-1, 1)).scaled(150, 200, Qt::KeepAspectRatio));
+    mas.back().image = (QPixmap(":/images/resources/goblin.png").transformed(QTransform().scale(-1, 1)).scaled(150, 200, Qt::KeepAspectRatio));
 
     mas.push_back(Beast());
     mas.back().id = mas.size() - 1;
@@ -233,7 +233,7 @@ void Drop::fill_beast_mas(std::vector<Beast> &mas)
     mas.back().xp = 50;
     mas.back().attack = 150;
     mas.back().lvl = 10;
-    mas.back().image = (QPixmap(":/images/owl.png").scaled(250, 200, Qt::KeepAspectRatio));
+    mas.back().image = (QPixmap(":/images/resources/owl.png").scaled(250, 200, Qt::KeepAspectRatio));
 
     mas.push_back(Beast());
     mas.back().id = mas.size() - 1;
@@ -247,7 +247,7 @@ void Drop::fill_beast_mas(std::vector<Beast> &mas)
     mas.back().xp = 20;
     mas.back().attack = 75;
     mas.back().lvl = 2;
-    mas.back().image = (QPixmap(":/images/wolf.png").scaled(180, 180, Qt::KeepAspectRatio));
+    mas.back().image = (QPixmap(":/images/resources/wolf.png").scaled(180, 180, Qt::KeepAspectRatio));
 
     mas.push_back(Beast());
     mas.back().id = mas.size() - 1;
@@ -261,5 +261,5 @@ void Drop::fill_beast_mas(std::vector<Beast> &mas)
     mas.back().xp = 30;
     mas.back().attack = 90;
     mas.back().lvl = 3;
-    mas.back().image = (QPixmap(":/images/spider.png").transformed(QTransform().scale(-1, 1)).scaled(220, 270, Qt::KeepAspectRatio));
+    mas.back().image = (QPixmap(":/images/resources/spider.png").transformed(QTransform().scale(-1, 1)).scaled(220, 270, Qt::KeepAspectRatio));
 }
