@@ -25,7 +25,7 @@ Player::Player()
     money = 0;
 
     //Вызывает libpng warning: iCCP: known incorrect sRGB profile
-    image = QPixmap(":/images/resources/main_hero.png").scaled(150, 200, Qt::KeepAspectRatio);
+    image = QPixmap(QCoreApplication::applicationFilePath().left(QCoreApplication::applicationFilePath().length() - 8) + "res/main_hero.png").scaled(150, 200, Qt::KeepAspectRatio);
 }
 
 Player::~Player()

@@ -82,12 +82,12 @@ void Inventory::onCell_right_click(int id)
     if (it != equippable_types.end())
         if (player->get_equipped_items()[(*it).second].name == "") //если вещь этого типа не надета на персонаже, тогда её можно надеть
         {
-        equipA = menu->addAction(QIcon(":/images/resources/equip.png"),"Надеть");
+        equipA = menu->addAction(QIcon(QCoreApplication::applicationFilePath().left(QCoreApplication::applicationFilePath().length() - 8) + "res/equip.png"),"Надеть");
         signalMapperE->setMapping(equipA, id);
         QObject::connect(equipA, SIGNAL(triggered(bool)), signalMapperE, SLOT(map()));
         }
 
-    sellA = menu->addAction(QIcon(":/images/resources/coin.png"), "Продать");
+    sellA = menu->addAction(QIcon(QCoreApplication::applicationFilePath().left(QCoreApplication::applicationFilePath().length() - 8) + "res/coin.png"), "Продать");
     signalMapperS->setMapping(sellA, id);
     QObject::connect(sellA, SIGNAL(triggered(bool)), signalMapperS, SLOT(map()));
 
@@ -100,7 +100,7 @@ void Inventory::onPlayers_cell_right_click(QString place)
 //    libpng warning: iCCP: known incorrect sRGB profile
     if (player->get_items().size() < 56)
     {
-        unequipA = menu->addAction(QIcon(":/images/resources/white_man.png"), "Снять");
+        unequipA = menu->addAction(QIcon(QCoreApplication::applicationFilePath().left(QCoreApplication::applicationFilePath().length() - 8) + "res/white_man.png"), "Снять");
         signalMapperU->setMapping(unequipA, place);
         QObject::connect(unequipA, SIGNAL(triggered(bool)), signalMapperU, SLOT(map()));
 

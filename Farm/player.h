@@ -8,6 +8,7 @@
 #include <typeinfo>
 #include <functions_for_persons.h>
 #include "beast_n_drop.h"
+#include <QCoreApplication>
 
 
 class Player: public QObject

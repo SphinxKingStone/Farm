@@ -11,7 +11,7 @@ Interface::Interface(QWidget *parent)
 
     scene = new QGraphicsScene(0,0,800,600,nullptr);
 
-    scene->setBackgroundBrush(QBrush(QImage(":/images/resources/green_bg.jpg")));
+    scene->setBackgroundBrush(QBrush(QImage(QCoreApplication::applicationFilePath().left(QCoreApplication::applicationFilePath().length() - 8) + "res/green_bg.jpg")));
 
     setScene(scene);
 
@@ -357,39 +357,39 @@ void Interface::draw_players_cells()
     scene->addWidget(players_view);
 
     ClickableLabel * label = new ClickableLabel();
-    label->setPixmap(QPixmap(":/images/resources/square.png").scaled(45,45,Qt::KeepAspectRatio));
+    label->setPixmap(QPixmap(QCoreApplication::applicationFilePath().left(QCoreApplication::applicationFilePath().length() - 8) + "res/square.png").scaled(45,45,Qt::KeepAspectRatio));
     inventory->profile_cells["hands"] = label;
     players_layout->addWidget(label,1,0,Qt::AlignLeft);
 
     label = new ClickableLabel();
-    label->setPixmap(QPixmap(":/images/resources/square.png").scaled(45,45,Qt::KeepAspectRatio));
+    label->setPixmap(QPixmap(QCoreApplication::applicationFilePath().left(QCoreApplication::applicationFilePath().length() - 8) + "res/square.png").scaled(45,45,Qt::KeepAspectRatio));
     inventory->profile_cells["body"] = label;
     players_layout->addWidget(label,2,0,Qt::AlignLeft);
 
     label = new ClickableLabel();
-    label->setPixmap(QPixmap(":/images/resources/square.png").scaled(45,45,Qt::KeepAspectRatio));
+    label->setPixmap(QPixmap(QCoreApplication::applicationFilePath().left(QCoreApplication::applicationFilePath().length() - 8) + "res/square.png").scaled(45,45,Qt::KeepAspectRatio));
     inventory->profile_cells["arms"] = label;
     players_layout->addWidget(label,3,0,Qt::AlignLeft);
 
     player->set_item(scene->addPixmap(player->get_image()), players_view->pos().x()+45+20, players_view->pos().y()+45+20);
 
     label = new ClickableLabel();
-    label->setPixmap(QPixmap(":/images/resources/square.png").scaled(45,45,Qt::KeepAspectRatio));
+    label->setPixmap(QPixmap(QCoreApplication::applicationFilePath().left(QCoreApplication::applicationFilePath().length() - 8) + "res/square.png").scaled(45,45,Qt::KeepAspectRatio));
     inventory->profile_cells["shoulders"] = label;
     players_layout->addWidget(label,1,2,Qt::AlignRight);
 
     label = new ClickableLabel();
-    label->setPixmap(QPixmap(":/images/resources/square.png").scaled(45,45,Qt::KeepAspectRatio));
+    label->setPixmap(QPixmap(QCoreApplication::applicationFilePath().left(QCoreApplication::applicationFilePath().length() - 8) + "res/square.png").scaled(45,45,Qt::KeepAspectRatio));
     inventory->profile_cells["legs"] = label;
     players_layout->addWidget(label,2,2,Qt::AlignRight);
 
     label = new ClickableLabel();
-    label->setPixmap(QPixmap(":/images/resources/square.png").scaled(45,45,Qt::KeepAspectRatio));
+    label->setPixmap(QPixmap(QCoreApplication::applicationFilePath().left(QCoreApplication::applicationFilePath().length() - 8) + "res/square.png").scaled(45,45,Qt::KeepAspectRatio));
     inventory->profile_cells["feet"] = label;
     players_layout->addWidget(label,3,2,Qt::AlignRight);
 
     label = new ClickableLabel();
-    label->setPixmap(QPixmap(":/images/resources/square.png").scaled(45,45,Qt::KeepAspectRatio));
+    label->setPixmap(QPixmap(QCoreApplication::applicationFilePath().left(QCoreApplication::applicationFilePath().length() - 8) + "res/square.png").scaled(45,45,Qt::KeepAspectRatio));
     inventory->profile_cells["head"] = label;
     players_layout->addWidget(label,0,1,Qt::AlignCenter);
 
@@ -446,7 +446,7 @@ void Interface::draw_inventory_cells()
     for (int i = 0; i < 56; i++)
     {
         QLabel * label = new QLabel();
-        label->setPixmap(QPixmap(":/images/resources/square.png").scaled(45,45,Qt::KeepAspectRatio));
+        label->setPixmap(QPixmap(QCoreApplication::applicationFilePath().left(QCoreApplication::applicationFilePath().length() - 8) + "res/square.png").scaled(45,45,Qt::KeepAspectRatio));
         grid_layout->addWidget(label,div(i, 7).quot, div(i, 7).rem,Qt::AlignAbsolute);
         inventory->inventory_cells[i] = label;
     }

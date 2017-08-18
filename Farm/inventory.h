@@ -8,6 +8,7 @@
 #include "beast_n_drop.h"
 #include "player.h"
 #include "inventory.h"
+#include <QCoreApplication>
 
 
 class Inventory: public QObject

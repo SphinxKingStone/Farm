@@ -17,6 +17,7 @@
 #include "beast_n_drop.h"
 #include "graphicmap.h"
 #include "gamesave.h"
+#include <QCoreApplication>
 
 
 class Interface: public QGraphicsView
