@@ -251,7 +251,7 @@ void Drop::fill_beast_mas(std::vector<Beast> &mas)
 
     mas.push_back(Beast());
     mas.back().id = mas.size() - 1;
-    mas.back().name = "Большой_паук";
+    mas.back().name = "Большой паук";
     mas.back().drop_chance = 85;
     mas.back().rarity = 40;
     mas.back().health = 160;

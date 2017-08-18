@@ -22,17 +22,6 @@ struct Beast
     QPixmap image;
 };
 
-//Для поиска по имени для std::find_if
-struct FindByName
-{
-    const QString name;
-    FindByName(const QString& name) : name(name) {}
-    bool operator()(const Beast& j) const
-    {
-        return j.name == name;
-    }
-};
-
 struct Item
 {
     int id;

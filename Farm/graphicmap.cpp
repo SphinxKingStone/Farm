@@ -1,23 +1,35 @@
 #include "graphicmap.h"
 #include <QDebug>
 
-GraphicMap::GraphicMap(Drop *drop_prt)
+GraphicMap::GraphicMap(Drop *drop_prt, int x, int y, int width, int height)
 {
     drop = drop_prt;
     map_scene = new QGraphicsScene;
     setScene(map_scene);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    mapper = new QSignalMapper;
-}
-
-void GraphicMap::draw_map(QString location, int x, int y, int width, int height)
-{
-    qsrand(time(nullptr));
+    timer_mapper = new QSignalMapper;
+    double_click_mapper = new QSignalMapper;
+    click_mapper = new QSignalMapper;
 
     move(x,y);
     resize (width, height);
     map_scene->setSceneRect(this->rect());
+}
+
+GraphicMap::~GraphicMap()
+{
+    map_scene->deleteLater();
+    timer_mapper->deleteLater();
+    double_click_mapper->deleteLater();
+    clear_map();
+}
+
+void GraphicMap::fill_map(QString location)
+{
+    clear_map();
+    qsrand(time(nullptr));
+
     Location selected_location;
     for (auto it = drop->location_mas.begin(); it != drop->location_mas.end(); ++it)
         if ((*it).name == location)
@@ -30,6 +42,7 @@ void GraphicMap::draw_map(QString location, int x, int y, int width, int height)
             QTimer *timer = new QTimer();
 
             enemies_container.push_back(map_beast());
+            enemies_container.back().beast_id = *it;
             enemies_container.back().label_ptr = label;
             enemies_container.back().timer_ptr = timer;
             enemies_container.back().vecX = qrand() % 5 - 2;
@@ -42,15 +55,38 @@ void GraphicMap::draw_map(QString location, int x, int y, int width, int height)
             label->setPixmap(drop->beast_mas[*it].image.scaled(75,75,Qt::KeepAspectRatio));
             label->setStyleSheet("background: transparent;");
             label->adjustSize();
-            label->move((qrand() + x) % int(x + width - label->width() - x), (qrand() + y) % int(y + height - label->height() - y));
+            label->move((qrand() + this->x()) % int(this->x() + this->width() - label->width() - this->x()),
+                        (qrand() + this->y()) % int(this->y() + this->height() - label->height() - this->y()));
+            double_click_mapper->setMapping(label,enemies_container.size() - 1);
+            QObject::connect(label,SIGNAL(doubleClicked()),double_click_mapper,SLOT(map()));
+            click_mapper->setMapping(label,enemies_container.size() - 1);
+            QObject::connect(label,SIGNAL(clicked()),click_mapper,SLOT(map()));
 
-            QObject::connect(timer,SIGNAL(timeout()),mapper,SLOT(map()));
-            mapper->setMapping(timer, enemies_container.size() - 1);
+            timer_mapper->setMapping(timer, enemies_container.size() - 1);
+            QObject::connect(timer,SIGNAL(timeout()),timer_mapper,SLOT(map()));
 
             timer->start(enemies_container.back().speed);
 
         }
-    QObject::connect(mapper, SIGNAL(mapped(int)), this, SLOT(move_enemy(int)));
+    QObject::connect(timer_mapper, SIGNAL(mapped(int)), this, SLOT(move_enemy(int)));
+    QObject::connect(double_click_mapper, SIGNAL(mapped(int)), this, SLOT(on_enemy_double_click(int)));
+    QObject::connect(click_mapper, SIGNAL(mapped(int)), this, SLOT(on_enemy_click(int)));
+}
+
+void GraphicMap::clear_map()
+{
+    for (auto it = enemies_container.begin(); it != enemies_container.end(); ++it)
+    {
+        QObject::disconnect((*it).label_ptr,SIGNAL(doubleClicked()),double_click_mapper,SLOT(map()));
+        QObject::disconnect((*it).timer_ptr,SIGNAL(timeout()),timer_mapper,SLOT(map()));
+        (*it).label_ptr->deleteLater();
+        (*it).timer_ptr->deleteLater();
+    }
+    enemies_container.clear();
+
+    QObject::disconnect(timer_mapper, SIGNAL(mapped(int)), this, SLOT(move_enemy(int)));
+    QObject::disconnect(double_click_mapper, SIGNAL(mapped(int)), this, SLOT(on_enemy_double_click(int)));
+    QObject::disconnect(click_mapper, SIGNAL(mapped(int)), this, SLOT(on_enemy_click(int)));
 }
 
 void GraphicMap::move_enemy(int id)
@@ -103,4 +139,14 @@ void GraphicMap::move_enemy(int id)
         }
     }
 
+}
+
+void GraphicMap::on_enemy_double_click(int container_id)
+{
+    emit beast_selected(drop->beast_mas[enemies_container[container_id].beast_id]);
+}
+
+void GraphicMap::on_enemy_click(int container_id)
+{
+    emit beast_clicked(drop->beast_mas[enemies_container[container_id].beast_id]);
 }

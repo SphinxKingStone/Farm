@@ -40,21 +40,12 @@ void Interface::play_bt_click()
 
 void Interface::onLocation_list_item_clicked()
 {
-    beast_list->clear();
-
-    GraphicMap * map = new GraphicMap(drop);
-    map->draw_map(location_list->currentItem()->text(), location_list->x() + location_list->width() + 30, location_list->y(),
-                  scene->width() - beast_list->x() - 10, location_list->height());
-    scene->addWidget(map);
+    map->fill_map(location_list->currentItem()->text());
 }
 
-void Interface::onBeast_list_item_selected()
+void Interface::onBeast_list_item_selected(Beast beast)
 {
-     //ищем итератор по имени существа (строка, пока не встретится пробел), которое получаем из выбранной строки в списке
-     auto it = std::find_if(drop->beast_mas.begin(), drop->beast_mas.end(), FindByName(beast_list->currentItem()->text().split(" ").at(0)));
-     //Если не нашли, то итератор будет указывать на конец вектора, вот и проверяем, нашли ли
-     if (it != drop->beast_mas.end())
-        enemy = new Enemy(*it);
+    enemy = new Enemy(beast);
 
     close_mainScreen();
 
@@ -155,13 +146,6 @@ void Interface::draw_mainScreen()
 
     QObject::connect(location_list,SIGNAL(itemClicked(QListWidgetItem*)),this,SLOT(onLocation_list_item_clicked()));
 
-    beast_list = new QListWidget();
-    beast_list->move(location_list->x() + location_list->width() + 30, location_list->y());
-    beast_list->resize(scene->width() - beast_list->x() - 10, location_list->height());
-    beast_list->setStyleSheet("background-color: rgba(255, 255, 255, 30%);"
-                              "font: 18px;");
-    QObject::connect(beast_list, SIGNAL(itemActivated(QListWidgetItem*)), this, SLOT(onBeast_list_item_selected()));
-
     profile_button = new QPushButton("Профиль", nullptr);
     profile_button->resize(150,60);
     profile_button->move(10, 10);
@@ -181,9 +165,20 @@ void Interface::draw_mainScreen()
     QObject::connect(inventory_button, SIGNAL(clicked(bool)), this, SLOT(onInventory_button_click()));
 
     scene->addWidget(location_list);
-    scene->addWidget(beast_list);
     scene->addWidget(profile_button);
     scene->addWidget(inventory_button);
+
+    map = new GraphicMap(drop, location_list->x() + location_list->width() + 30, location_list->y(),
+                         scene->width() - (location_list->x() + location_list->width() + 30) - 10, location_list->height());
+    QObject::connect(map, SIGNAL(beast_selected(Beast)), this, SLOT(onBeast_list_item_selected(Beast)));
+    QObject::connect(map, SIGNAL(beast_clicked(Beast)), this, SLOT(update_enemy_info(Beast)));
+    scene->addWidget(map);
+
+    enemy_info = new QLabel();
+    scene->addWidget(enemy_info);
+    enemy_info->move(map->x() + map->width() - enemy_info->width(), map->y() - enemy_info->height());
+    enemy_info->setStyleSheet("font: 18px;"
+                              "background: transparent;");
 }
 
 bool Interface::draw_Exit_button(QPushButton *&button)
@@ -202,9 +197,13 @@ bool Interface::draw_Exit_button(QPushButton *&button)
 bool Interface::close_mainScreen()
 {
     location_list->deleteLater();
-    beast_list->deleteLater();
     profile_button->deleteLater();
     inventory_button->deleteLater();
+    enemy_info->deleteLater();
+    map->deleteLater();
+    QObject::disconnect(map, SIGNAL(beast_selected(Beast)), this, SLOT(onBeast_list_item_selected(Beast)));
+    QObject::disconnect(map, SIGNAL(beast_clicked(Beast)), this, SLOT(update_enemy_info(Beast)));
+
     return true;
 }
 
@@ -418,7 +417,6 @@ void Interface::draw_inventory_cells()
         inventory->inventory_cells[i] = label;
     }
 
-    //заполняем временный вектор всеми вещами персонажа
     draw_items();
 
     profile_frame = new QFrame();
@@ -515,6 +513,13 @@ void Interface::update_inventory()
                            "font: 16px;"
                            "font-weight: bold;");
     money_label->move(profile_frame->x() - money_label->width() - 10, profile_frame->y());
+}
+
+void Interface::update_enemy_info(Beast beast)
+{
+    enemy_info->setText(beast.name + " " + QString::number(beast.lvl) + " - го уровня");
+    enemy_info->adjustSize();
+    enemy_info->move(map->x() + map->width() - enemy_info->width(), map->y() - enemy_info->height());
 }
 
 void Interface::add_item_pic(QGridLayout *layout, QPixmap image, int row, int column, int i)

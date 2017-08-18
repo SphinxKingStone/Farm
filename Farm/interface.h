@@ -45,13 +45,13 @@ public:
     Drop * drop;
     Enemy * enemy;
     Inventory * inventory;
+    GraphicMap * map;
 
 private:
     QGraphicsScene * scene;
     QPushButton * play_buttton;
     QGridLayout * grid_layout;
     QListWidget * location_list;
-    QListWidget * beast_list;
     QPushButton * profile_button;
     QPushButton * inventory_button;
     QFrame * profile_frame;
@@ -70,6 +70,8 @@ private:
     QGridLayout * inventory_layout;
     QGraphicsView * inventory_view;
 
+    QLabel * enemy_info;
+
     int * hit_value;
 
     QMap<QString, QLabel*> labels_map;
@@ -87,13 +89,14 @@ private:
 private slots:
     void play_bt_click();
     void onLocation_list_item_clicked();
-    void onBeast_list_item_selected();
+    void onBeast_list_item_selected(Beast beast);
     void onProfile_button_click();
     void onInventory_button_click();
     void battle();
     void update_health_bar();
     void update_log(int players_hit);
     void update_inventory();
+    void update_enemy_info(Beast beast);
     void onExit_battle_button_click();
     void onExit_profile_button_click();
     void onSkill_point_button_click(QString name);
